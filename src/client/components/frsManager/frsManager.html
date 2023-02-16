@@ -1,0 +1,39 @@
+<template name="frsManager">
+    <div class="frsManager container-fluid">
+
+        <div class="title">
+            <p>{{ i18n label="manager_title" }}</p>
+        </div>
+
+        <div class="manager-middle container-fluid d-flex">
+            <ul class="nav nav-tabs flex-grow-1" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="frsTreeNav" data-bs-toggle="tab" data-bs-target="#frsTreeContent">{{ i18n label="tree_nav" }}</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="frsSettingsNav" data-bs-toggle="tab" data-bs-target="#frsSettingsContent">{{ i18n label="settings_nav" }}</button>
+                </li>
+            </ul>
+
+            <div class="frs-buttons">
+                <div class="frs-tree-buttons">
+                </div>
+                <div class="frs-settings-buttons">
+                </div>
+            </div>
+        </div>
+
+        <div class="manager-content container-fluid">
+            <div class="tab-pane" id="frsTreeContent" role="tabpanel" aria-labelledby="tree-tab">
+                {{> frs_tree_tab language=language }}
+            </div>
+            <div class="tab-pane" id="frsSettingsContent" role="tabpanel" aria-labelledby="settings-tab">
+                {{> frs_settings_tab language=language }}
+            </div>
+        </div>
+
+        <div class="manager-bottom d-flex">
+        </div>
+
+    </div>
+</template>

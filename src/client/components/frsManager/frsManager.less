@@ -1,0 +1,54 @@
+.frsManager {
+
+    .frs-settings-tab,
+    .frs-tree-tab {
+        .tab-top {
+            margin: 1em;
+        }
+        .tab-middle {
+            margin-top: 0.5em;
+            padding: 0.5em 0.25em;
+            border: solid 1px lightgray;
+            border-radius: 0.5em;
+    
+            .jstree-anchor,
+            .jstree-wholerow {
+                line-height: 2.25em;
+                height: 2.25em;
+            }
+            // categories
+            ul > li {
+                color: #138D75;
+                font-weight: bold;
+                i {
+                    display: inline;
+                }
+            }
+            // forums
+            ul > li > ul > li {
+                color: #1F618D;
+                font-weight: bold;
+                display: flex;
+            }
+            a {
+                display: flex;
+                align-items: center;
+                width: 100%;
+            }
+            .frs-tree-btn {
+                margin-left: 0.25em;
+            }
+            .frs-buttons {
+                margin-left: 0.5em;
+            }
+            .frs-badges {
+                margin-left: 1em;
+            }
+        }
+    }
+    .frs-total {
+        display: block;
+        font-size: 90%;
+        font-weight: bold;
+    }
+}

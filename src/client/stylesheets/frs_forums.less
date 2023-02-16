@@ -1,0 +1,202 @@
+.frsForums,
+.frsThreads,
+.frsPosts {
+    margin-left: 2em;
+    margin-right: 2em;
+
+    .frs-top {
+        display: flex;
+        align-items: center;
+        margin-top: 0.5em;
+
+        .frs-left {
+            flex-grow: 1;
+        }
+        .frs-title {
+            font-size: 150%;
+            font-weight: bold;
+        }
+        .frs-breadcrumb {
+            margin-left: 1em;
+            .breadcrumb {
+                --bs-breadcrumb-margin-bottom: 0;
+            }
+        }
+    }
+    .frs-header {
+        margin-top: 0.5em;
+        .frs-page-title {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+    }
+}
+
+.frs-modal {
+    .modal-title {
+        color: black;
+        font-size: 150%;
+    }
+    table {
+        width: 100%;
+    }
+    .form-label {
+        font-weight: normal;
+        margin-bottom: 0;
+        padding-right: 0.5em;
+        color: gray;
+    }
+    .frs-div-archived {
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        padding-top: 0.5em;
+        padding-bottom: 0.5em;
+        border-top: 1px solid gray;
+        border-bottom: 1px solid gray;
+        padding-left: 1.25em;
+
+        label {
+            display: block;
+        }
+        .frs-line2 {
+            font-size: 90%;
+            color: gray;
+            font-style: italic;
+        }
+    }
+    .frs-tab {
+        margin-top: 0.5em;
+    }
+    .nav-item .nav-link:disabled {
+        font-style: italic;
+    }
+}
+.frs-a:hover {
+    text-decoration: none;
+    color: black;
+    //background-color: #e8e8e8;
+    background-color: #e0f0f0;
+}
+.frs-btn {
+    white-space: nowrap;
+    margin-left: 0.5em;
+}
+.frs-center {
+    text-align: center;
+}
+.frs-dcontents {
+    display: contents;
+}
+.frs-ellipsize {
+    // https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.frs-ellipsize-2 {
+    -webkit-line-clamp: 2;
+}
+.frs-ellipsize-4 {
+    -webkit-line-clamp: 4;
+}
+.frs-hidden {
+    display: none;
+}
+.frs-h025 {
+    height: 0.25em;
+}
+.frs-lh2 {
+    height: 2em;
+}
+.frs-ml025 {
+    margin-left: 0.25em;
+}
+.frs-ml05 {
+    margin-left: 0.5em;
+}
+.frs-ml1 {
+    margin-left: 1em;
+}
+.frs-mr05 {
+    margin-right: 0.5em;
+}
+.frs-mr1 {
+    margin-right: 1em;
+}
+.frs-mt05 {
+    margin-top: 0.5em;
+}
+.frs-mt1 {
+    margin-top: 1em;
+}
+.frs-nowrap {
+    white-space: nowrap;
+}
+.frs-right {
+    text-align: right;
+}
+.frs-top {
+    vertical-align: top;
+}
+.frs-transparent {
+    opacity: 0;
+}
+.frs-w2 {
+    width: 2em;
+    min-width: 2em;
+    max-width: 2em;
+}
+.frs-w3 {
+    width: 3em;
+    min-width: 3em;
+    max-width: 3em;
+}
+span.frs-counter {
+    font-weight: normal;
+    font-size: 65%;
+    margin-left: 0.25em;
+}
+span.frs-badge {
+    font-size: 14px;
+    margin-left: 0.25em;
+    --bs-badge-padding-x: 0.55em;
+    --bs-badge-padding-y: 0.55em;
+    --bs-badge-border-radius: 1em;
+    width: 2.25em;
+    height: 2.25em;
+}
+span.frs-moderator {
+    font-weight: normal;
+    font-size: 65%;
+}
+/*
+ * COLORS
+ */
+.frs-bg-cat,
+ button.frs-bg-cat {
+     background-color: #138D75;
+ }
+.frs-bg-cat:disabled,
+button.frs-bg-cat:disabled {
+    background-color: #82e0aa;
+    opacity: 0.65;
+}
+.frs-bg-cat:not(.badge):hover,
+button.frs-bg-cat:not(.badge):hover {
+    background-color: #004d40;
+}
+
+.frs-bg-forum,
+button.frs-bg-forum {
+    background-color: #1F618D;
+}
+.frs-bg-forum:disabled,
+button.frs-bg-forum:disabled {
+    background-color: #7fb3d5;
+    opacity: 0.65;
+}
+.frs-bg-forum:not(.badge):hover,
+button.frs-bg-forum:not(.badge):hover {
+    background-color: #154360;
+}

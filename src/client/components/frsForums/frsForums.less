@@ -1,0 +1,98 @@
+.frsForums {
+    .frs-content {
+        display: grid;
+        grid-template-columns: 10px 1fr auto;
+
+        .frs-background {
+            background-color: green;
+        }
+
+        .frs-margin-top-1 {
+            grid-column-start: 1;
+            grid-column-end: 4;
+            height: 1em;
+        }
+
+        .frs-category {
+            background-color: #e0e0e0;
+            margin: 0 1em 0 0.5em;
+            padding: 0.5em;
+            border: solid 1px lightgray;
+            border-radius: 0.25em;
+            color: black;
+            grid-column-start: 2;
+            grid-column-end: 4;
+
+            .frs-body {
+                margin-left: 1em;
+
+                .frs-title {
+                    font-size: 125%;
+                    font-weight: bold;
+                }
+                .frs-description {
+                    font-size: 1em;
+                }
+            }
+        }
+
+        .frs-forum {
+            margin-top: 0.5em;
+        }
+        .frs-forum.frs-left {
+            margin-left: 2.5em;
+        }
+        .frs-forum.frs-right {
+            margin-right: 3em;
+        }
+
+        .frs-forum.frs-top {
+            border-top: solid 1px lightgray;
+            padding-top: 0.5em;
+        }
+
+        .frs-forum {
+            .frs-a {
+                width: 100%;
+                height: 100%;
+                display: inline-grid;
+            }
+            td.frs-left,
+            td.frs-right {
+                background-color: #e0e0e0;
+                border: solid 1px lightgray;
+                // border-radius: 0.25em;       // only works if border-collapse: collapse;
+            }
+            td.frs-left {
+                border-right: none;
+            }
+            td.frs-right {
+                border-left: none;
+            }
+            .frs-body,
+            .frs-infos {
+                padding: 0.25em;
+            }
+            .frs-title {
+                font-weight: bold;
+                font-size: 90%;
+            }
+            .frs-description {
+                font-size: 90%;
+            }
+            .frs-comment {
+                font-size: 90%;
+                font-style: italic;
+            }
+            .frs-lastpost {
+                font-size: 75%;
+                font-style: italic;
+                color: gray;
+                white-space: nowrap;
+                line-height: 1.25em;
+                margin-top: 0.5em;
+                text-align: center;
+            }
+        }
+    }
+}

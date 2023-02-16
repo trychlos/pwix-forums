@@ -1,0 +1,74 @@
+.frsPosts {
+    .frs-header,
+    .frs-content {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+    .frs-post-id {
+        font-style: italic;
+        color: gray;
+    }
+    .frs-body {
+        table {
+            font-size: 0.9rem;
+            margin-top: 0.5em;
+            th {
+                color: gray;
+                white-space: nowrap;
+            }
+            tbody > tr {
+                margin-top: 0.25em;
+                padding-top: 0.25em;
+            }
+            tbody > tr.frs-post-tr,
+            tbody > tr.frs-moderated-tr,
+            tbody > tr.frs-deleted-tr {
+                border-top: solid 1px rgb(48, 14, 14);
+            }
+            .frs-td {
+                padding-left: 0.25em;
+                padding-right: 0.25em;
+                vertical-align: text-top;
+            }
+            .frs-td.frs-first {
+                padding-left: 0.5em;
+            }
+            .frs-td.frs-last {
+                padding-right: 0.5em;
+            }
+            .frs-td.frs-reply-td {
+                padding-bottom: 0.5em;
+                text-align: center;
+            }
+            .frs-td.frs-reply-td .btn {
+                margin-top: 0.5em;
+            }
+            .frs-moderated-label,
+            .frs-deleted-label {
+                font-size: 90%;
+                font-style: italic;
+                color: gray;
+                padding-left: 0.5em;
+            }
+            .frs-moderated-label {
+                cursor: pointer;
+            }
+            .frs-moderated-post {
+                font-style: italic;
+                color: gray;
+                .frs-edit-td {
+                    cursor: pointer;
+                }
+            }
+        }
+        .frs-postid {
+            padding-right: 0.5em;
+            font-size: 75%;
+            white-space: nowrap;
+        }
+        .frs-edit-div {
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+        }
+    }
+}

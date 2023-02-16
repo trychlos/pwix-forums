@@ -1,0 +1,43 @@
+<template name="frs_post_moderate">
+    <div class="frs-post-moderate">
+
+        <div class="frs-text frs-pre">
+            {{{ i18n label="pre_text" }}}
+        </div>
+        <div class="frs-origin">
+            <div class="frs-ellipsize frs-ellipsize-4 frs-content">
+                <div class="frs-content-label">
+                    {{ i18n label="content_label" }}
+                </div>
+                <div class="frs-content-div">
+                    {{{ content }}}
+                </div>
+            </div>
+            <div class="frs-ellipsize frs-ellipsize-4 frs-owner">
+                <p class="frs-owner-label">{{ i18n label="owner_label" }}</p>
+                <div class="frs-owner-div">
+                    <p>{{ email }}</p>
+                    <p>{{ deletedCount }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="form">
+            <div class="frs-inform">
+                <input type="checkbox" class="form-check-input form-check-input-sm frs-inform" id="inform_{{ id }}" checked />
+                <label class="form-check-label form-check-label-sm" for="inform_{{ id }}">{{ i18n label="inform_label" }}</label>
+            </div>
+            <div class="frs-reason">
+                <label class="form-check-label form-check-label-sm" for="reason_{{ id }}">{{ i18n label="reason_label" }}</label>
+                <select class="form-select form-select-sm frs-reason" id="reason_{{ id }}" aria-label="Reason selection">
+                    {{#each it in reasons }}
+                        <option {{ selected it }} value="{{ it.id }}">{{ it.label }}</option>
+                    {{/each}}
+                </select>
+            </div>
+        </div>
+        <div class="frs-text frs-post">
+            {{{ i18n label="post_text" }}}
+        </div>
+
+    </div>
+</template>

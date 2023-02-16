@@ -1,0 +1,69 @@
+<template name="frsPosts">
+    <div class="frsPosts">
+
+        <div class="frs-top">
+            <div class="frs-left">
+                <div class="frs-title">
+                    <p>{{ forumTitle }}</p>
+                </div>
+            </div>
+            <div class="frs-badges d-flex align-items-center">
+                {{{ badgeModerator }}}
+                <div class="frs-ml05"></div>
+                {{{ badgePrivate }}}
+                {{{ badgeArchived }}}
+            </div>
+            <div class="frs-right">
+                {{> frs_breadcrumb page="posts" args=(forumId) }}
+            </div>
+        </div>
+
+        <div class="frs-header">
+            <p class="frs-page-title flex-grow-1">{{ threadTitle }}</p>
+        </div>
+
+        <div class="frs-content">
+            <div class="frs-body">
+                <table class="w-100">
+                    <tbody>
+                        {{#each it in postsList }}
+                            {{#if moderatedPost it }}
+                                {{#if showModerated }}
+                                    <tr class="frs-moderated-tr" data-post-id="{{ it._id }}">
+                                        <td></td>
+                                        <td class="frs-moderated-label">
+                                            <span>{{ moderatedLabel it }}</span>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                    {{> frs_post_tr (postTr it) }}
+                                {{/if}}
+                            {{else}}
+                                {{#if userDeleted it }}
+                                    {{#if showDeleted }}
+                                        <tr class="frs-deleted-tr" data-post-id="{{ it._id }}">
+                                            <td></td>
+                                            <td class="frs-deleted-label">
+                                                <span>{{ deletedLabel it }}</span>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    {{/if}}
+                                {{else}}
+                                    {{> frs_post_tr (postTr it) }}
+                                {{/if}}
+                            {{/if}}
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="frs-footer">
+        </div>
+
+        <div class="frs-bottom">
+        </div>
+
+    </div>
+</template>

@@ -1,0 +1,78 @@
+<template name="frsThreads">
+    <div class="frsThreads">
+
+        <div class="frs-top">
+            <div class="frs-left">
+                <div class="frs-title">
+                    <p>{{ forumTitle }}</p>
+                    <p class="frs-forum-description">{{ forumDescription }}</p>
+                </div>
+            </div>
+            <div class="frs-badges d-flex align-items-center">
+                {{{ badgeModerator }}}
+                <div class="frs-ml05"></div>
+                {{{ badgePrivate }}}
+                {{{ badgeArchived }}}
+            </div>
+            <div class="frs-right">
+                {{#unless uiSMView }}
+                    {{> frs_breadcrumb page="threads" }}
+                {{/unless}}
+            </div>
+        </div>
+
+        <div class="frs-header d-flex align-items-center">
+            <p class="frs-page-title flex-grow-1">{{ i18n label="page_title" }}</p>
+            <button type="button" class="btn btn-outline-primary btn-sm frs-btn frs-thread-new-btn" data-bs-toggle="button" {{ disableNew }}>{{ i18n label="new" }}</button>
+        </div>
+
+        <div class="frs-new-thread">
+            {{> frs_post_edit (parmsPostEdit) }}
+        </div>
+
+        <div class="frs-content">
+            <div class="frs-body container-fluid">
+                {{#if hasThreads }}
+                    <table class="js-igrid w-100">
+                        <thead>
+                            <tr>
+                                <th data-column-name="title">{{ i18n label="title_header" }}</th>
+                                <th data-column-name="started" class="frs-center">{{ i18n label="start_header" }}</th>
+                                <th data-column-name="owner" class="frs-center">{{ i18n label="owner_header" }}</th>
+                                <th data-column-name="count" class="frs-center">{{ i18n label="count_header" }}</th>
+                                <th data-column-name="last" class="frs-center">{{ i18n label="last_header" }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each it in threadsList }}
+                                {{ push it }}
+                                <tr data-row-id="{{ it._id }}" class="frs-thread-tr" data-bs-toggle="tooltip" data-bs-title="{{ threadTooltip it }}">
+                                    <td class="frs-td">
+                                        <div class="frs-thread-title">{{ it.title }}</div>
+                                        <div class="frs-ellipsize frs-ellipsize-2">{{{ it.content }}}</div>
+                                    </td>
+                                    <td class="frs-td frs-center">{{ threadStarted it }}</td>
+                                    <td class="frs-td frs-center">{{ threadOwner it }}</td>
+                                    <td class="frs-td frs-center">{{ it.postsCount }}</td>
+                                    <td class="frs-td frs-center frs-lastpost">{{{ threadLast it }}}</td>
+                                </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                    {{ enableTooltips }}
+                {{else}}
+                    <div class="frs-empty">
+                        {{{ i18n label="no_threads" }}}
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+
+        <div class="frs-footer">
+        </div>
+
+        <div class="frs-bottom">
+        </div>
+
+    </div>
+</template>

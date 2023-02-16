@@ -1,0 +1,29 @@
+<template name="frs_post_edit">
+    <div class="frs-post-edit frs-hidden">
+
+        {{#if showTitle }}
+            <div class="d-flex frs-form align-items-center">
+                <label for="" class="form-label">{{ i18n label="title_label" }}</label>
+                <input type="text" class="form-control form-control-sm frs-title" id="" placeholder="{{ i18n label="title_placeholder" }}" value="{{ title }}" />
+            </div>
+        {{/if}}
+
+        <div>{{> teEditor (parmsEditor) }}</div>
+
+        {{#if showButtons }}
+            <div class="d-flex justify-content-between align-items-center frs-buttons">
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-cancel-btn">{{ i18n label="cancel_btn" }}</button>
+                </div>
+                <div>
+                    <div class="frs-message frs-hidden"></div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-preview-btn" {{ disablePreview }} data-bs-toggle="button">{{ i18n label="preview_btn" }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-post-btn" {{ disablePost }}>{{ i18n label="post_btn" }}</button>
+                </div>
+            </div>
+        {{/if}}
+
+    </div>
+</template>

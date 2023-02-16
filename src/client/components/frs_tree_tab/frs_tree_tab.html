@@ -1,0 +1,28 @@
+<template name="frs_tree_tab">
+    <div class="frs-tree-tab">
+
+        <div class="tab-top d-flex flex-row">
+            <div class="frs-description flex-grow-1">
+                {{{ i18n label="description" }}}
+            </div>
+            <div class="buttons d-flex flex-column justify-content-around">
+                <button class="btn btn-primary btn-sm frs-btn frs-new-category">{{ i18n label="category_new" }}</button>
+                <button class="btn btn-primary btn-sm frs-btn frs-new-forum">{{ i18n label="forum_new" }}</button>
+            </div>
+        </div>
+
+        <div class="tab-middle">
+            <div id="frsTreeTabTree"></div>
+        </div>
+
+        <div class="tab-bottom">
+            <div class="frs-total frs-mt05">
+                {{ categoriesCount }}
+            </div>
+            <div class="frs-total">
+                {{ forumsCount }}
+            </div>
+        </div>
+
+    </div>
+</template>

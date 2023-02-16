@@ -1,0 +1,84 @@
+<template name="frsForums">
+    <div class="frsForums">
+
+        <div class="frs-top">
+            <div class="frs-left">
+                <div class="frs-title">
+                    {{ i18n label="page_title" }}
+                </div>
+            </div>
+            <div class="frs-right">
+                {{#unless uiSMView }}
+                    {{> frs_breadcrumb page="forums" }}
+                {{/unless}}
+            </div>
+        </div>
+
+        <div class="frs-content">
+            {{#each c in catList }}
+                {{ catCatch c }}
+                <div class="frs-margin-top-1"></div>
+                <div class="frs-background"></div>
+                <div class="frs-category d-flex align-items-center">
+                    <div class="frs-body flex-grow-1">
+                        <div class="frs-title">
+                            {{ c.title }}
+                        </div>
+                        <div class="frs-description">
+                            {{{ c.description }}}
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="badge frs-mr1 frs-ml1 frs-bg-cat frs-count">
+                            {{ c.forumsCount }}
+                        </div>
+                    </div>
+                </div>
+                {{#each f in forumList c }}
+                    <div class="frs-background"></div>
+                    <div class="frs-forum frs-left {{ topForum f }}">
+                        <a class="frs-a" href="{{ route f }}">
+                            <div class="frs-body">
+                                <div class="frs-title">
+                                    {{{ forIcon f }}}
+                                    {{ f.title }}
+                                </div>
+                                <div class="frs-description">
+                                    {{ f.displayableDescription }}
+                                </div>
+                                <div class="frs-comment">
+                                    {{ forComment f }}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="frs-forum frs-right {{ topForum f }}">
+                        <div class="frs-infos d-flex flex-column">
+                            <div class="d-flex align-items-center justify-content-evenly flex-fill frs-badges">
+                                {{#unless uiSMView }}
+                                    {{{ badgeModerator f }}}
+                                    <div class="frs-ml025"></div>
+                                    {{{ badgePrivate f }}}
+                                    {{{ badgeArchived f }}}
+                                    <div class="frs-ml025"></div>
+                                    {{{ badgeThreads f }}}
+                                {{/unless}}
+                                {{{ badgePosts f }}}
+                                <div class="frs-mr05"></div>
+                            </div>
+                            <div class="flex-fill frs-lastpost">
+                                {{#unless uiSMView }}
+                                    {{{ forLastPost f }}}
+                                {{/unless}}
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            {{/each}}
+        </div>
+
+        <div class="frs-bottom">
+        </div>
+
+    </div>
+</template>
