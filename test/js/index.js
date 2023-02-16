@@ -2,7 +2,7 @@
 import { Tinytest } from "meteor/tinytest";
 
 // Import and rename a variable exported by forums.js.
-import { name as packageName } from "meteor/pwi:forums";
+import { name as packageName } from "meteor/pwix:forums";
 
 // Write your tests here!
 // Here is an example.

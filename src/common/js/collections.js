@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/common/js/collections.js
+ * pwix:forums/src/common/js/collections.js
  *
  *  Initialize the common part of the collections
  */

@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/js/functions.js
+ * pwix:forums/src/client/js/functions.js
  */
 
 import { Promise } from 'meteor/promise';
@@ -13,7 +13,7 @@ if( Meteor.isClient ){
         // a callback defined for the pwiRoles:prView component
         //  must return a Promise
         viewRoles( tab ){
-            //console.log( 'pwi:forums pwiForums.client.fn.viewRoles' );
+            //console.log( 'pwix:forums pwiForums.client.fn.viewRoles' );
             const userId = Meteor.userId();
             return new Promise(( resolve, reject ) => {
                 let html = '';

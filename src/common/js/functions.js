@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/common/js/functions.js
+ * pwix:forums/src/common/js/functions.js
  */
 
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';

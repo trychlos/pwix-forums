@@ -1,10 +1,10 @@
 /*
- * pwi:forums/src/common/js/config.js
+ * pwix:forums/src/common/js/config.js
  */
 
 import { Tracker } from 'meteor/tracker';
 
-console.log( 'pwi:forums/src/common/js/config.js declaring global exported pwiForums object' );
+console.log( 'pwix:forums/src/common/js/config.js declaring global exported pwiForums object' );
 
 _ready = {
     dep: new Tracker.Dependency(),
@@ -40,9 +40,9 @@ pwiForums = {
 
     // should be *in same terms* called both by the client and the server
     configure: function( o ){
-        console.log( 'pwi:forums configure() with', o );
+        console.log( 'pwix:forums configure() with', o );
         pwiForums.conf = { ...pwiForums.conf, ...o };
-        //console.log( 'pwi:forums/src/common/index.js:config() pwiForums=', pwiForums );
+        //console.log( 'pwix:forums/src/common/index.js:config() pwiForums=', pwiForums );
     },
 
     /**

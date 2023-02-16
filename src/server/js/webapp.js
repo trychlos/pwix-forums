@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/server/js/webapp.js
+ * pwix:forums/src/server/js/webapp.js
  *
  * See https://stackoverflow.com/questions/75402993/does-serving-static-files-from-multiple-routes-in-meteor-implies-to-multiply-pu/
  */
@@ -9,7 +9,7 @@ const _redirect = function( url, res, stringIdentifier ){
     const indexOf = url.indexOf( stringIdentifier );
     if( indexOf > 0 ){
         const newurl = url.substring( indexOf );
-        console.log( 'pwi:forums redirect', url, 'to', newurl );
+        console.log( 'pwix:forums redirect', url, 'to', newurl );
         res.writeHead( 301, {
             Location: newurl
         });

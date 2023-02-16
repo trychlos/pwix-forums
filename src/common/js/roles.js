@@ -1,7 +1,7 @@
 /*
- * pwi:forums/src/common/js/roles.js
+ * pwix:forums/src/common/js/roles.js
  *
- *  Define here the roles used by the pwi:forums package.
+ *  Define here the roles used by the pwix:forums package.
  *
  *      FRS_ADMIN                       do anything anywhere
  * 

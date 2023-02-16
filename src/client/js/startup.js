@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/js/startup.js
+ * pwix:forums/src/client/js/startup.js
  */
 
 import '../../common/js/index.js';
@@ -7,7 +7,7 @@ import '../../common/js/index.js';
 if( Meteor.isClient ){
     Meteor.startup( function(){
         // define the cient-side collections
-        console.log( 'pwi:forums/src/client/js/startup.js Meteor.startup() defining collections...' );
+        console.log( 'pwix:forums/src/client/js/startup.js Meteor.startup() defining collections...' );
         pwiForums.collections.every(( c ) => {
             const name = pwiForums.conf.prefix + pwiForums[c].radical;
             console.log( '   '+c+' -> '+name );
@@ -20,7 +20,7 @@ if( Meteor.isClient ){
 
 if( Meteor.isClient ){
     Meteor.startup( function(){
-        console.log( 'pwi:forums/src/client/js/startup.js Meteor.startup() setting package ready' );
+        console.log( 'pwix:forums/src/client/js/startup.js Meteor.startup() setting package ready' );
         _ready.val = true,
         _ready.dep.changed();
     });

@@ -1,5 +1,5 @@
 Package.describe({
-    name: 'pwi:forums',
+    name: 'pwix:forums',
     version: '0.90.0',  // pre-release version number
     summary: 'A forum solution for Meteor',
     git: 'https://github.com/trychlos/pwix-forums',
@@ -18,7 +18,7 @@ Package.onUse( function( api ){
 Package.onTest( function( api ){
     configure( api );
     api.use( 'tinytest' );
-    api.use( 'pwi:forums' );
+    api.use( 'pwix:forums' );
     api.mainModule( 'test/js/index.js' );
 });
 

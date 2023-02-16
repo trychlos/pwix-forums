@@ -16,7 +16,7 @@ The used prefix is configurable, defaulting to `frs_`.
 ### Installation
 
 ```
-    meteor add pwi:forums
+    meteor add pwix:forums
 ```
     
     Exported object

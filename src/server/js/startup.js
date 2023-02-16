@@ -1,12 +1,12 @@
 /*
- * pwi:forums/src/server/js/startup.js
+ * pwix:forums/src/server/js/startup.js
  */
 import { Mongo } from 'meteor/mongo';
 
 if( Meteor.isServer ){
     Meteor.startup( function(){
         // define the collections
-        console.log( 'pwi:forums/src/client/js/startup.js Meteor.startup() defining collections...' );
+        console.log( 'pwix:forums/src/client/js/startup.js Meteor.startup() defining collections...' );
         pwiForums.collections.every(( c ) => {
             const name = pwiForums.conf.prefix + pwiForums[c].radical;
             console.log( '   '+c+' -> '+name );

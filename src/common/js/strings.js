@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/common/js/strings.js
+ * pwix:forums/src/common/js/strings.js
  */
 
 pwiForums.strings = {

@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/components/frsThreads/frsThreads.js
+ * pwix:forums/src/client/components/frsThreads/frsThreads.js
  *
  * The displayed forum content is available as a 'forumId' route param
  */

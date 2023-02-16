@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/components/frs_breadcrumb/frs_breadcrumb.js
+ * pwix:forums/src/client/components/frs_breadcrumb/frs_breadcrumb.js
  *
  * Display the current hierarchy inside of the forums.
  * Because the labels must be internationalized, the possible herarchy is registered as a pwiForums.client array

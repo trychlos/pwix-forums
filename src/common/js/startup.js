@@ -1,7 +1,7 @@
 /*
- * pwi:forums/src/common/js/startup.js
+ * pwix:forums/src/common/js/startup.js
  */
 
 Meteor.startup( function(){
-    //console.log( 'pwi:forums/src/common/startup.js Meteor.startup()' );
+    //console.log( 'pwix:forums/src/common/startup.js Meteor.startup()' );
 });

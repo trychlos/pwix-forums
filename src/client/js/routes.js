@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/js/routes.js
+ * pwix:forums/src/client/js/routes.js
  */
 
 // see the forums

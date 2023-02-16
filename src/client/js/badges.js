@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/js/badges.js
+ * pwix:forums/src/client/js/badges.js
  *
  * Display badges for public/private forums.
  * 

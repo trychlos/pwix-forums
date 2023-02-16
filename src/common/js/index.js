@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/common/js/index.js
+ * pwix:forums/src/common/js/index.js
  */
 
 import './config.js';

@@ -1,5 +1,5 @@
 /*
- * pwi:forums/src/client/js/breadcrumb.js
+ * pwix:forums/src/client/js/breadcrumb.js
  */
 
 pwiForums.client.breadcrumb = [
