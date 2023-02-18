@@ -124,7 +124,7 @@ pwiForums.Forums = {
     // - user: the user identifier
     canModerate( forum, user ){
         const moderate = forum && user &&
-            ( pwiRoles.userIsInRoles( user, 'FRS_MODERATORS' ) || pwiForums.fn.ids( forum.moderators || [] ).includes( user ));
+            ( pwiRoles.userIsInRoles( user, 'FRS_MODERATOR' ) || pwiForums.fn.ids( forum.moderators || [] ).includes( user ));
         return moderate ? true : false;
     },
 
@@ -133,7 +133,7 @@ pwiForums.Forums = {
     // - user: the user record
     isEditable( forum, user ){
         const editable = forum && user &&
-            ( pwiRoles.userIsInRoles( user._id, [ 'FRS_MODERATORS', 'FRS_PRIVATE_EDIT' ])
+            ( pwiRoles.userIsInRoles( user._id, [ 'FRS_MODERATOR', 'FRS_PRIVATE_EDIT' ])
                 || pwiForums.fn.ids( forum.privateUsers || [] ).includes( user._id )
                 || pwiForums.fn.ids( forum.moderators || [] ).includes( user._id )
                 || !forum.private ) &&
@@ -150,7 +150,7 @@ pwiForums.Forums = {
         if( !forum ){
             return false;
         }
-        if( user && pwiRoles.userIsInRoles( user, [ 'FRS_MODERATORS', 'FRS_PRIVATE_EDIT' ] )){
+        if( user && pwiRoles.userIsInRoles( user, [ 'FRS_MODERATOR', 'FRS_PRIVATE_EDIT' ] )){
             return true;
         }
         if( user ){
@@ -166,7 +166,7 @@ pwiForums.Forums = {
         let result = { selector: {}, options: {}};
 
         // user is identified and exhibit FRS_PRIVATE_VIEW: all forums are visible
-        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_MODERATORS', 'FRS_PRIVATE_VIEW' ])){
+        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_MODERATOR', 'FRS_PRIVATE_VIEW' ])){
             ; // nothing to add to the default (empty) result
 
         // user is identified but doesn't have required role => must be registered as a privateUser or a moderator

@@ -4,24 +4,26 @@
 
 import '../../common/js/index.js';
 
-if( Meteor.isClient ){
-    Meteor.startup( function(){
-        // define the cient-side collections
-        console.log( 'pwix:forums/src/client/js/startup.js Meteor.startup() defining collections...' );
-        pwiForums.collections.every(( c ) => {
-            const name = pwiForums.conf.prefix + pwiForums[c].radical;
+Meteor.startup( function(){
+    // define the cient-side collections
+    if( pwiForums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
+        console.log( 'pwix:forums defining collections...' );
+    }
+    pwiForums.collections.every(( c ) => {
+        const name = pwiForums.opts()['collections.prefix'] + pwiForums[c].radical;
+        if( pwiForums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
             console.log( '   '+c+' -> '+name );
-            pwiForums.client.collections[c] = new Mongo.Collection( name );
-            pwiForums.client.collections[c].attachSchema( pwiForums[c].schema );
-            return true;
-        });
+        }
+        pwiForums.client.collections[c] = new Mongo.Collection( name );
+        pwiForums.client.collections[c].attachSchema( pwiForums[c].schema );
+        return true;
     });
-}
+});
 
-if( Meteor.isClient ){
-    Meteor.startup( function(){
-        console.log( 'pwix:forums/src/client/js/startup.js Meteor.startup() setting package ready' );
-        _ready.val = true,
-        _ready.dep.changed();
-    });
-}
+Meteor.startup( function(){
+    _ready.val = true,
+    _ready.dep.changed();
+    if( pwiForums.opts().verbosity() & FRS_VERBOSE_READY ){
+        console.log( 'pwix:forums ready', pwiForums.ready());
+    }
+});

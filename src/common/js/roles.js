@@ -27,12 +27,50 @@ pwiForums.roles = {
             children: [
                 {
                     name: 'FRS_CATEGORY_MANAGER',
+                    children: [
+                        {
+                            name: 'FRS_CATEGORY_CREATE'
+                        },
+                        {
+                            name: 'FRS_CATEGORY_UPDATE'
+                        },
+                        {
+                            name: 'FRS_CATEGORY_DELETE'
+                        }
+                    ]
                 },
                 {
-                    name: 'FRS_FORUM_MANAGER'
+                    name: 'FRS_FORUM_MANAGER',
+                    children: [
+                        {
+                            name: 'FRS_FORUM_CREATE'
+                        },
+                        {
+                            name: 'FRS_FORUM_UPDATE'
+                        },
+                        {
+                            name: 'FRS_FORUM_DELETE'
+                        }
+                    ]
                 },
                 {
-                    name: 'FRS_MODERATORS'
+                    name: 'FRS_MODERATOR_MANAGER',
+                    children: [
+                        {
+                            name: 'FRS_MODERATOR',
+                            children: [
+                                {
+                                    name: 'FRS_PUBLIC_MODERATOR'
+                                },
+                                {
+                                    name: 'FRS_PRIVATE_MODERATOR'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'FRS_MODERATOR'
                 },
                 {
                     name: 'FRS_PRIVATE_EDIT',

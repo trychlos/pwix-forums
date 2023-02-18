@@ -87,7 +87,7 @@ Meteor.publish( 'frsForums.listVisiblePrivate', function( userId ){
 });
 
 // returns the list of forums which this user is authorized to moderate
-//  apart from an eventual FRS_MODERATORS role
+//  apart from an eventual FRS_MODERATOR role
 Meteor.publish( 'frsForums.listVisibleModerators', function( userId ){
     const self = this;
     const collectionName = pwiForums.conf.prefix + pwiForums.Forums.radical;
