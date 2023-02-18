@@ -24,3 +24,7 @@ FRS_VERBOSE_CONFIGURE      = 0x01 <<  0;
 FRS_VERBOSE_STARTUP        = 0x01 <<  1;
 FRS_VERBOSE_READY          = 0x01 <<  2;     // when ready(), client-only
 FRS_VERBOSE_COLLECTIONS    = 0x01 <<  3;
+
+// non exported constants
+
+FRSI18N = 'pwix:forums:i18n';
