@@ -38,8 +38,8 @@ Template.frs_breadcrumb.helpers({
     breadLink( it ){
         const data = Template.currentData();
         if( it.fn ){
-            if( typeof pwiForums[it.fn] === 'function' ){
-                return pwiForums[it.fn]( data.args ).route;
+            if( typeof pwiForums.client.fn[it.fn] === 'function' ){
+                return pwiForums.client.fn[it.fn]( data.args );
             } else {
                 return it.fn;
             }

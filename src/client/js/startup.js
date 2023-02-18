@@ -10,7 +10,7 @@ Meteor.startup( function(){
         console.log( 'pwix:forums defining collections...' );
     }
     pwiForums.collections.every(( c ) => {
-        const name = pwiForums.opts()['collections.prefix'] + pwiForums[c].radical;
+        const name = pwiForums.opts()['collections.prefix']() + pwiForums[c].radical;
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
             console.log( '   '+c+' -> '+name );
         }

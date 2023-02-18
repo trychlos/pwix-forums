@@ -3,7 +3,7 @@
  */
 
 pwiForums.i18n = {
-    ...pwiAccounts.i18n,
+    ...pwiForums.i18n,
     ...{
         fr_FR: {
             badges: {
@@ -125,6 +125,10 @@ pwiForums.i18n = {
                 no_threads: 'There is not yet any thread opened on this forum.'
                     +'<br />Be the first to create one (click on the "New discussion" button on the top right of this page).'
                     +'<br />And enjoy...',
+                not_writable: 'There is not yet any thread opened on this forum.'
+                    +'<br />Unfortunately, you are currently not allowed to create a new thread here.'
+                    +'<br />The reason is that %s.'
+                    +'<br />Contact the administrator if you are not sure.',
                 owner_header: 'Owner',
                 reply: 'Reply',
                 posted_by: 'Posted by %s',
@@ -158,6 +162,17 @@ pwiForums.i18n = {
                 forcount_label: '%s registered forum(s)',
                 forum_new: 'New forum',
                 category_new: 'New category'
+            },
+            // these strings are to be added to a sentence - so do not begin with a capital
+            unwritable: {
+                FRS_REASON_NONE: 'FRS_REASON_NONE',
+                FRS_REASON_NOTCONNECTED: 'you are not connected',
+                FRS_REASON_NOEMAIL: 'your profile does not exhibit any registered email address',
+                FRS_REASON_NOTVERIFIED: 'your email address has not yet been verified',
+                FRS_REASON_APPFN: 'participation is refused by the application',
+                FRS_REASON_PRIVATEWRITERS: 'FRS_REASON_PRIVATEWRITERS',
+                FRS_REASON_PRIVATEEDIT: 'FRS_REASON_PRIVATEEDIT',
+                FRS_REASON_PRIVATE: 'FRS_REASON_PRIVATE'
             }
         }
     },

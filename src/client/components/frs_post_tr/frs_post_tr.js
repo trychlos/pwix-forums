@@ -15,7 +15,6 @@
  *    provides { post: <post> } object data
  */
 
-import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
 import { pwixBootbox } from 'meteor/pwix:bootbox';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 import { pwixModal } from 'meteor/pwix:modal';
@@ -132,8 +131,8 @@ Template.frs_post_tr.onCreated( function(){
     // get the owner username
     self.autorun(() => {
         let post = Template.currentData().post;
-        post.dynOwnerUsername = pwixAccountsTools.preferredLabelById( post.owner, AC_USERNAME );
-        post.dynOwnerEmail = pwixAccountsTools.preferredLabelById( post.owner, AC_EMAIL_ADDRESS );
+        post.dynOwnerUsername = pwiForums.fn.labelById( post.owner, AC_USERNAME );
+        post.dynOwnerEmail = pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS );
     })
 });
 

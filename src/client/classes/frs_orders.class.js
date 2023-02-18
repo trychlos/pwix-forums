@@ -27,6 +27,7 @@
  *  user is allowed to see. As a consequence, it may be incomplete. As a consequence of the consequence, there
  *  is no try to 'repair' incomplete orders if the user is not a forum administrator.
  */
+
 import deepEqual from 'deep-equal';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Tracker } from 'meteor/tracker';

@@ -6,10 +6,9 @@
  * Display the list of opened visible forums.
  * This page is meant to be public.
  * 
- * Params:
+ * Params: none
  */
 
-import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
@@ -29,7 +28,7 @@ Template.frsForums.onCreated( function(){
         handles: {
             forums: self.subscribe( 'frsForums.listVisible' )
         },
-        orderedTree: new frsOrders( self.data.language || 'en-US' )
+        orderedTree: new frsOrders()
     };
 });
 
@@ -119,7 +118,7 @@ Template.frsForums.helpers({
                                     forums.push( fetched[j] );
                                     //console.log( fetched[j] );
                                     if( fetched[j].lastPost ){
-                                        fetched[j].lastPost.dynOwner = pwixAccountsTools.preferredLabelById( fetched[j].lastPost.owner, AC_USERNAME )
+                                        fetched[j].lastPost.dynOwner = pwiForums.fn.labelById( fetched[j].lastPost.owner, AC_USERNAME )
                                     }
                                     // set a topForum flag on all but the first forum of the category
                                     fetched[j].topForum = true;
@@ -153,6 +152,6 @@ Template.frsForums.helpers({
 
     // route to the threads of a forum
     route( f ){
-        return pwiForums.routeThreads( f._id ).route;
+        return pwiForums.client.fn.routeThreads( f._id );
     }
 });

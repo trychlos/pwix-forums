@@ -5,6 +5,7 @@
  * See server/methods.js for server functions remotely callable from the client
  *  (aka Meteor RPC).
  */
+
 import SimpleSchema from 'simpl-schema';
 
 pwiForums.Forums = {
@@ -31,19 +32,32 @@ pwiForums.Forums = {
             type: String,
             optional: true
         },
+        // who is able to participate to this public forum ?
+        publicWriter: {
+            type: String,
+            defaultValue: defaults.common.forums.publicWriter
+        },
         // whether the forum is private (user must be identified and allowed to view and participate) ?
         private: {
             type: Boolean,
             defaultValue: false
         },
-        // the list of users which are allowed to view and participate to a private forum
+        // the list of users which are allowed to view this private forum
         //  FRS_FORUM_PRIVATE_VIEW is always allowed to view
-        privateUsers: {
+        privateReaders: {
             type: Array,
             defaultValue: []
         },
-        "privateUsers.$": Object,
-        "privateUsers.$.id": String,
+        "privateReaders.$": Object,
+        "privateReaders.$.id": String,
+        // the list of users which are allowed to participate (write in) to this private forum
+        //  FRS_FORUM_PRIVATE_EDIT is always allowed to participate
+        privateWriters: {
+            type: Array,
+            defaultValue: []
+        },
+        "privateWriters.$": Object,
+        "privateWriters.$.id": String,
         // whether the moderated posts should be rendered with a placeholder for the forum moderators ?
         //  - true (a placeholder with an accordion which displayed the deleted post)
         //  - false: nothing is shown
@@ -128,18 +142,95 @@ pwiForums.Forums = {
         return moderate ? true : false;
     },
 
-    // whether the specified forum is editable (postable) by the specified user ?
+    // whether the specified forum is editable (postable) by the specified user (which may be null at the moment) ?
     // - forum: the Forum object
     // - user: the user record
+    // returns an object:
+    //  - editable: true|false
+    //  - reason: a constant
     isEditable( forum, user ){
-        const editable = forum && user &&
-            ( pwiRoles.userIsInRoles( user._id, [ 'FRS_MODERATOR', 'FRS_PRIVATE_EDIT' ])
-                || pwiForums.fn.ids( forum.privateUsers || [] ).includes( user._id )
-                || pwiForums.fn.ids( forum.moderators || [] ).includes( user._id )
-                || !forum.private ) &&
-            ( pwiAccounts.isEmailVerified( user ) || !pwiForums.conf.wantVerifiedEmail );
-        //console.log( 'forum', forum, 'user', user, 'editable', editable );
-        return editable ? true : false;
+        if( !forum ){
+            throw new Error( 'forum is mandatory, not specified' );
+        }
+        let result = {
+            editable: true,
+            reason: FRS_REASON_NONE
+        };
+        if( forum.private ){
+            if( user ){
+                if( pwiForums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
+                    reason = FRS_REASON_PRIVATEWRITERS;
+                } else if( pwiRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
+                    reason = FRS_REASON_PRIVATEEDIT;
+                } else {
+                    result.editable = false;
+                    result.reason = FRS_REASON_PRIVATE;
+                }
+            } else {
+                result.editable = false;
+                result.reason = FRS_REASON_NOTCONNECTED;
+            }
+        } else {
+            switch( forum.publicWriter ){
+                case FRS_USER_ANYBODY:
+                    result.reason = FRS_USER_ANYBODY;
+                    break;
+                case FRS_USER_LOGGEDIN:
+                    if( user ){
+                        result.reason = FRS_USER_LOGGEDIN;
+                    } else {
+                        result.editable = false;
+                        result.reason = FRS_REASON_NOTCONNECTED;
+                    }
+                    break;
+                case FRS_USER_EMAILADDRESS:
+                    if( user ){
+                        const o = pwiForums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
+                        if( o.origin === AC_EMAIL_ADDRESS ){
+                            result.reason = FRS_USER_EMAILADDRESS;
+                        } else {
+                            result.editable = false;
+                            result.reason = FRS_REASON_NOEMAIL;
+                        }
+                    } else {
+                        result.editable = false;
+                        result.reason = FRS_REASON_NOTCONNECTED;
+                    }
+                    break;
+                case FRS_USER_EMAILVERIFIED:
+                    if( user ){
+                        const o = pwiForums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
+                        if( o.origin === AC_EMAIL_ADDRESS ){
+                            if( pwiForums.fn.isEmailVerified( user, o.label )){
+                                result.reason = FRS_USER_EMAILVERIFIED;
+                            } else {
+                                result.editable = false;
+                                result.reason = FRS_REASON_NOTVERIFIED;
+                            }
+                        } else {
+                            result.editable = false;
+                            result.reason = FRS_REASON_NOEMAIL;
+                        }
+                    } else {
+                        result.editable = false;
+                        result.reason = FRS_REASON_NOTCONNECTED;
+                    }
+                    break;
+                case FRS_USER_APPFN:
+                    if( user ){
+                        result.editable = pwiForums.opts()['forums.publicWriterAppFn']( forum );
+                        result.reason = FRS_REASON_APPFN;
+                    } else {
+                        result.editable = false;
+                        result.reason = FRS_REASON_NOTCONNECTED;
+                    }
+                    break;
+                default:
+                    throw new Error( 'unmanaged \'publicWriter\' value \''+forum.publicWriter+'\'' );
+                }
+        }
+        //console.log( 'forum', forum, 'user', user, 'result', result );
+        return result;
     },
 
     // whether the specified forum is visible to the specified user ?

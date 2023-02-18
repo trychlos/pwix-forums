@@ -46,7 +46,8 @@
 |      |            | an option only opened to mail redactor ? or to app administrator |
 |   16 | 2023- 2- 5 | have a color per category |
 |   17 | 2023- 2-13 | have the ability to unmoderate a post |
-|   18 | | |
+|   18 | 2023- 2-18 | frsForums frs-right column; items are not aligned |
+|   19 | | |
 
 ---
 ## Done

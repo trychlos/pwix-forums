@@ -22,7 +22,11 @@
         </div>
 
         <div class="frs-header d-flex align-items-center">
-            <p class="frs-page-title flex-grow-1">{{ i18n label="page_title" }}</p>
+            {{#if hasThreads }}
+                <p class="frs-page-title flex-grow-1">{{ i18n label="page_title" }}</p>
+            {{else}}
+                <p class="frs-page-title flex-grow-1"></p>
+            {{/if}}
             <button type="button" class="btn btn-outline-primary btn-sm frs-btn frs-thread-new-btn" data-bs-toggle="button" {{ disableNew }}>{{ i18n label="new" }}</button>
         </div>
 
@@ -62,7 +66,11 @@
                     {{ enableTooltips }}
                 {{else}}
                     <div class="frs-empty">
-                        {{{ i18n label="no_threads" }}}
+                        {{#if writableTrue }}
+                            {{{ i18n label="no_threads" }}}
+                        {{else}}
+                            {{{ writableReason }}}
+                        {{/if}}
                     </div>
                 {{/if}}
             </div>

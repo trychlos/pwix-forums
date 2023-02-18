@@ -1,9 +1,15 @@
 
-// returns the list of known forums
+// returns the list of visible forums
 //  adds count of threads and total count of posts
+// rules are:
+//  - public forums are always visible to all
+//  - private forums are visible to:
+//    > a connected user who
+//      - either is explicitely listed as a reader of this private forum
+//      - or has the FRS_PRIVATE_VIEW role
 Meteor.publish( 'frsForums.listVisible', function(){
     const self = this;
-    const collectionName = pwiForums.conf.prefix + pwiForums.Forums.radical;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
     const query = pwiForums.Forums.queryVisible();
     //console.log( query );
 

@@ -8,7 +8,7 @@ Meteor.publish( 'frsPosts.listOne', function( threadId ){
 // + if the current user is a moderator of this forum, then honor the 'showDeletedForAdmin'
 Meteor.publish( 'frsPosts.listForThread', function( threadId, limit ){
     const self = this;
-    const collectionName = pwiForums.conf.prefix + pwiForums.Posts.radical;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
     const userId = this.userId;
     const thread = userId ? pwiForums.server.collections.Posts.findOne({ _id: threadId }) : null;
     const forum = thread ? pwiForums.server.collections.Forums.findOne({ _id: thread.forum }) : null;
@@ -56,7 +56,7 @@ Meteor.publish( 'frsPosts.listForThread', function( threadId, limit ){
 
 Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
     const self = this;
-    const collectionName = pwiForums.conf.prefix + pwiForums.Posts.radical;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
     const query = pwiForums.Posts.queryThreads( forumId, limit );
 
     // add lastPosted and posts count for this tread

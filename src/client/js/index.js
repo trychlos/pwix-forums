@@ -9,5 +9,4 @@ import './breadcrumb.js';
 import './config.js';
 import './functions.js';
 import './roles-config.js';
-import './routes.js';
 import './startup.js';

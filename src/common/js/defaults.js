@@ -2,6 +2,8 @@
  * pwix:forums/src/common/js/defaults.js
  */
 
+import merge from 'merge';
+
 import { frsOptions } from '../classes/options.class.js';
 
 const _false = function(){
@@ -29,9 +31,5 @@ defaults = {
     }
 };
 
-pwiForums._conf = {
-    ...pwiForums._conf,
-    ...defaults.common
-};
-
+pwiForums._conf = merge.recursive( true, pwiForums._conf, defaults.common );
 pwiForums._opts = new frsOptions( pwiForums._conf );

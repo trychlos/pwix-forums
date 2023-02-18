@@ -12,7 +12,6 @@
 
 import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
-import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
 
 import { pwiForums } from '../../js/index.js';
 import { frsOrders } from '../../classes/frs_orders.class.js';
@@ -61,7 +60,7 @@ Template.frs_forum_tab.onCreated( function(){
                 self.FRS.orig = { ...forum };
                 self.FRS.origSet.set( true );
                 if( forum.archivedAt && forum.archivedBy ){
-                    forum.dynArchived = pwixAccountsTools.preferredLabelById( forum.archivedBy, AC_USERNAME );
+                    forum.dynArchived = pwiForums.fn.labelById( forum.archivedBy, AC_USERNAME );
                 }
             }
         }

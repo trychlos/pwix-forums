@@ -5,7 +5,6 @@
  */
 
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
@@ -46,6 +45,7 @@ Template.frsThreads.onCreated( function(){
 
         // whether the current user is allowed to create a new thread in the current forum
         writer: new ReactiveVar( false ),
+        reason: new ReactiveVar( null ),
 
         // whether the 'new discussion' toggle is active or not ?
         //  thanks to Bootstrap framework, the button already holds its state here and we shouldn't have to take care of that
@@ -111,7 +111,9 @@ Template.frsThreads.onCreated( function(){
     //  must be member of private list for private forum
     self.autorun(() => {
         const forum = self.FRS.forum.object.get();
-        self.FRS.writer.set( pwiForums.Forums.isEditable( forum, Meteor.user()));
+        const o = forum ? pwiForums.Forums.isEditable( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
+        self.FRS.writer.set( o.editable );
+        self.FRS.reason.set( o.reason );
         //console.log( 'writer', self.FRS.writer.get());
     });
 });
@@ -190,8 +192,8 @@ Template.frsThreads.helpers({
     push( it ){
         Template.instance().FRS.threads.hash[it._id] = it;
         const post = it.lastPost ? it.lastPost : it;
-        it.dynLastPost = pwixAccountsTools.preferredLabelById( post.owner, AC_USERNAME );
-        it.dynOwner = pwixAccountsTools.preferredLabelById( it.owner, AC_USERNAME );
+        it.dynLastPost = pwiForums.fn.labelById( post.owner, AC_USERNAME );
+        it.dynOwner = pwiForums.fn.labelById( it.owner, AC_USERNAME );
     },
 
     threadContent( it ){
@@ -212,11 +214,23 @@ Template.frsThreads.helpers({
     },
 
     threadTooltip( it ){
-        return pwiForums.fn.i18n( 'threads.tooltip', pwiForums.routePosts( it._id ).route );
+        return pwiForums.fn.i18n( 'threads.tooltip', pwiForums.client.fn.routePosts( it._id ));
     },
 
     threadsList(){
         return Template.instance().FRS.threads.cursor.get();
+    },
+
+    // display the reason for why the user is not allowed
+    writableReason(){
+        const reason = Template.instance().FRS.reason.get();
+        const group = i18n.group( FRSI18N, 'unwritable' );
+        return pwiForums.fn.i18n( 'threads.not_writable', group[reason] );
+    },
+
+    // whether the current user is allowed to create a thread in this forum ?
+    writableTrue(){
+        return Template.instance().FRS.writer.get();
     }
 });
 
@@ -231,14 +245,14 @@ Template.frsThreads.events({
     // click on a row to open the thread
     'click .frs-thread-tr'( event, instance ){
         const postId = $( event.currentTarget ).data( 'row-id' );
-        FlowRouter.go( pwiForums.routePosts( postId ).route );
+        FlowRouter.go( pwiForums.client.fn.routePosts( postId ));
         return false;
     },
 
     // a new thread has been posted -> go to the Posts page
     'frs-post-edit-success .frs-new-thread'( event, instance, data ){
         //console.log( data.post );
-        FlowRouter.go( pwiForums.routePosts( data.post._id ).route );
+        FlowRouter.go( pwiForums.client.fn.routePosts( data.post._id ));
     },
 
     // when the panel is closed by itself

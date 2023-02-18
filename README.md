@@ -134,6 +134,16 @@ The method should be called in same terms both in client and server sides, and f
 
     Provide a default value for new forums `publicWriter` parameter, defaulting to `FRS_USER_EMAILVERIFIED`.
 
+- `forums.publicWriterAppFn`
+
+    An application-provided function to determine if a logged-in user is allowed to participate to a public forum.
+
+    The `forum` object is provided as single argument; the function must return `true` to allow the currently logged-in user is allowed to write in the forum.
+
+    This parameter is only considered when `publicWriter` is `FRS_USER_APPFN` for the considered forum.
+
+    Default is a function which returns `false`.
+
 - `forums.moderation`
 
     Provide a default value for new forums `moderation` parameter, defaulting to `FRS_MODERATE_APRIORI`.
@@ -193,19 +203,9 @@ Per forum configuration is available through the forums manager page.
 
     - `FRS_USER_APPFN`
 
-        Whether a connected user is allowed to participate to a public forum will be determined at runtime by an application-provided function.
+        Whether a connected user is allowed to participate to a public forum is determined at runtime by an application-provided function.
 
         This is the way for an application to fully override the authorization mechanisms in `pwix:forums`.
-
-- `publicWriterAppFn`
-
-    An application-provided function to determine if a logged-in user is allowed to participate to a public forum.
-
-    The `forum` object is provided as single argument; the function must return `true` to allow the currently logged-in user to write in the forum.
-
-    This parameter is only considered when `publicWriter` is `FRS_USER_APPFN`.
-
-    Default is a function which returns `false`.
 
 - `moderation`
 
@@ -236,6 +236,16 @@ Private forums also have:
 ### Globally exported object
 
 The `pwix:forums` package exports a single `pwiForums` object which holds all necessary data and functions.
+
+### Blaze templates
+
+#### `frsForums`
+
+The `frsForums` Blaze template let the application display the available forums.
+
+Whether a user is connected or not, all public forums are visible here.
+
+A private forum is only displayed if the logged-in user has a read access on it, either because it is explicitely listed in the readers list, or because he/she has a `FRS_PRIVATE_VIEW` role.
 
 ---
 

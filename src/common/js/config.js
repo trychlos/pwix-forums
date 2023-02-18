@@ -2,6 +2,8 @@
  * pwix:forums/src/common/js/config.js
  */
 
+import merge from 'merge';
+
 import { frsOptions } from '../classes/options.class.js';
 
 //console.log( 'pwix:forums/src/common/js/config.js defining globally exported pwiForums object' );
@@ -40,7 +42,7 @@ pwiForums = {
      *  Should be called *in same terms* both by the client and the server.
      */
     configure: function( o ){
-        pwiForums._conf = { ...pwiForums._conf, ...o };
+        pwiForums._conf = merge.recursive( true, pwiForums._conf, o );
         pwiForums._opts = new frsOptions( pwiForums._conf );
 
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){

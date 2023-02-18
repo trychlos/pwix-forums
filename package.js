@@ -27,10 +27,11 @@ function configure( api ){
     api.use( 'blaze-html-templates@2.0.0', 'client' );
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );
-    api.use( 'pwix:accounts' );
+    api.use( 'pwix:accounts-tools@1.0.0' );
     api.use( 'pwix:bootbox@1.0.0', 'client' );
     api.use( 'pwix:editor', 'client' );
     api.use( 'pwix:i18n@1.0.0' );
+    api.use( 'pwix:modal@1.0.0', 'client' );
     api.use( 'pwix:modal-info@1.0.0', 'client' );
     api.use( 'pwix:options@1.0.0' );
     api.use( 'pwix:roles' );

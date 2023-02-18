@@ -1,7 +1,7 @@
 <template name="frs_post_tr">
 
         <tr class="frs-post-tr" data-post-id="{{ post._id }}">
-            <td class="frs-td frs-first frs-postid">
+            <td class="frs-td frs-postid">
                 <div>{{ postOwner post }}</div>
                 <div>{{ posted post }}</div>
                 <div class="frs-post-id">{{ post._id }}</div>
@@ -23,7 +23,7 @@
                 {{/if}}
             </td>
 
-            <td class="frs-td frs-last frs-reply-td">
+            <td class="frs-td frs-reply-td">
                 {{#unless deleted }}
                     {{#if canReply post }}
                         <div>

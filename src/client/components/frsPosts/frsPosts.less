@@ -26,14 +26,16 @@
                 border-top: solid 1px rgb(48, 14, 14);
             }
             .frs-td {
-                padding-left: 0.25em;
                 padding-right: 0.25em;
                 vertical-align: text-top;
             }
-            .frs-td.frs-first {
+            .frs-td:first-child {
                 padding-left: 0.5em;
             }
-            .frs-td.frs-last {
+            .frs-td:not( :first-child ){
+                padding-left: 1em;
+            }
+            .frs-td:last-child {
                 padding-right: 0.5em;
             }
             .frs-td.frs-reply-td {
