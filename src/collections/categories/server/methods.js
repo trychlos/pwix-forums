@@ -1,4 +1,6 @@
 
+import { frsColor } from '../../../common/classes/frs_color.class.js';
+
 Meteor.methods({
     // delete a category
     //  + Orders collection: remove the category from the categories order
@@ -27,11 +29,12 @@ Meteor.methods({
         const selector = { _id: o._id };
         let modifier = {
             title: o.title || '',
-            description: o.description || ''
+            description: o.description || '',
+            color: o.color || frsColor.Random().color()
         };
         modifier.title = modifier.title.trim();
         modifier.description = modifier.description.trim();
-        if( o && o.createdAd ){
+        if( o && o.createdAt ){
             modifier.createdAt = o.createdAt;
             modifier.createdBy = o.createdBy;
             modifier.updatedAt = new Date();

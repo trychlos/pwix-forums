@@ -1,0 +1,16 @@
+<template name="frs_color_panel">
+    <div class="frs-color-panel">
+
+        <div class="frs-color-choices">
+            {{#each color in colors }}
+                {{> frs_color_button rvColor=(rvColor color) }}
+            {{/each}}
+        </div>
+
+        <div class="frs-color-current">
+            <p class="flex-grow-1">{{ i18n label="current" }}</p>
+            {{> frs_color_button rvColor=(rvCurrent) side="3rem" }}
+        </div>
+
+    </div>
+</template>

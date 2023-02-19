@@ -30,6 +30,11 @@ pwiForums.Categories = {
             type: String,
             optional: true
         },
+        // color as an hex color '#abcdef'
+        color: {
+            type: String,
+            optional: true
+        },
         // creation timestamp
         // mandatory
         createdAt: {

@@ -44,16 +44,18 @@
 |      |            | as of today, we have first verification mail, later verification mail, reset password, contact form |
 |      |            | + subscription mail + moderation information |
 |      |            | an option only opened to mail redactor ? or to app administrator |
-|   16 | 2023- 2- 5 | have a color per category |
 |   17 | 2023- 2-13 | have the ability to unmoderate a post |
 |   18 | 2023- 2-18 | frsForums frs-right column; items are not aligned |
-|   19 | | |
+|   19 | 2023- 2-19 | tree_tab.cat_edit, cat_delete, for_edit, for_delete should have double quotes, but doesn't work |
+|   20 | | |
 
 ---
 ## Done
 
 |   Id | Date       | Description and comment(s) |
 | ---: | :---       | :---                       |
+|   16 | 2023- 2- 5 | have a color per category |
+|      | 2023- 2-19 | done |
 
 ---
 P. Wieser

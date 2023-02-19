@@ -18,7 +18,7 @@
             {{#each c in catList }}
                 {{ catCatch c }}
                 <div class="frs-margin-top-1"></div>
-                <div class="frs-background"></div>
+                <div class="frs-background" style="background-color: {{ c.color }};"></div>
                 <div class="frs-category d-flex align-items-center">
                     <div class="frs-body flex-grow-1">
                         <div class="frs-title">
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 {{#each f in forumList c }}
-                    <div class="frs-background"></div>
+                    <div class="frs-background" style="background-color: {{ c.color }};"></div>
                     <div class="frs-forum frs-left {{ topForum f }}">
                         <a class="frs-a" href="{{ route f }}">
                             <div class="frs-body">

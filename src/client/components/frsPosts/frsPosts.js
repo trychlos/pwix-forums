@@ -230,6 +230,13 @@ Template.frsPosts.helpers({
     userDeleted( it ){
         const userId = Meteor.userId();
         return ( it.owner === userId && it.deletedAt && it.deletedBy === userId && !it.deletedBecause );
+    },
+
+    // the reason for why the user cannot post in this forum
+    writableReason(){
+        const reason = Template.instance().FRS.reason.get();
+        const group = i18n.group( FRSI18N, 'unwritable' );
+        return pwiForums.fn.i18n( 'posts.not_writable', group[reason] );
     }
 });
 

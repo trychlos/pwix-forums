@@ -1,5 +1,5 @@
 /*
- * /components/frs_forum_edit/frs_forum_edit.js
+ * /components/frs_forum_panel/frs_forum_panel.js
  *
  * Forum properties edition.
  * 
@@ -18,9 +18,9 @@ import '../../stylesheets/frs_forums.less';
 
 import '../frs_forum_tab/frs_forum_tab.js';
 
-import './frs_forum_edit.html';
+import './frs_forum_panel.html';
 
-Template.frs_forum_edit.onCreated( function(){
+Template.frs_forum_panel.onCreated( function(){
     const self = this;
 
     self.FRS = {
@@ -88,10 +88,10 @@ Template.frs_forum_edit.onCreated( function(){
     };
 });
 
-Template.frs_forum_edit.onRendered( function(){
+Template.frs_forum_panel.onRendered( function(){
     const self = this;
 
-    self.$( '.modal' ).modal( 'show' );
+    pwixModal.setTarget( self.$( '.frs-forum-panel' ));
 
     // set our variables as soon as we get the forum
     //  - private users
@@ -120,7 +120,7 @@ Template.frs_forum_edit.onRendered( function(){
     });
 });
 
-Template.frs_forum_edit.helpers({
+Template.frs_forum_panel.helpers({
     // get a translated label
     i18n( opts ){
         return pwiForums.fn.i18n( 'forum_edit.'+opts.hash.label );
@@ -166,10 +166,11 @@ Template.frs_forum_edit.helpers({
     }
 });
 
-Template.frs_forum_edit.events({
-
+Template.frs_forum_panel.events({
     // submit the updates to the db
     'click button.frs-save'( event, instance ){
+        console.log( event, instance );
+        return true;
         let f = instance.FRS.forum.get();
         if( !f.category ){
             f.category = pwiForums.Categories.default;
@@ -188,14 +189,5 @@ Template.frs_forum_edit.events({
             instance.$( '.frs-modal' ).modal( 'hide' );
         });
         return false;
-    },
-
-    'shown.bs.modal .frs-modal'( event, instance ){
-        instance.$( '.frs-title' ).focus();
-    },
-
-    // remove the Blaze element from the DOM
-    'hidden.bs.modal .frs-forum-edit'( event, instance ){
-        Blaze.remove( instance.view );
     }
 });

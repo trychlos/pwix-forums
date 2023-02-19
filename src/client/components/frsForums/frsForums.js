@@ -61,8 +61,12 @@ Template.frsForums.helpers({
     },
 
     // catch the current category
+    //  set the background color accordingly
     catCatch( c ){
         //console.log( c );
+        Template.instance().$( '.frsForums .frs-background.cat-'+c._id ).css({
+            'background-color': c.color
+        });
     },
 
     // send the list of non empty categories

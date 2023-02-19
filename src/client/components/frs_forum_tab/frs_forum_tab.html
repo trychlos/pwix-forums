@@ -1,79 +1,56 @@
 <template name="frs_forum_tab">
     <div class="frs-forum-tab">
 
-        <table class="w-100">
-            <tr>
-                <td class="frs-right frs-nowrap">
-                    <label for="" class="form-label form-label-sm">{{ i18n label="title_label" }}</label>
-                </td>
-                <td>
-                    <input type="text" class="form-control form-control-sm frs-title" placeholder="{{ i18n label="title_placeholder" }}" value="{{ forTitle }}" data-frs-field="title" />
-                </td>
-            </tr>
-            <tr>
-                <td class="frs-right frs-top frs-nowrap">
-                    <label for="" class="form-label form-label-sm">{{ i18n label="description_label" }}</label>
-                </td>
-                <td>
-                    <textarea class="form-control form-control-sm frs-description" rows="3" placeholder="{{ i18n label="description_placeholder" }}" data-frs-field="displayableDescription" >{{ forDescription }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="frs-right frs-top frs-nowrap">
-                    <label for="" class="form-label form-label-sm">{{ i18n label="comment_label" }}</label>
-                </td>
-                <td>
-                    <textarea class="form-control frs-comment" rows="3" placeholder="{{ i18n label="comment_placeholder" }}" data-frs-field="internalComment">{{ forComment }}</textarea>
-                </td>
-            </tr>
-            <tr>
-                <td class="frs-right frs-nowrap">
-                    <label for="" class="form-label form-label-sm">{{ i18n label="category_label" }}</label>
-                </td>
-                <td>
-                    {{ catLabel }}
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="frs-nowrap">
-                    <input type="checkbox" class="form-check-input form-check-input-sm frs-private" {{ forPrivate }} id="private_{{ id }}" data-frs-field="private" />
-                    <label class="form-check-label form-check-label-sm" for="private_{{ id }}">{{ i18n label="private_label" }}</label>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <input type="checkbox" class="form-check-input form-check-input-sm frs-show-deleted-admin" {{ forDeletedAdmin }} id="admin_{{ id }}" data-frs-field="showDeletedForAdmin" />
-                    <label class="form-check-label form-check-label-sm" for="admin_{{ id }}">{{ i18n label="show_deleted_for_admin_label" }}</label>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <input type="checkbox" class="form-check-input form-check-input-sm frs-show-deleted-user" {{ forDeletedUser }} id="users_{{ id }}" data-frs-field="showDeletedForUsers" />
-                    <label class="form-check-label form-check-label-sm" for="users_{{ id }}">{{ i18n label="show_deleted_for_user_label" }}</label>
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td class="frs-nowrap">
-                    {{#if isArchived }}
-                        <div class="frs-div-archived">
-                            <label class="form-check-label form-check-label-sm frs-line1">{{ i18n label="forum_archived" }}</label>
-                            <label class="form-check-label form-check-label-sm frs-line2">{{ forArchivedAtBy }}</label>
-                        </div>
-                        <div class="frs-div-unarchive">
-                            <input type="checkbox" class="form-check-input form-check-input-sm frs-unarchive" id="unarchive_{{ id }}" data-frs-field="unarchive" />
-                            <label class="form-check-label form-check-label-sm" for="unarchive_{{ id }}">{{ i18n label="unarchive_label" }}</label>
-                        </div>
-                    {{else}}
-                        <input type="checkbox" class="form-check-input form-check-input-sm frs-archive" id="archive_{{ id }}" data-frs-field="archive" />
-                        <label class="form-check-label form-check-label-sm" for="archive_{{ id }}">{{ i18n label="archive_label" }}</label>
-                    {{/if}}
-                </td>
-            </tr>
-        </table>
+        <form>
+            <label for="" class="form-label form-label-sm frs-one">{{ i18n label="title_label" }}</label>
+            <input type="text" class="form-control form-control-sm frs-title" placeholder="{{ i18n label="title_placeholder" }}" value="{{ forTitle }}" data-frs-field="title" />
+
+            <label for="" class="form-label form-label-sm frs-one">{{ i18n label="description_label" }}</label>
+            <textarea class="form-control form-control-sm frs-description" rows="3" placeholder="{{ i18n label="description_placeholder" }}" data-frs-field="displayableDescription" >{{ forDescription }}</textarea>
+
+            <label for="" class="form-label form-label-sm frs-one">{{ i18n label="comment_label" }}</label>
+            <textarea class="form-control frs-comment" rows="3" placeholder="{{ i18n label="comment_placeholder" }}" data-frs-field="internalComment">{{ forComment }}</textarea>
+
+            <label for="" class="form-label form-label-sm frs-one">{{ i18n label="category_label" }}</label>
+            <div class="category">
+                {{ catLabel }}
+            </div>
+
+            <div></div>
+            <div>
+                <input type="checkbox" class="form-check-input form-check-input-sm frs-private" {{ forPrivate }} id="private_{{ id }}" data-frs-field="private" />
+                <label class="form-check-label form-check-label-sm" for="private_{{ id }}">{{ i18n label="private_label" }}</label>
+            </div>
+
+            <div></div>
+            <div>
+                <input type="checkbox" class="form-check-input form-check-input-sm frs-show-deleted-admin" {{ forDeletedAdmin }} id="admin_{{ id }}" data-frs-field="showDeletedForAdmin" />
+                <label class="form-check-label form-check-label-sm" for="admin_{{ id }}">{{ i18n label="show_deleted_for_admin_label" }}</label>
+           </div>
+
+            <div></div>
+            <div>
+                <input type="checkbox" class="form-check-input form-check-input-sm frs-show-deleted-user" {{ forDeletedUser }} id="users_{{ id }}" data-frs-field="showDeletedForUsers" />
+                <label class="form-check-label form-check-label-sm" for="users_{{ id }}">{{ i18n label="show_deleted_for_user_label" }}</label>
+           </div>
+
+            <div></div>
+            <div>
+                {{#if isArchived }}
+                    <div class="frs-div-archived">
+                        <label class="form-check-label form-check-label-sm frs-line1">{{ i18n label="forum_archived" }}</label>
+                        <label class="form-check-label form-check-label-sm frs-line2">{{ forArchivedAtBy }}</label>
+                    </div>
+                    <div class="frs-div-unarchive">
+                        <input type="checkbox" class="form-check-input form-check-input-sm frs-unarchive" id="unarchive_{{ id }}" data-frs-field="unarchive" />
+                        <label class="form-check-label form-check-label-sm" for="unarchive_{{ id }}">{{ i18n label="unarchive_label" }}</label>
+                    </div>
+                {{else}}
+                    <input type="checkbox" class="form-check-input form-check-input-sm frs-archive" id="archive_{{ id }}" data-frs-field="archive" />
+                    <label class="form-check-label form-check-label-sm" for="archive_{{ id }}">{{ i18n label="archive_label" }}</label>
+                {{/if}}
+           </div>
+        </form>
 
     </div>
 </template>

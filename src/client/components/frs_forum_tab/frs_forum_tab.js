@@ -2,7 +2,7 @@
  * pwix:forums/src/components/frs_forum_tab/frs_forum_tab.js
  *
  * Forum properties edition.
- * A tab of frs_forum_edit modal.
+ * A tab of frs_forum_panel modal.
  * 
  * Parms:
  * - forum: a ReactiveVar with an object { forum: <forum> }

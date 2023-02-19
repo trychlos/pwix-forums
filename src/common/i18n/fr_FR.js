@@ -32,6 +32,10 @@ pwiForums.i18n = {
                 message_updated: 'Category "%s" successfully updated',
                 message_created: 'Category "%s" successfully created'
             },
+            color: {
+                choose: 'Choose a color',
+                current: 'Current selection'
+            },
             forum_edit: {
                 modal_edit: 'Edit a forum',
                 modal_new: 'Create a new forum',
@@ -105,6 +109,9 @@ pwiForums.i18n = {
                 msg_error: 'Unable to post your message. Sorry',
                 msg_success: 'Message successfully posted'
             },
+            posts: {
+                not_writable: 'You cannot participate as %s.'
+            },
             roles_view: {
                 perms_tab: 'Forums permissions',
                 public_label: 'As an identified user, you are able to view and participate to all public forums.',
@@ -154,12 +161,17 @@ pwiForums.i18n = {
                 cat_deleted: 'Category "%s" successfully deleted.',
                 for_confirm_delete: 'You are about to delete the "%s" forum<br />Are you sure ?',
                 for_deleted: 'Forum "%s" successfully deleted.',
-                cat_edit: 'Edit the "%s" category',
-                cat_delete: 'Delete the "%s" category',
-                for_edit: 'Edit the "%s" forum',
-                for_delete: 'Delete the "%s" forum',
-                catcount_label: '%s registered category(ies)',
-                forcount_label: '%s registered forum(s)',
+                cat_edit: 'Edit the \'%s\' category',
+                cat_delete: 'Delete the \'%s\' category',
+                for_count: 'Forums count',
+                for_edit: 'Edit the \'%s\' forum',
+                for_delete: 'Delete the \'%s\' forum',
+                catcount_plural: '%s registered categories',
+                catcount_singular: '%s registered category',
+                catcount_none: 'No registered category',
+                forcount_plural: '%s registered forums',
+                forcount_singular: '%s registered forum',
+                forcount_none: 'No registered forum',
                 forum_new: 'New forum',
                 category_new: 'New category'
             },
@@ -172,7 +184,7 @@ pwiForums.i18n = {
                 FRS_REASON_APPFN: 'participation is refused by the application',
                 FRS_REASON_PRIVATEWRITERS: 'FRS_REASON_PRIVATEWRITERS',
                 FRS_REASON_PRIVATEEDIT: 'FRS_REASON_PRIVATEEDIT',
-                FRS_REASON_PRIVATE: 'FRS_REASON_PRIVATE'
+                FRS_REASON_PRIVATE: 'you are not allowed to participate to this private forum'
             }
         }
     },

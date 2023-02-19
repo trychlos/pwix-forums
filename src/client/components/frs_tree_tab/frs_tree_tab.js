@@ -24,8 +24,8 @@ import { frsOrders } from '../../classes/frs_orders.class.js';
 
 import '../../stylesheets/jstree-style.css';
 
-import '../frs_category_edit/frs_category_edit.js';
-import '../frs_forum_edit/frs_forum_edit.js';
+import '../frs_category_panel/frs_category_panel.js';
+import '../frs_forum_panel/frs_forum_panel.js';
 
 import './frs_tree_tab.html';
 
@@ -83,18 +83,20 @@ Template.frs_tree_tab.onCreated( function(){
        // actually all the 'text' of a node will goes inside of <a>..</a> tags. May perfectly be full HTML
         createCategoryNode( c ){
             //console.log( c );
+            const labelCount = pwiForums.fn.i18n( 'tree_tab.for_count' );
+            const titleInfo = pwiForums.fn.i18n( 'tree_tab.cat_info' );
+            const titleEdit = pwiForums.fn.i18n( 'tree_tab.cat_edit', c.text );
+            const titleDelete = pwiForums.fn.i18n( 'tree_tab.cat_delete', c.text );
+            //console.log( titleEdit );
             const div = ''
                 +'<span class="flex-grow-1">'+c.text+'</span>'
                 +'<div class="frs-badges d-flex align-items-center">'
-                +'    <span class="badge frs-w2 frs-bg-cat" title="count">'+c.forums.length+'</span>'
-                +'    <span class="frs-ml05"></<span>'
-                +'    <span class="badge frs-transparent"><span class="fa-solid fa-square"></span></span>'
-                +'    <span class="badge frs-transparent"><span class="fa-solid fa-square"></span></span>'
+                +'    <span class="badge frs-tree-badge frs-bg-cat" title="'+labelCount+'">'+c.forums.length+'</span>'
                 +'</div>'
                 +'<div class="frs-buttons d-flex align-items-center">'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-info" data-frs-id="C-'+c.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.cat_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-edit-cat" data-frs-id="C-'+c.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.cat_edit', c.text )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-delete-cat" data-frs-id="C-'+c.id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.cat_delete', c.text )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-info" data-frs-id="C-'+c.id+'" title="'+titleInfo+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-edit-cat" data-frs-id="C-'+c.id+'" title="'+titleEdit+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-delete-cat" data-frs-id="C-'+c.id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+titleDelete+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>'
                 ;
             self.$( '#frsTreeTabTree' ).jstree( true ).create_node( null, { "id":"frstree_"+c.id, "text":div, "children":[], "orig":"CAT" });
@@ -109,7 +111,7 @@ Template.frs_tree_tab.onCreated( function(){
                 +'<div class="frs-badges d-flex align-items-center">'
                 + pwiForums.client.htmlThreadsCountBadge( f.object )
                 + pwiForums.client.htmlPostsCountBadge( f.object )
-                +'<span class="frs-ml05"></<span>'
+                +'<span class="frs-ml1"></<span>'
                 + pwiForums.client.htmlPrivateBadge( f.object )
                 + pwiForums.client.htmlArchivedBadge( f.object )
                 +'</div>'
@@ -468,14 +470,14 @@ Template.frs_tree_tab.helpers({
     categoriesCount(){
         const self = Template.instance();
         const count = self.FRS.orderedTree.categoriesCount();
-        return pwiForums.fn.i18n( 'tree_tab.catcount_label', count );
+        return pwiForums.fn.i18n( count > 1 ? 'tree_tab.catcount_plural' : ( count ? 'tree_tab.catcount_singular' : 'tree_tab.catcount_none' ), count );
     },
 
     // a label with the count of forums
     forumsCount(){
         const self = Template.instance();
         const count = self.FRS.orderedTree.forumsCount();
-        return pwiForums.fn.i18n( 'tree_tab.forcount_label', count );
+        return pwiForums.fn.i18n( count > 1 ? 'tree_tab.forcount_plural' : ( count ? 'tree_tab.forcount_singular' : 'tree_tab.forcount_none' ), count );
     },
 
     // get a translated label
@@ -528,16 +530,29 @@ Template.frs_tree_tab.events({
     // edit a category
     'click .frs-edit-cat'( event, instance ){
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
-        let o = instance.FRS.orderedTree.category( ids[1] );
-        Blaze.renderWithData( Template.frs_category_edit, { cat: o }, $( 'body' )[0] );
+        //let o = instance.FRS.orderedTree.category( ids[1] );
+        //Blaze.renderWithData( Template.frs_category_panel, { cat: o }, $( 'body' )[0] );
+        pwixModal.run({
+            mdBody: 'frs_category_panel',
+            mdTitle: pwiForums.fn.i18n( 'category_edit.modal_edit' ),
+            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            cat: instance.FRS.orderedTree.category( ids[1] )
+        });
         return false;
     },
 
     // edit a forum
     'click .frs-edit-for'( event, instance ){
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
-        let o = instance.FRS.orderedTree.forum( ids[1] );
-        Blaze.renderWithData( Template.frs_forum_edit, { forum: o }, $( 'body' )[0] );
+        //let o = instance.FRS.orderedTree.forum( ids[1] );
+        //Blaze.renderWithData( Template.frs_forum_panel, { forum: o }, $( 'body' )[0] );
+        pwixModal.run({
+            mdBody: 'frs_forum_panel',
+            mdTitle: pwiForums.fn.i18n( 'forum_edit.modal_edit' ),
+            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdClasses: "modal-lg",
+            forum: instance.FRS.orderedTree.forum( ids[1] )
+        });
         return false;
     },
 
@@ -566,13 +581,24 @@ Template.frs_tree_tab.events({
 
     // new category
     'click .frs-new-category'( event, instance ){
-        Blaze.renderWithData( Template.frs_category_edit, { cat: null }, $( 'body' )[0] );
+        pwixModal.run({
+            mdBody: 'frs_category_panel',
+            mdTitle: pwiForums.fn.i18n( 'category_edit.modal_new' ),
+            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            cat: null
+        });
         return false;
     },
 
     // new forum
     'click .frs-new-forum'( event, instance ){
-        Blaze.renderWithData( Template.frs_forum_edit, { forum: null }, $( 'body' )[0] );
+        pwixModal.run({
+            mdBody: 'frs_forum_panel',
+            mdTitle: pwiForums.fn.i18n( 'forum_edit.modal_new' ),
+            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdClasses: "modal-lg",
+            forum: null
+        });
         return false;
     },
 });

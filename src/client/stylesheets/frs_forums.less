@@ -25,52 +25,45 @@
     }
     .frs-header {
         margin-top: 0.5em;
+        margin-bottom: 0.5em;
         .frs-page-title {
-            font-size: 1rem;
+            font-size: 1.25rem;
             font-weight: bold;
+        }
+        .frs-page-comment {
+            font-size: 90%;
+            font-style: italic;
         }
     }
 }
 
-.frs-modal {
-    .modal-title {
-        color: black;
-        font-size: 150%;
-    }
-    table {
-        width: 100%;
-    }
+/*
+ * pwixModal editions
+ */
+.frs-category-panel,
+.frs-forum-panel {
     .form-label {
         font-weight: normal;
         margin-bottom: 0;
         padding-right: 0.5em;
         color: gray;
     }
-    .frs-div-archived {
-        margin-top: 0.5em;
-        margin-bottom: 0.5em;
-        padding-top: 0.5em;
-        padding-bottom: 0.5em;
-        border-top: 1px solid gray;
-        border-bottom: 1px solid gray;
-        padding-left: 1.25em;
-
-        label {
-            display: block;
-        }
-        .frs-line2 {
-            font-size: 90%;
-            color: gray;
-            font-style: italic;
-        }
+    .tab-content {
+        margin-top: 1em;
+        margin-bottom: 1em;
     }
-    .frs-tab {
-        margin-top: 0.5em;
-    }
-    .nav-item .nav-link:disabled {
-        font-style: italic;
+    form {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 0.5em;
+        row-gap: 0.5em;
+        .frs-one {
+            justify-self: end;
+            white-space: nowrap;
+        }
     }
 }
+
 .frs-a:hover {
     text-decoration: none;
     color: black;
