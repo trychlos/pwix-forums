@@ -64,9 +64,12 @@ Template.frsForums.helpers({
     //  set the background color accordingly
     catCatch( c ){
         //console.log( c );
-        Template.instance().$( '.frsForums .frs-background.cat-'+c._id ).css({
-            'background-color': c.color
-        });
+        const instance = Template.instance();
+        if( instance.view.isRendered ){
+            instance.$( '.frsForums .frs-background.cat-'+c._id ).css({
+                'background-color': c.color
+            });
+        }
     },
 
     // send the list of non empty categories
@@ -109,7 +112,7 @@ Template.frsForums.helpers({
         const self = Template.instance();
         let forums = [];
         if( self.FRS.handles.forums.ready()){
-            const query = pwiForums.Forums.queryVisible();
+            const query = pwiForums.Forums.queryReadables();
             const fors = pwiForums.client.collections.Forums.find( query.selector );
             if( fors ){
                 const fetched = fors.fetch();

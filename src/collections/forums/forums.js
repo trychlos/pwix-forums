@@ -104,7 +104,7 @@ pwiForums.Forums = {
             optional: true
         },
         // the list of the moderators of *this* forum
-        //  FRS_MODERATOR is allowed to moderate all forums
+        //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
         moderators: {
             type: Array,
             defaultValue: []
@@ -135,11 +135,72 @@ pwiForums.Forums = {
 
     // whether the specified user can moderate the specified forum ?
     // - forum: the Forum object
-    // - user: the user identifier
-    canModerate( forum, user ){
-        const moderate = forum && user &&
-            ( pwiRoles.userIsInRoles( user, 'FRS_MODERATOR' ) || pwiForums.fn.ids( forum.moderators || [] ).includes( user ));
+    // - userId: the user identifier
+    // Note: archived forums are not candidate to moderation
+    canModerate( forum, userId ){
+        const moderate = forum && userId && forum.archivedAt === null && forum.archivedBy === null &&
+            (( !forum.private && pwiRoles.userIsInRoles( userId, 'FRS_PUBLIC_MODERATOR' )) || 
+             ( forum.private && pwiRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
+             ( pwiForums.fn.ids( forum.moderators || [] ).includes( userId )));
         return moderate ? true : false;
+    },
+
+    // returns an object { selector, options } suitable to list all forums moderable by the current user
+    //  to be used both on the server-side publication and on the client fetch
+    //  sorted in ascending title alpha order
+    queryModerables(){
+        const userId = Meteor.userId();
+        // default is to select all public+private non-archived forums
+        let result = { selector: { $and: [{ archivedAt: { $eq: null }}, { archivedBy: { $eq: null }}] }, options: { sort: { title: 1 }}};
+
+        // to be able to moderate a forum, identified user must have
+        //  - FRS_PRIVATE_MODERATOR role for a private forum
+        //  - or FRS_PUBLIC_MODERATOR role for a public forum
+        //  - or be identified in moderators array
+        if( userId ){
+            let conditions = [];
+            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
+                conditions.push({ private: { $ne: true }});
+            }
+            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
+                conditions.push({ private: { $eq: true }});
+            }
+            conditions.push({ 'moderators.id': userId });
+            let orCond = { $or: [] };
+            conditions.every(( cond ) => {
+                orCond.$or.push( cond );
+                return true;
+            });
+            result.selector.$and.push( orCond );
+
+        // if not identified, unable to moderate
+        //  set a fake selector to not return anything
+        } else {
+            result.selector = { xxxxxx: 'EMPTY_SELECTION' };
+        }
+        return result;
+    },
+
+    // returns an object { selector, options } suitable to list all forums visible by the current user
+    //  to be used both on the server-side publication and on the client fetch
+    queryReadables(){
+        const userId = Meteor.userId();
+        // default is to select all public+private forums
+        let result = { selector: {}, options: {}};
+
+        // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
+        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+            ; // nothing to add to the default (ful) result
+
+        // user is identified but doesn't have required role => is he registered as a privateReader ?
+        } else if( userId ){
+            result.selector = { $or: [{ private: { $ne: true } }, { 'privateReaders.id': userId }]};
+
+        //  - anonymous : only public forums are visible
+        } else {
+            result.selector = { private: { $ne: true }};
+        }
+        return result;
     },
 
     // whether the specified forum is editable (postable) by the specified user (which may be null at the moment) ?
@@ -148,7 +209,7 @@ pwiForums.Forums = {
     // returns an object:
     //  - editable: true|false
     //  - reason: a constant
-    isEditable( forum, user ){
+    canWrite( forum, user ){
         if( !forum ){
             throw new Error( 'forum is mandatory, not specified' );
         }
@@ -230,44 +291,6 @@ pwiForums.Forums = {
                 }
         }
         //console.log( 'forum', forum, 'user', user, 'result', result );
-        return result;
-    },
-
-    // whether the specified forum is visible to the specified user ?
-    // same code than queryVisble() below
-    // - forum: the Forum object
-    // - user: the user identifier
-    isVisible( forum, user ){
-        if( !forum ){
-            return false;
-        }
-        if( user && pwiRoles.userIsInRoles( user, [ 'FRS_MODERATOR', 'FRS_PRIVATE_EDIT' ] )){
-            return true;
-        }
-        if( user ){
-            return !forum.private || pwiForums.fn.ids( forum.privateUsers || [] ).includes( user ) || pwiForums.fn.ids( forum.moderators || [] ).includes( user );
-        }
-        return !forum.private;
-    },
-
-    // returns an object { selector, options } suitable to list all forums visible by the current user
-    //  to be used both on the server-side publication and on the client fetch
-    queryVisible(){
-        const userId = Meteor.userId();
-        let result = { selector: {}, options: {}};
-
-        // user is identified and exhibit FRS_PRIVATE_VIEW: all forums are visible
-        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_MODERATOR', 'FRS_PRIVATE_VIEW' ])){
-            ; // nothing to add to the default (empty) result
-
-        // user is identified but doesn't have required role => must be registered as a privateUser or a moderator
-        } else if( userId ){
-            result.selector = { $or: [{ private: { $ne: true } }, { 'privateUsers.id': userId }, { 'moderators.id': userId }]};
-
-        //  - anonymous : only public forums are visible
-        } else {
-            result.selector = { private: { $ne: true }};
-        }
         return result;
     }
 };

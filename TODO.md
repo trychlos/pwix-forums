@@ -11,7 +11,6 @@
 |   Id | Date       | Description and comment(s) |
 | ---: | :---       | :---                       |
 |    1 | 2022-10- 2 | forums: have an icon for the categories (hardcoded default) (was app #7) |
-|    2 | 2022-10- 2 | forums: have an icon per category (was app #8) |
 |    3 | 2022-10- 2 | forums: have an icon for the forums (hardcoded default) (was app #9) |
 |    4 | 2022-10- 2 | forums: have an icon per forum (was app #10) |
 |    5 | 2022-10-30 | pwix:forums let a moderator delete a post + inform the user (was app #97) |
@@ -47,13 +46,22 @@
 |   17 | 2023- 2-13 | have the ability to unmoderate a post |
 |   18 | 2023- 2-18 | frsForums frs-right column; items are not aligned |
 |   19 | 2023- 2-19 | tree_tab.cat_edit, cat_delete, for_edit, for_delete should have double quotes, but doesn't work |
-|   20 | | |
+|   20 | 2023- 2-21 | get rid of FRS_MODERATOR_ACCESS role, replacing with a function |
+|   21 | 2023- 2-21 | export more bulding elements, e.g. methods who answer some common questions as who is able to read, to write, to moderate, and so on |
+|   22 | 2023- 2-21 | frsModerate: internationalize datepicker formats |
+|   23 | 2023- 2-21 | add a view counter to the thread |
+|   24 | 2023- 2-21 | review html externalizing to stylesheets all display classes from bootstrap  -> have container classes |
+|   25 | 2023- 2-21 | review stylesheets, distinguishing intrinsic format of an element (element classes) vs. positioning utilities (positioning classes) + js classes |
+|   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
+|   27 | | |
 
 ---
 ## Done
 
 |   Id | Date       | Description and comment(s) |
 | ---: | :---       | :---                       |
+|    2 | 2022-10- 2 | forums: have an icon per category (was app #8) |
+|      | 2023- 2-2à | replaced with a color per category - done |
 |   16 | 2023- 2- 5 | have a color per category |
 |      | 2023- 2-19 | done |
 

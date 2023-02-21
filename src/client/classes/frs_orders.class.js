@@ -111,7 +111,7 @@ export class frsOrders {
         });
         Tracker.autorun(() => {
             if( self._vars.forums.handle.ready()){
-                const query = pwiForums.Forums.queryVisible();
+                const query = pwiForums.Forums.queryReadables();
                 self._vars.forums.collection.set( pwiForums.client.collections.Forums.find( query.selector ).fetch() || [] );
                 console.log( 'frsForums', self._vars.forums.collection.get());
                 self._vars.forums.set.set( true );

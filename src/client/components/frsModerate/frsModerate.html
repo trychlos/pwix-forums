@@ -1,0 +1,60 @@
+<template name="frsModerate">
+    <div class="frsModerate">
+
+        <div class="frs-top">
+            <div class="frs-left">
+                <div class="frs-title">
+                    {{ i18n label="page_title" }}
+                </div>
+            </div>
+            <div class="frs-right">
+            </div>
+        </div>
+
+        <div class="frs-header">
+            <div class="frs-left flex-grow-1">
+                <div class="frs-comment">
+                    {{ i18n label="page_comment" }}
+                </div>
+            </div>
+            <div class="frs-right">
+                <div class="d-flex align-items-center">
+                    <p class="frs-nowrap frs-mr05">{{ i18n label="date" }}</p>
+                    <div class="input-date d-flex">
+                        <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ date }}"/>
+                        <span class="fa-regular fa-sm fa-calendar-days calendar-icon"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="frs-content">
+            {{#each f in forumsList }}
+                {{ forumCatch f }}
+                <p class="frs-forum-title">{{ f.title }}</p>
+                <div class="frs-posts">
+                    {{#if postsListCount f }}
+                        {{#each p in postsList f }}
+                            {{ postCatch p }}
+                            {{#if threadNew f p }}
+                                <div class="frs-thread d-flex flex-align-items-center">
+                                    <p class="frs-title">{{{ threadTitle p }}}</p>
+                                    {{{ badgeNew p }}}
+                                </div>
+                            {{/if}}
+                            <div class="frs-post {{ postFirst f p }}">
+                                <p class="frs-content">{{{ p.content }}}</p>
+                            </div>
+                        {{/each}}
+                    {{else}}
+                        <p class="frs-no-new-post">{{ noNewPost }}</p>
+                    {{/if}}
+                </div>
+            {{/each}}
+        </div>
+
+        <div class="frs-bottom">
+        </div>
+
+    </div>
+</template>

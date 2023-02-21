@@ -27,11 +27,11 @@ function configure( api ){
     api.use( 'blaze-html-templates@2.0.0', 'client' );
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );
-    api.use( 'pwix:accounts-tools@1.0.0' );
+    api.use( 'pwix:accounts-tools@0.1.0' );
     api.use( 'pwix:bootbox@1.0.0', 'client' );
     api.use( 'pwix:editor', 'client' );
     api.use( 'pwix:i18n@1.0.0' );
-    api.use( 'pwix:modal@1.0.0', 'client' );
+    api.use( 'pwix:modal@1.1.0', 'client' );
     api.use( 'pwix:modal-info@1.0.0', 'client' );
     api.use( 'pwix:options@1.0.0' );
     api.use( 'pwix:roles' );
@@ -40,6 +40,7 @@ function configure( api ){
     api.use( 'webapp', 'server' );
     api.addFiles( 'src/client/components/frsManager/frsManager.js', 'client' );
     api.addFiles( 'src/client/components/frsForums/frsForums.js', 'client' );
+    api.addFiles( 'src/client/components/frsModerate/frsModerate.js', 'client' );
     api.addFiles( 'src/client/components/frsPosts/frsPosts.js', 'client' );
     api.addFiles( 'src/client/components/frsThreads/frsThreads.js', 'client' );
 }

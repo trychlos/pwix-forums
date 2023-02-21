@@ -124,6 +124,15 @@ export class frsOptions extends pwixOptions.Options {
 
     /**
      * Getter/Setter
+     * @param {String|Function} value the route to the forums moderation page
+     * @returns {String}
+     */
+    'routes.moderate'( value ){
+        return this.getset_String_Fn( 'routes.moderate', value, { default: defaults.common.routes.moderate });
+    }
+
+    /**
+     * Getter/Setter
      * @param {String|Function} value the route to the posts of a thread
      * @returns {String}
      */

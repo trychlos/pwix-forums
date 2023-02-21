@@ -10,7 +10,7 @@
 Meteor.publish( 'frsForums.listVisible', function(){
     const self = this;
     const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
-    const query = pwiForums.Forums.queryVisible();
+    const query = pwiForums.Forums.queryReadables();
     //console.log( query );
 
     function f_addFields( doc ){
@@ -51,7 +51,7 @@ Meteor.publish( 'frsForums.listOne', function( id ){
 // returns the list of private forums visible to this user
 Meteor.publish( 'frsForums.listVisiblePrivate', function( userId ){
     const self = this;
-    const collectionName = pwiForums.conf.prefix + pwiForums.Forums.radical;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
 
     // returns the doc + a 'listVisiblePrivate' flag if it is concerned
     function f_filter( doc ){
@@ -93,37 +93,17 @@ Meteor.publish( 'frsForums.listVisiblePrivate', function( userId ){
 });
 
 // returns the list of forums which this user is authorized to moderate
-//  apart from an eventual FRS_MODERATOR role
-Meteor.publish( 'frsForums.listVisibleModerators', function( userId ){
+Meteor.publish( 'frsForums.listModerables', function( userId ){
     const self = this;
-    const collectionName = pwiForums.conf.prefix + pwiForums.Forums.radical;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
+    const query = pwiForums.Forums.queryModerables();
 
-    // returns the doc + a 'listVisibleModerators' flag if it is concerned
-    function f_filter( doc ){
-        let newDoc = null;
-        if( doc.moderators ){
-            const array = pwiForums.fn.ids( doc.moderators );
-            if( array.includes( userId )){
-                newDoc = doc;
-                newDoc.listVisibleModerators = true;
-            }
-        }
-        return newDoc;
-    }
-
-    const observer = pwiForums.server.collections.Forums.find().observe({
-        added: function( doc){
-            const filtered = f_filter( doc );
-            if( filtered ){
-                //console.log( 'moderators adding', filtered );
-                self.added( collectionName, doc._id, filtered );
-            }
+    const observer = pwiForums.server.collections.Forums.find( query.selector, query.options ).observe({
+        added: function( doc ){
+            self.added( collectionName, doc._id, doc );
         },
         changed: function( newDoc, oldDoc ){
-            const filtered = f_filter( newDoc );
-            if( filtered ){
-                self.changed( collectionName, newDoc._id, filtered );
-            }
+            self.changed( collectionName, newDoc._id, newDoc );
         },
         removed: function( oldDoc ){
             self.removed( collectionName, oldDoc._id );

@@ -19,7 +19,8 @@ defaults = {
             forums: '/forums',
             threads: '/forums/t/:forumId',
             posts: '/forums/p/:threadId',
-            manager: '/forums/admin'
+            manager: '/forums/admin',
+            moderate: '/forums/moderate'
         },
         forums: {
             access: FRS_FORUM_PUBLIC,

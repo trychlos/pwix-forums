@@ -8,9 +8,13 @@ In `pwix:forums`, a forum can be public or private:
 
 - A public forum is readable by anybody, even a non-connected, anonymous, visitor.
 
-- Who is able to write into a public forum is determined by the `publicWriter` parameter which qualifies a user topology (say for example logged-in users).
+- Who is able to write into a public forum is determined by the '`publicWriter`' parameter which qualifies a user topology (say for example logged-in users). A default value is configurable at the package level for all public forums, but each forum can have its own value.
 
-- Contrarily, a private forum is only accessible to an extensive and limitative set of users. So a readers and a writers lists are associated to each private forum. 
+- Who can moderate a public forum is determined by either the '`FRS_PUBLIC_MODERATOR`' role, or a list of users able to moderate this particular forum.
+
+- Contrarily, a private forum is only accessible to an extensive and limitative set of users. So a readers and a writers lists are associated to each private forum.
+
+- Who can moderate a private forum is determined by either the '`FRS_PRIVATE_MODERATOR`' role, or a list of users able to moderate this particular forum.
 
 - A forum may be archived: it is still visible and readable, but can no more host any new posts.
 
@@ -35,6 +39,8 @@ The package doesn't care about user authentification, and delegates all identifi
 - a user identifier
 - a user name
 - an email address, and whether it is verified or not.
+
+For these, it relies on '`pwix:accounts-tools`' package.
 
 ## Usage
 

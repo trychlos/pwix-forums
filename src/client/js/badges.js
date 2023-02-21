@@ -41,6 +41,16 @@ pwiForums.client.htmlModeratorBadge = function( f ){
     return html;
 }
 
+// display a new thread badge
+pwiForums.client.htmlNewThreadBadge = function(){
+    const html = ''
+        +'<span class="badge frs-bg-post frs-new-thread"'
+        +'  title="'+pwiForums.fn.i18n( 'badges.new_thread' )+'">'
+        + pwiForums.fn.i18n( 'badges.new_label' )
+        +'</span>';
+    return html;
+}
+
 // display the posts count badge
 //  if small size: only display the count (without the label)
 //

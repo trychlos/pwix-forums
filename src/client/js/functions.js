@@ -33,7 +33,7 @@ pwiForums.client.fn = {
             if( userId ){
                 html += '<p>' + pwiForums.fn.i18n( 'roles_view.public_label' ) + '</p>';
                 const privHandle = Meteor.subscribe( 'frsForums.listVisiblePrivate', userId );
-                const modHandle = Meteor.subscribe( 'frsForums.listVisibleModerators', userId );
+                const modHandle = Meteor.subscribe( 'frsForums.listModerables', userId );
                 const rv = new ReactiveVar( 0 );
                 let done = 0;
                 Tracker.autorun(() => {

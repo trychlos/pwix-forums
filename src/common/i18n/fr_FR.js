@@ -13,7 +13,9 @@ pwiForums.i18n = {
                 for_ro: 'Forum is archived',
                 moderator: 'Moderator',
                 threads_count: '%s threads',
-                posts_count: '%s posts'
+                posts_count: '%s posts',
+                new_thread: 'New thread',
+                new_label: 'New',
             },
             breadcrumb: {
                 forums: 'Forums',
@@ -79,6 +81,13 @@ pwiForums.i18n = {
                 default_category_label: 'Uncategorized'
             },
             moderate: {
+                // moderation page
+                page_title: 'Forums moderation',
+                page_comment: 'You are seeing here all messages since the specified date, posted in the forums you are allowed to moderate.',
+                date: 'Date :',
+                nonewpost: 'No new post since %s',
+                thread_title: 'In the thread «&nbsp;<b>%s</b>&nbsp;»',
+                // moderation operation
                 modal_title: 'Moderating a post',
                 pre_text: 'You are about to moderate a post.'
                     +'<br />After your operation, the message will no longer be visible to standard users.'
@@ -161,6 +170,7 @@ pwiForums.i18n = {
                 cat_deleted: 'Category "%s" successfully deleted.',
                 for_confirm_delete: 'You are about to delete the "%s" forum<br />Are you sure ?',
                 for_deleted: 'Forum "%s" successfully deleted.',
+                cat_color: 'The category\'s color',
                 cat_edit: 'Edit the \'%s\' category',
                 cat_delete: 'Delete the \'%s\' category',
                 for_count: 'Forums count',

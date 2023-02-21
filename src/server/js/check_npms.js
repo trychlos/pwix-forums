@@ -13,5 +13,6 @@ if( false ){
 checkNpmVersions({
     '@popperjs/core': '^2.11.6',
     'bootstrap': '^5.2.1',
+    'jquery-ui-dist': '^1.13.2',
     'merge': '^2.1.1'
     }, 'pwix:forums' );

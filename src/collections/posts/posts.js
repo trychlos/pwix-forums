@@ -148,6 +148,25 @@ pwiForums.Posts = {
         return result;
     },
 
+    // returns an object { selector, options } suitable to list the posts to be moderated
+    //  - in the list of forums
+    //  - since the specified Date object
+    queryModerables( forumsList, date ){
+        let result = {
+            selector: { $and: [{ deletedAt: null }, { createdAt: { $gte: date }}] },
+            options: {
+                sort: { threadSort: 1, createdAt: 1 }
+            }
+        };
+        let forumsIds = [];
+        forumsList.every(( f ) => {
+            forumsIds.push( f._id );
+            return true;
+        });
+        result.selector.$and.push({ forum: { $in: forumsIds }});
+        return result;
+    },
+
     // returns an object { selector, options } suitable to list the threads opened on a forum
     queryThreads( forumId, limit ){
         let result = {

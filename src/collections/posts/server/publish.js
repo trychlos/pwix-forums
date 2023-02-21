@@ -89,3 +89,48 @@ Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
 
     self.ready();
 });
+
+// returns the list of posts to be moderated
+//  - for the given list of forums
+//  - since the specified Date object
+//  ordered by increasing creation date (most old first)
+
+Meteor.publish( 'frsPosts.moderables', function( forumsList, date ){
+    const self = this;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
+    const query = pwiForums.Posts.queryModerables( forumsList, date );
+    //console.log( query.selector );
+    //query.selector.$and.every(( it ) => {
+    //    console.log( it );
+    //    return true;
+    //});
+
+    // add thread title
+    function f_addFields( doc ){
+        const originalPost = doc.threadId ? pwiForums.server.collections.Posts.findOne({ _id: doc.threadId }) : doc;
+        doc.threadTitle = originalPost.title;
+        doc.threadSort = originalPost.createdAt;
+        return doc;
+    }
+
+    const observer = pwiForums.server.collections.Posts.find( query.selector, query.options ).observe({
+        added: function( doc){
+            //console.log( 'adding', doc );
+            self.added( collectionName, doc._id, f_addFields( doc ));
+        },
+        changed: function( newDoc, oldDoc ){
+            //console.log( 'changing', newDoc );
+            self.changed( collectionName, newDoc._id, f_addFields( newDoc ));
+        },
+        removed: function( oldDoc ){
+            //console.log( 'removing', oldDoc );
+            self.removed( collectionName, oldDoc._id );
+        }
+    });
+
+    self.onStop( function(){
+        observer.stop();
+    });
+
+    self.ready();
+});

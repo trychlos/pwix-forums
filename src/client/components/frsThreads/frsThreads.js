@@ -111,7 +111,7 @@ Template.frsThreads.onCreated( function(){
     //  must be member of private list for private forum
     self.autorun(() => {
         const forum = self.FRS.forum.object.get();
-        const o = forum ? pwiForums.Forums.isEditable( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
+        const o = forum ? pwiForums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
         self.FRS.writer.set( o.editable );
         self.FRS.reason.set( o.reason );
         //console.log( 'writer', self.FRS.writer.get());

@@ -57,6 +57,7 @@ pwiForums.roles = {
                     name: 'FRS_MODERATOR_MANAGER',
                     children: [
                         {
+                            // must have one of these roles to be able to actually moderate
                             name: 'FRS_MODERATOR',
                             children: [
                                 {
@@ -66,16 +67,19 @@ pwiForums.roles = {
                                     name: 'FRS_PRIVATE_MODERATOR'
                                 }
                             ]
+                        },
+                        {
+                            // must have this role to access to the moderation page
+                            name: 'FRS_MODERATOR_ACCESS'
                         }
                     ]
                 },
                 {
-                    name: 'FRS_MODERATOR'
-                },
-                {
+                    // can post in all private forums
                     name: 'FRS_PRIVATE_EDIT',
                     children: [
                         {
+                            // can view all private forums
                             name: 'FRS_PRIVATE_VIEW'
                         }
                     ]

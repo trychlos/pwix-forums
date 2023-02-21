@@ -1,0 +1,51 @@
+.frsModerate {
+    .frs-header {
+        display: flex;
+        align-items: center;
+        .input-date {
+            width: 8em;
+            .calendar-icon {
+                margin-left: -22px;
+                color: var( --bs-gray );
+                position: relative;
+                bottom: -0.5em;
+            }
+        }
+    }
+    .frs-content {
+        .frs-forum-title {
+            font-weight: bold;
+            font-size: 110%;
+        }
+        .frs-forum-title:not( :first-child ){
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid lightgray;
+        }
+        .frs-posts {
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+        .frs-post {
+            margin-left: 1em;
+            margin-right: 1em;
+        }
+        .frs-thread:not( :first-child ){
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid blue;
+        }
+        .frs-post {
+            margin-top: 0.5em;
+        }
+        .frs-post:not( .frs-first ){
+            padding-top: 0.5em;
+            border-top: 1px solid lightblue;
+        }
+        .frs-no-new-post {
+            font-style: italic;
+            color: gray;
+            font-size: 95%;
+        }
+    }
+}
