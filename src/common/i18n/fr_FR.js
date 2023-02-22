@@ -16,6 +16,7 @@ pwiForums.i18n = {
                 posts_count: '%s posts',
                 new_thread: 'New thread',
                 new_label: 'New',
+                mod_strategy: 'Moderation strategy'
             },
             breadcrumb: {
                 forums: 'Forums',
@@ -115,6 +116,11 @@ pwiForums.i18n = {
                     { id: FRS_MODERATE_NONE, label: 'No moderation at all' },
                     { id: FRS_MODERATE_APRIORI, label: 'Moderation a priori' },
                     { id: FRS_MODERATE_APOSTERIORI, label: 'Moderation a posteriori' }
+                ],
+                short_strategies: [
+                    { id: FRS_MODERATE_NONE, label: 'None' },
+                    { id: FRS_MODERATE_APRIORI, label: 'A priori' },
+                    { id: FRS_MODERATE_APOSTERIORI, label: 'A posteriori' }
                 ]
             },
             post_edit: {

@@ -15,6 +15,7 @@ import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
 import { frsOrders } from '../../classes/frs_orders.class.js';
+import { frsModerate } from '../../../common/classes/frs_moderate.class.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -161,7 +162,7 @@ Template.frs_forum_tab.helpers({
 
     // returns the list of known moderation strategies
     moderations(){
-        return pwixI18n.group( FRSI18N, 'moderate.strategies' );
+        return frsModerate.strategyLabels();
     },
 
     // if this forum use this moderation strategy ?

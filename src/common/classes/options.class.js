@@ -6,6 +6,8 @@
 
 import { pwixOptions } from 'meteor/pwix:options';
 
+import { frsModerate } from './frs_moderate.class.js';
+
 import '../js/constants.js';
 
 export class frsOptions extends pwixOptions.Options {
@@ -16,12 +18,6 @@ export class frsOptions extends pwixOptions.Options {
     static AccessMode = [
         FRS_FORUM_PUBLIC,
         FRS_FORUM_PRIVATE
-    ];
-
-    static Moderation = [
-        FRS_MODERATE_NONE,
-        FRS_MODERATE_APRIORI,
-        FRS_MODERATE_APOSTERIORI
     ];
 
     static PublicWriter = [
@@ -83,7 +79,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'forums.moderation'( value ){
-        return this.getset_String_Fn( 'forums.moderation', value, { default: defaults.common.forums.moderation, ref: frsOptions.Moderation });
+        return this.getset_String_Fn( 'forums.moderation', value, { default: defaults.common.forums.moderation, ref: frsModerate.Strategies });
     }
 
     /**

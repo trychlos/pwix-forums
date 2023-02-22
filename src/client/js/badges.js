@@ -6,7 +6,10 @@
  * Have JS functions to display badges is made mandatory as we need them when updating the objects tree (cf. frs_tree_tab.js)
  */
 
+import { pwixI18n } from 'meteor/pwix:i18n';
 import { uiLayout } from 'meteor/pwix:layout';
+
+import { frsModerate } from '../../common/classes/frs_moderate.class.js';
 
 // display the archived badge
 //  opened forum:   color=transparent
@@ -22,6 +25,19 @@ pwiForums.client.htmlArchivedBadge = function( f ){
         +'    <span class="fa-solid fa-lock"></span>'
         +'</span>';
     }
+    return html;
+}
+
+// display the moderate strategy badge
+//
+//  f is the Forum
+pwiForums.client.htmlModerationStrategyBadge = function( f ){
+    const group = pwixI18n.group( FRSI18N, 'moderate.short_strategies' );
+    const html = ''
+        +'<span class="badge frs-bg-forum frs-counter"'
+        +'  title="'+pwiForums.fn.i18n( 'badges.mod_strategy' )+'">'
+        + frsModerate.short( f.moderation )
+        +'</span>';
     return html;
 }
 

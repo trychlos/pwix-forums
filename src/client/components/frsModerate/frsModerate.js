@@ -205,6 +205,11 @@ Template.frsModerate.onRendered( function(){
 
 Template.frsModerate.helpers({
 
+    // display the moderation badge
+    badgeModeration( f ){
+        return pwiForums.client.htmlModerationStrategyBadge( f );
+    },
+
     // whether this is a new thread (created after the date)
     badgeNew( p ){
         const threadDate = new Date( p.threadSort );

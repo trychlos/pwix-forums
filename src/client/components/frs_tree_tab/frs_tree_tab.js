@@ -113,6 +113,7 @@ Template.frs_tree_tab.onCreated( function(){
             const div = ''
                 +'<span class="flex-grow-1">'+f.text+'</span>'
                 +'<div class="frs-badges d-flex align-items-center">'
+                + pwiForums.client.htmlModerationStrategyBadge( f.object )
                 + pwiForums.client.htmlThreadsCountBadge( f.object )
                 + pwiForums.client.htmlPostsCountBadge( f.object )
                 +'<span class="frs-ml1"></<span>'
