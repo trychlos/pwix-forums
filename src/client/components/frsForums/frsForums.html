@@ -29,7 +29,7 @@
                         </div>
                     </div>
                     <div class="d-flex align-items-center">
-                        <div class="badge frs-mr1 frs-ml1 frs-bg-cat frs-count">
+                        <div class="badge frs-badge-btn frs-mr1 frs-ml1 frs-bg-cat frs-count">
                             {{ c.forumsCount }}
                         </div>
                     </div>
@@ -57,11 +57,13 @@
                             <div class="d-flex flex-row align-items-center justify-content-evenly flex-fill frs-badges">
                                 {{#unless uiSMView }}
                                     {{{ badgeModerator f }}}
-                                    <div class="frs-ml025"></div>
+                                    <div class="frs-ml05"></div>
                                     {{{ badgePrivate f }}}
+                                    <div class="frs-ml025"></div>
                                     {{{ badgeArchived f }}}
                                     <div class="frs-ml025"></div>
                                     {{{ badgeThreads f }}}
+                                    <div class="frs-ml025"></div>
                                 {{/unless}}
                                 {{{ badgePosts f }}}
                                 <div class="frs-mr05"></div>

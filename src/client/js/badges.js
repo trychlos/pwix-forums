@@ -20,7 +20,7 @@ pwiForums.client.htmlArchivedBadge = function( f ){
     let html = '';
     if( f ){
         html += ''
-        +'<span class="badge '+( f.archivedAt ? 'text-bg-warning' : 'frs-transparent' )+' frs-badge"'
+        +'<span class="badge '+( f.archivedAt ? 'text-bg-warning' : 'frs-transparent' )+' frs-badge-round"'
         +'  title="'+pwiForums.fn.i18n( 'badges.'+( f.archivedAt ? 'for_ro' : 'for_rw' ))+'">'
         +'    <span class="fa-solid fa-lock"></span>'
         +'</span>';
@@ -34,7 +34,7 @@ pwiForums.client.htmlArchivedBadge = function( f ){
 pwiForums.client.htmlModerationStrategyBadge = function( f ){
     const group = pwixI18n.group( FRSI18N, 'moderate.short_strategies' );
     const html = ''
-        +'<span class="badge frs-bg-forum frs-counter"'
+        +'<span class="badge frs-bg-forum frs-badge-label"'
         +'  title="'+pwiForums.fn.i18n( 'badges.mod_strategy' )+'">'
         + frsModerate.short( f.moderation )
         +'</span>';
@@ -49,7 +49,7 @@ pwiForums.client.htmlModeratorBadge = function( f ){
     const userId = Meteor.userId();
     if( pwiForums.Forums.canModerate( f, userId )){
         html += ''
-        +'<span class="badge frs-bg-forum frs-moderator"'
+        +'<span class="badge frs-badge-label frs-bg-forum"'
         +'  title="'+pwiForums.fn.i18n( 'badges.moderator' )+'">'
         + pwiForums.fn.i18n( 'badges.moderator' )
         +'</span>';
@@ -77,7 +77,7 @@ pwiForums.client.htmlPostsCountBadge = function( f ){
         const width = uiLayout.view();
         console.log( width );
         html += ''
-            +'<span class="badge frs-counter frs-bg-forum">'
+            +'<span class="badge frs-badge-label frs-bg-forum">'
             +( width === UI_VIEW_SM ? f.postsCount : pwiForums.fn.i18n( 'badges.posts_count', f.postsCount ))
             +'</span>';
     }
@@ -97,7 +97,7 @@ pwiForums.client.htmlPrivateBadge = function( f, opts=null ){
         const publicIsTransparent = opts && Object.keys( opts ).includes( 'publicIsTransparent' ) ? opts.publicIsTransparent : false;
         const publicClass = publicIsTransparent ? 'frs-transparent' : 'text-bg-info';
         html += ''
-            +'<span class="badge '+( f.private ? 'text-bg-warning' : publicClass )+' frs-badge"'
+            +'<span class="badge '+( f.private ? 'text-bg-warning' : publicClass )+' frs-badge-round"'
             +'  title="'+pwiForums.fn.i18n( 'badges.'+( f.private ? 'for_private' : 'for_public' ))+'">'
             +'    <span class="fa-solid '+( f.private ? 'fa-user-gear' : 'fa-users' )+'"></span>'
             +'</span>';
@@ -112,7 +112,7 @@ pwiForums.client.htmlThreadsCountBadge = function( f ){
     let html = '';
     if( f ){
         html += ''
-            +'<span class="badge frs-counter frs-bg-forum">'
+            +'<span class="badge frs-badge-label frs-bg-forum">'
             + pwiForums.fn.i18n( 'badges.threads_count', f.threadsCount )
             +'</span>';
     }

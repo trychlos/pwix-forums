@@ -15,7 +15,7 @@ Template.frsModerate.onCreated( function(){
 
     self.FRS = {
         dpSelector: '.frsModerate input.frs-date',
-        ellipSelector: '.frsModerate .frs-post .frs-content.frs-ellipsis-text',
+        ellipSelector: '.frsModerate .frs-post .frs-content.ellipsis-text',
         date: new ReactiveVar( new Date()),         // Date object
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
@@ -92,9 +92,9 @@ Template.frsModerate.onCreated( function(){
                 //console.log( 'dddcb', this );
                 //console.log( $( 'a', this ));
                 if( !isTruncated ){
-                    $( this ).closest( '.frs-ellipsis-wrapper' ).find( 'a.frs-ellipsis-more, a.frs-ellipsis-less' ).hide();
+                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-more, a.ellipsis-less' ).hide();
                 } else {
-                    $( this ).closest( '.frs-ellipsis-wrapper' ).find( 'a.frs-ellipsis-less' ).hide();
+                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-less' ).hide();
                 }
             }
             const maxHeight = 50;
@@ -107,18 +107,18 @@ Template.frsModerate.onCreated( function(){
                 .then(( nodes ) => {
                     //console.log( 'initializing dotdotdot', nodes );
                     self.$( self.FRS.ellipSelector ).dotdotdot( opts );
-                    self.$( self.FRS.ellipSelector ).closest( '.frs-ellipsis-wrapper' ).on( 'click', 'a', function(){
+                    self.$( self.FRS.ellipSelector ).closest( '.ellipsis-wrapper' ).on( 'click', 'a', function(){
                         //console.log( this );  // 'this' is the 'a' DOM element
-                        const wrapper = $( this ).closest( '.frs-ellipsis-wrapper' );
-                        if( $( this ).hasClass( 'frs-ellipsis-more' )){
-                            wrapper.find( 'a.frs-ellipsis-more' ).hide();
-                            wrapper.find( 'a.frs-ellipsis-less' ).show();
-                            wrapper.find( '.frs-ellipsis-text' ).dotdotdot( 'restore' );
+                        const wrapper = $( this ).closest( '.ellipsis-wrapper' );
+                        if( $( this ).hasClass( 'ellipsis-more' )){
+                            wrapper.find( 'a.ellipsis-more' ).hide();
+                            wrapper.find( 'a.ellipsis-less' ).show();
+                            wrapper.find( '.ellipsis-text' ).dotdotdot( 'restore' );
                         }
                         else {
-                            wrapper.find( 'a.frs-ellipsis-more' ).show();
-                            wrapper.find( 'a.frs-ellipsis-less' ).hide();
-                            wrapper.find( '.frs-ellipsis-text' ).dotdotdot( opts );
+                            wrapper.find( 'a.ellipsis-more' ).show();
+                            wrapper.find( 'a.ellipsis-less' ).hide();
+                            wrapper.find( '.ellipsis-text' ).dotdotdot( opts );
                         }
                     });
                 });

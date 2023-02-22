@@ -12,8 +12,8 @@ pwiForums.i18n = {
                 for_rw: 'Forum is opened',
                 for_ro: 'Forum is archived',
                 moderator: 'Moderator',
-                threads_count: '%s threads',
-                posts_count: '%s posts',
+                threads_count: '%s thread(s)',
+                posts_count: '%s post(s)',
                 new_thread: 'New thread',
                 new_label: 'New',
                 mod_strategy: 'Moderation strategy'

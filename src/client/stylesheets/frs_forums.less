@@ -1,7 +1,8 @@
 .frsForums,
 .frsThreads,
 .frsPosts,
-.frsModerate {
+.frsModerate,
+.frsManager {
     margin-left: 2em;
     margin-right: 2em;
 
@@ -19,22 +20,30 @@
         }
         .frs-breadcrumb {
             margin-left: 1em;
-            .breadcrumb {
+            ol.breadcrumb {
                 --bs-breadcrumb-margin-bottom: 0;
+                li {
+                    font-size: 0.85rem;
+                }
             }
         }
     }
     .frs-header {
         margin-top: 0.5em;
         margin-bottom: 0.5em;
-        .frs-page-title {
-            font-size: 1.25rem;
+
+        .frs-title {
+            font-size: 125%;
             font-weight: bold;
         }
-        .frs-page-comment {
+        .frs-comment {
             font-size: 90%;
             font-style: italic;
         }
+    }
+    .frs-total {
+        font-size: 90%;
+        font-weight: bold;
     }
 }
 
@@ -63,9 +72,15 @@
             justify-self: end;
             white-space: nowrap;
         }
-        .frs-div-unarchive {
-            margin-top: 0.5em;
-        }
+    }
+}
+
+// dotdotdot ellipsizer
+.ellipsis-wrapper {
+    .ellipsis-more,
+    .ellipsis-less {
+        font-size: 90%;
+        color: gray;
     }
 }
 
@@ -74,6 +89,31 @@
     color: black;
     //background-color: #e8e8e8;
     background-color: #e0f0f0;
+}
+// a badge which is displayed as a squared button
+//  has to use '!important' to override Bootstrap 'badge' (or use e.g. span.frs-badge-btn but this would be too restrictive imho)
+.frs-badge-btn {
+    font-size: 80% !important;
+    padding: 0.55em !important;
+    width: 2.2em;
+    min-width: 2.2em;
+    max-width: 2.2em;
+    height: 2.2em;
+    min-height: 2.2em;
+    max-height: 2.2em;
+}
+// a badge for a short label
+.frs-badge-label {
+    line-height: 1.4em !important;
+    --bs-badge-padding-x: 1em !important;
+}
+.frs-badge-round {
+    font-size: 14px !important;
+    --bs-badge-padding-x: 0.55em !important;
+    --bs-badge-padding-y: 0.55em !important;
+    --bs-badge-border-radius: 1em !important;
+    width: 2.25em;
+    height: 2.25em;
 }
 .frs-btn {
     white-space: nowrap;
@@ -84,12 +124,6 @@
 }
 .frs-dcontents {
     display: contents;
-}
-//.frs-ellipsis-text
-.frs-ellipsis-more,
-.frs-ellipsis-less {
-    font-size: 90%;
-    color: gray;
 }
 .frs-ellipsize {
     // https://stackoverflow.com/questions/15909489/text-overflow-ellipsis-on-two-lines
@@ -158,28 +192,6 @@
     width: 3em;
     min-width: 3em;
     max-width: 3em;
-}
-span.frs-counter {
-    font-weight: normal;
-    font-size: 65%;
-    margin-left: 0.25em;
-}
-span.frs-badge {
-    font-size: 14px;
-    margin-left: 0.25em;
-    --bs-badge-padding-x: 0.55em;
-    --bs-badge-padding-y: 0.55em;
-    --bs-badge-border-radius: 1em;
-    width: 2.25em;
-    height: 2.25em;
-}
-span.frs-moderator {
-    font-weight: normal;
-    font-size: 65%;
-}
-span.frs-new-thread {
-    padding: 0.4em 0.7em;
-    margin-left: 1em;
 }
 /*
  * COLORS

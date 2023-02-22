@@ -50,11 +50,6 @@
 |   21 | 2023- 2-21 | export more bulding elements, e.g. methods who answer some common questions as who is able to read, to write, to moderate, and so on |
 |   22 | 2023- 2-21 | frsModerate: internationalize (register in i18n) datepicker formats |
 |   23 | 2023- 2-21 | add a view counter to the thread |
-|   24 | 2023- 2-21 | review html externalizing to stylesheets all display classes from bootstrap  -> have container classes |
-|      | 2023- 2-22 | should have container classes for grid, flex and so on |
-|      |            | but keep (Bootstrap) display classes for the same reason we introduce positioning classes |
-|   25 | 2023- 2-21 | review stylesheets, distinguishing intrinsic format of an element (element classes) vs. positioning utilities (positioning classes) + js classes |
-|   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
 |   29 | 2023- 2-21 | frsModerate: have an option to show already moderated posts |
 |   30 | 2023- 2-21 | frsModerate: have an option to show empty forums (forums without any to-be-moderated posts) |
 |   33 | 2023- 2-21 | frsModerate posts: display the creation date|
@@ -68,7 +63,10 @@
 |   42 | 2023- 2-22 | review the display of the permissions in a forum |
 |   43 | 2023- 2-22 | when posting, publish or not depending of the forum moderation mode |
 |   46 | 2023- 2-22 | alert the moderator manager when there are too many pending posts |
-|   47 | | |
+|   47 | 2023- 2-22 | forum_edit: restore edition of private readers, writers and moderators |
+|   48 | 2023- 2-22 | frsForums: ellipsize the forum description like in frsModerate |
+|   49 | 2023- 2-22 | frsPosts: have a single Reply button for the thread |
+|   50 | | |
 
 ---
 ## Done
@@ -79,6 +77,14 @@
 |      | 2023- 2-2à | replaced with a color per category - done |
 |   16 | 2023- 2- 5 | have a color per category |
 |      | 2023- 2-19 | done |
+|   24 | 2023- 2-21 | review html externalizing to stylesheets all display classes from bootstrap  -> have container classes |
+|      | 2023- 2-22 | should have container classes for grid, flex and so on |
+|      |            | but keep (Bootstrap) display classes for the same reason we introduce positioning classes |
+|      | 2023- 2-22 | done |
+|   25 | 2023- 2-21 | review stylesheets, distinguishing intrinsic format of an element (element classes) vs. positioning utilities (positioning classes) + js classes |
+|      | 2023- 2-22 | done |
+|   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
+|      | 2023- 2-22 | done |
 |   28 | 2023- 2-21 | BUG frsPosts: while I am logged in as admin, display 'You cannot participate as undefined.' |
 |      | 2023- 2-22 | fixed |
 |   27 | 2023- 2-21 | frsModerate: keep the last used date either as a user data |

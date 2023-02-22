@@ -92,15 +92,15 @@ Template.frs_tree_tab.onCreated( function(){
                 +'<div class="d-flex align-items-center flex-grow-1">'
                 +'    <span>'+c.text+'</span>'
                 +'    <span class="frs-ml1"></span>'
-                +'    <span class="badge frs-tree-badge" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.object.color+';">&nbsp;</span>'
+                +'    <span class="badge frs-badge-btn frs-ml025" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.object.color+';">&nbsp;</span>'
                 +'</div>'
-                +'<div class="frs-badges d-flex align-items-center">'
-                +'    <span class="badge frs-tree-badge frs-bg-cat" title="'+labelCount+'">'+c.forums.length+'</span>'
+                +'<div class="frs-badges d-flex align-items-center frs-ml1">'
+                +'    <span class="badge frs-badge-btn frs-bg-cat frs-ml025" title="'+labelCount+'">'+c.forums.length+'</span>'
                 +'</div>'
-                +'<div class="frs-buttons d-flex align-items-center">'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-info" data-frs-id="C-'+c.id+'" title="'+titleInfo+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-edit-cat" data-frs-id="C-'+c.id+'" title="'+titleEdit+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-tree-btn frs-bg-cat frs-delete-cat" data-frs-id="C-'+c.id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+titleDelete+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'<div class="frs-buttons d-flex align-items-center frs-ml1">'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-info" data-frs-id="C-'+c.id+'" title="'+titleInfo+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-edit-cat" data-frs-id="C-'+c.id+'" title="'+titleEdit+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-delete-cat" data-frs-id="C-'+c.id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+titleDelete+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>'
                 ;
             self.$( '#frsTreeTabTree' ).jstree( true ).create_node( null, { "id":"frstree_"+c.id, "text":div, "children":[], "orig":"CAT" });
@@ -112,18 +112,21 @@ Template.frs_tree_tab.onCreated( function(){
         createForumNode( parent, f ){
             const div = ''
                 +'<span class="flex-grow-1">'+f.text+'</span>'
-                +'<div class="frs-badges d-flex align-items-center">'
-                + pwiForums.client.htmlModerationStrategyBadge( f.object )
-                + pwiForums.client.htmlThreadsCountBadge( f.object )
-                + pwiForums.client.htmlPostsCountBadge( f.object )
-                +'<span class="frs-ml1"></<span>'
-                + pwiForums.client.htmlPrivateBadge( f.object )
-                + pwiForums.client.htmlArchivedBadge( f.object )
+                +'<div class="frs-badges d-flex align-items-center frs-ml1">'
+                +   pwiForums.client.htmlModerationStrategyBadge( f.object )
+                +   '<span class="frs-ml025"></span>'
+                +   pwiForums.client.htmlThreadsCountBadge( f.object )
+                +   '<span class="frs-ml025"></span>'
+                +   pwiForums.client.htmlPostsCountBadge( f.object )
+                +   '<span class="frs-ml1"></span>'
+                +   pwiForums.client.htmlPrivateBadge( f.object )
+                +   '<span class="frs-ml025"></span>'
+                +   pwiForums.client.htmlArchivedBadge( f.object )
                 +'</div>'
-                +'<div class="frs-buttons d-flex align-items-center">'
-                +'    <button class="btn btn-sm btn-primary frs-tree-btn frs-bg-forum frs-info" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-tree-btn frs-bg-forum frs-edit-for" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_edit', f.text )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-tree-btn frs-bg-forum frs-delete-for" data-frs-id="F-'+f.id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.for_delete', f.text )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'<div class="frs-buttons d-flex align-items-center frs-ml1">'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-info" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-edit-for" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_edit', f.text )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-delete-for" data-frs-id="F-'+f.id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.for_delete', f.text )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>';
             self.$( '#frsTreeTabTree' ).jstree( true ).create_node( parent, { "id":"frstree_"+f.id, "text":div, "orig":"FOR" });
         },
