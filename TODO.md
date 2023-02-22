@@ -55,7 +55,17 @@
 |   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
 |   27 | 2023- 2-21 | frsModerate: keep the last used date either as a user data |
 |   28 | 2023- 2-21 | BUG frsPosts: while I am logged in as admin, display 'You cannot participate as undefined.' |
-|   29 | | |
+|   29 | 2023- 2-21 | frsModerate: have an option to show already moderated posts |
+|   30 | 2023- 2-21 | frsModerate: have an option to show empty forums (forums without any to-be-moderated posts) |
+|   31 | 2023- 2-21 | frsModerate forums: add a public/private badge |
+|   32 | 2023- 2-21 | frsModerate forums: display the moderation strategy |
+|   33 | 2023- 2-21 | frsModerate posts: display the creation date|
+|   35 | 2023- 2-21 | frsModerate identify the author + add already moderated count and percent|
+|   36 | 2023- 2-21 | frsModerate have a checkbox for validate if moderation is a priori |
+|   37 | 2023- 2-21 | frsModerate have a button for moderate which goes to the moderation dialog |
+|   38 | 2023- 2-21 | frsModerate if already moderated, say by who and why and when ? |
+|   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
+|   40 | | |
 
 ---
 ## Done
@@ -66,6 +76,8 @@
 |      | 2023- 2-2à | replaced with a color per category - done |
 |   16 | 2023- 2- 5 | have a color per category |
 |      | 2023- 2-19 | done |
+|   34 | 2023- 2-21 | frsModerate posts: ellipsize the content + have 'plus' button/link |
+|      | 2023- 2-22 | done |
 
 ---
 P. Wieser
