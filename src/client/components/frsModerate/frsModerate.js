@@ -29,7 +29,7 @@ Template.frsModerate.onCreated( function(){
 
     self.FRS = {
         dpSelector: '.frsModerate input.frs-date',
-        ellipSelector: '.frsModerate .frs-post .frs-content',
+        ellipSelector: '.frsModerate .frs-post .frs-content.frs-ellipsis-text',
         date: new ReactiveVar( null ),  // Date object
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
@@ -98,12 +98,45 @@ Template.frsModerate.onCreated( function(){
         // we have displayed as posts as expected (though maybe the last is still being building)
         //  apply ellipsize when DOM is ready
         waitForPostsDom(){
-            console.log( 'waitForPostsDom' );
+            //console.log( 'waitForPostsDom' );
+            // called for each div.ellipSelector, event if too small to be truncated
+            //  - isTruncated: true|false
+            //  - originalContent: the jQuery object with oroginal content
+            //  - this: the DOM element with current content
+            const dddCallback = function( isTruncated, originalContent ){
+                //console.log( 'ddddcb', arguments );
+                //console.log( 'dddcb', this );
+                //console.log( $( 'a', this ));
+                if( !isTruncated ){
+                    $( this ).closest( '.frs-ellipsis-wrapper' ).find( 'a.frs-ellipsis-more, a.frs-ellipsis-less' ).hide();
+                } else {
+                    $( this ).closest( '.frs-ellipsis-wrapper' ).find( 'a.frs-ellipsis-less' ).hide();
+                }
+            }
+            const maxHeight = 50;
+            const opts = {
+                height: maxHeight,
+                ellipsis: '',
+                callback: dddCallback
+            };
             self.FRS.waitForElements( self.FRS.ellipSelector, self.FRS.posts.expected )
                 .then(( nodes ) => {
-                    console.log( 'initializing dotdotdot', nodes );
-                    const res = self.$( self.FRS.ellipSelector ).dotdotdot();
-                    console.log( 'dotdotdot', res );
+                    //console.log( 'initializing dotdotdot', nodes );
+                    self.$( self.FRS.ellipSelector ).dotdotdot( opts );
+                    self.$( self.FRS.ellipSelector ).closest( '.frs-ellipsis-wrapper' ).on( 'click', 'a', function(){
+                        //console.log( this );  // 'this' is the 'a' DOM element
+                        const wrapper = $( this ).closest( '.frs-ellipsis-wrapper' );
+                        if( $( this ).hasClass( 'frs-ellipsis-more' )){
+                            wrapper.find( 'a.frs-ellipsis-more' ).hide();
+                            wrapper.find( 'a.frs-ellipsis-less' ).show();
+                            wrapper.find( '.frs-ellipsis-text' ).dotdotdot( 'restore' );
+                        }
+                        else {
+                            wrapper.find( 'a.frs-ellipsis-more' ).show();
+                            wrapper.find( 'a.frs-ellipsis-less' ).hide();
+                            wrapper.find( '.frs-ellipsis-text' ).dotdotdot( opts );
+                        }
+                    });
                 });
             }
     };
@@ -136,7 +169,6 @@ Template.frsModerate.onCreated( function(){
     // subscribe to list of all posts from the moderable forums since the given date
     self.autorun(() => {
         if( self.FRS.forums.ready.get()){
-            console.log( 'subscribing' );
             self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', self.FRS.forums.list.get(), self.FRS.date.get()));
             self.FRS.posts.ready.set( false );
             //console.log( pwiForums.Posts.queryModerables( self.FRS.forums.list.get(), self.FRS.date.get().toISOString()));
@@ -145,10 +177,8 @@ Template.frsModerate.onCreated( function(){
 
     // subscription is ready: we are so able to anticipate the total count of posts
     self.autorun(() => {
-        console.log( 'trying to get an initial cursor' );
         if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
             self.FRS.posts.expected = pwiForums.client.collections.Posts.find().count();
-            console.log( 'exepcted', self.FRS.posts.expected );
             self.FRS.posts.ready.set( true );
         }
     });
@@ -180,26 +210,6 @@ Template.frsModerate.onRendered( function(){
             });
             //console.log( 'datepicker', res );
         });
-
-    // initialize the ellipsizers
-    /*
-        self.FRS.waitForElm( self.FRS.ellipSelector )
-        .then(( elem ) => {
-            console.log( 'initializing dotdotdot' );
-            const res = self.$( self.FRS.ellipSelector ).dotdotdot();
-            console.log( 'dotdotdot', res );
-        });
-        */
-
-        /*
-    self.autorun(() => {
-        console.log( 'expected', self.FRS.posts.expected, 'displayed', self.FRS.posts.displayed.get());
-        if( self.FRS.posts.ready.get() && self.FRS.posts.expected === self.FRS.posts.displayed.get()){
-            console.log( 'initializing dotdotdot' );
-            self.$( self.FRS.ellipSelector ).dotdotdot();
-        }
-    });
-    */
 });
 
 Template.frsModerate.helpers({
@@ -249,15 +259,14 @@ Template.frsModerate.helpers({
 
     // catch each rendered post
     postCatch( f, p ){
-        console.log( 'postCatch' );
+        //console.log( 'postCatch' );
     },
 
     // end of a post
     postEnd(){
-        console.log( 'postEnd' );
         const FRS = Template.instance().FRS;
         FRS.posts.displayed += 1;
-        console.log( 'expected', FRS.posts.expected, 'displayed', FRS.posts.displayed );
+        //console.log( 'expected', FRS.posts.expected, 'displayed', FRS.posts.displayed );
         if( FRS.posts.displayed === FRS.posts.expected ){
             FRS.waitForPostsDom();
         }
@@ -286,7 +295,6 @@ Template.frsModerate.helpers({
 
     // list the posts to be moderated
     postsList( f ){
-        console.log( 'postsList' );
         return Template.instance().FRS.postsCursor( f );
    },
 

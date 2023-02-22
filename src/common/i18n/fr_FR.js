@@ -88,6 +88,8 @@ pwiForums.i18n = {
                 noforum: 'No moderable forum',
                 nonewpost: 'No new post since %s',
                 thread_title: 'In the thread «&nbsp;<b>%s</b>&nbsp;»',
+                ellipsis_more: '[Read more]',
+                ellipsis_less: '[Read less]',
                 // moderation operation
                 modal_title: 'Moderating a post',
                 pre_text: 'You are about to moderate a post.'
