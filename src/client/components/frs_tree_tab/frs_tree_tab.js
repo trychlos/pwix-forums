@@ -89,9 +89,12 @@ Template.frs_tree_tab.onCreated( function(){
             const titleDelete = pwiForums.fn.i18n( 'tree_tab.cat_delete', c.text );
             //console.log( titleEdit );
             const div = ''
-                +'<span class="flex-grow-1">'+c.text+'</span>'
-                +'<div class="frs-badges d-flex align-items-center">'
+                +'<div class="d-flex align-items-center flex-grow-1">'
+                +'    <span>'+c.text+'</span>'
+                +'    <span class="frs-ml1"></span>'
                 +'    <span class="badge frs-tree-badge" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.object.color+';">&nbsp;</span>'
+                +'</div>'
+                +'<div class="frs-badges d-flex align-items-center">'
                 +'    <span class="badge frs-tree-badge frs-bg-cat" title="'+labelCount+'">'+c.forums.length+'</span>'
                 +'</div>'
                 +'<div class="frs-buttons d-flex align-items-center">'

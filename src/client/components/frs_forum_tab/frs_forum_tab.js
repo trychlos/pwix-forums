@@ -68,13 +68,17 @@ Template.frs_forum_tab.onCreated( function(){
 });
 
 Template.frs_forum_tab.helpers({
-    // category title (read-only)
-    catLabel(){
+    // the list of available categories
+    categories(){
+        return Template.instance().FRS.orderedTree.get().categories();
+    },
+
+    // whether the current category should be selected ?
+    catSelected( c ){
         const rv = Template.currentData().forum;
         const f = rv ? rv.get() : null;
         const cat_id = f ? f.category : pwiForums.Categories.default;
-        const cat = Template.instance().FRS.orderedTree.get().category( cat_id );
-        return cat.title;
+        return cat_id === c._id ? 'selected' : '';
     },
 
     // forum has been archived
@@ -164,6 +168,12 @@ Template.frs_forum_tab.events({
     },
     'change textarea'( event, instance ){
         const value = $( event.currentTarget ).val() || '';
+        const field = $( event.currentTarget ).data( 'frs-field' );
+        instance.FRS.setField( field, value.trim());
+    },
+    'change select.frs-cat-select'( event, instance ){
+        //console.log( 'cat', instance.$( 'select.frs-cat-select option:selected' ).val(), instance.$( 'select.frs-cat-select option:selected' ).text());
+        const value = instance.$( 'select.frs-cat-select option:selected' ).val();
         const field = $( event.currentTarget ).data( 'frs-field' );
         instance.FRS.setField( field, value.trim());
     },

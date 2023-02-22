@@ -64,7 +64,11 @@
 |   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
 |   40 | 2023- 2-22 | frsPosts: ellipsize like in frsModerate |
 |   41 | 2023- 2-22 | frsThreads: ellipsize like in frsModerate |
-|   42 | | |
+|   42 | 2023- 2-22 | review the view of the permissions in a forum |
+|   43 | 2023- 2-22 | when posting, publish or not depending of the forum moderation mode |
+|   45 | 2023- 2-22 | forum_panel: select the moderation strategy |
+|   46 | 2023- 2-22 | alert the moderator manager when there are too many pending posts |
+|   47 | | |
 
 ---
 ## Done
@@ -82,6 +86,8 @@
 |   31 | 2023- 2-21 | frsModerate forums: add a public/private badge |
 |      | 2023- 2-22 | done |
 |   34 | 2023- 2-21 | frsModerate posts: ellipsize the content + have 'plus' button/link |
+|      | 2023- 2-22 | done |
+|   44 | 2023- 2-22 | should be able to modify the category from forum_panel |
 |      | 2023- 2-22 | done |
 
 ---

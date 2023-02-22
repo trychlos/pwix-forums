@@ -519,6 +519,13 @@ export class frsOrders {
     }
 
     /**
+     * @returns {Array} the list of registered categories
+     */
+    categories(){
+        return this._vars.categories.collection.get();
+    }
+
+    /**
      * @returns {Integer} the count of registered categories
      *  Note that some categories may appear as unused by the user depending of his permissions
      */

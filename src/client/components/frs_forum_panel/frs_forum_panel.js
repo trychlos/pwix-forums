@@ -167,6 +167,29 @@ Template.frs_forum_panel.helpers({
 });
 
 Template.frs_forum_panel.events({
+    'md-click .frs-forum-panel'( event, instance, data ){
+        //console.log( event, instance, data );
+        if( data.button === MD_BUTTON_SAVE ){
+            let f = instance.FRS.forum.get();
+            if( !f.category ){
+                f.category = pwiForums.Categories.default;
+            }
+            f.privateUsers = instance.FRS.privUsers.get();
+            f.moderators = instance.FRS.moderators.get();
+            //console.log( f );
+            Meteor.call( 'frsForums.upsert', f, ( err, res ) => {
+                if( err ){
+                    console.error( err );
+                    tlTolert.error( 'message_error' );
+                } else {
+                    console.log( res );
+                    tlTolert.success( pwiForums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
+                    pwixModal.close();
+                }
+            });
+        }
+    }
+    /*
     // submit the updates to the db
     'click button.frs-save'( event, instance ){
         console.log( event, instance );
@@ -190,4 +213,5 @@ Template.frs_forum_panel.events({
         });
         return false;
     }
+    */
 });

@@ -12,9 +12,11 @@
             <textarea class="form-control frs-comment" rows="3" placeholder="{{ i18n label="comment_placeholder" }}" data-frs-field="internalComment">{{ forComment }}</textarea>
 
             <label for="" class="form-label form-label-sm frs-one">{{ i18n label="category_label" }}</label>
-            <div class="category">
-                {{ catLabel }}
-            </div>
+            <select class="form-select frs-cat-select" data-frs-field="category">
+                {{#each c in categories }}
+                    <option {{ catSelected c }} value="{{ c._id }}">{{ c.title }}</option>
+                {{/each}}
+            </select>
 
             <div></div>
             <div>
