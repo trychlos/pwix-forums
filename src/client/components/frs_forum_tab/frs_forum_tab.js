@@ -34,6 +34,7 @@ Template.frs_forum_tab.onCreated( function(){
 
         // set a value in the object
         setField( field, value ){
+            //console.log( field, value );
             const rv = Template.currentData().forum;
             if( rv ){
                 const f = rv.get() || {};
@@ -46,6 +47,7 @@ Template.frs_forum_tab.onCreated( function(){
                     f.archivedAt = new Date();
                     f.archivedBy = Meteor.userId();
                 }
+                //console.log( f );
                 rv.set( f );
             }
         }
@@ -155,6 +157,18 @@ Template.frs_forum_tab.helpers({
         if( FRS.origSet.get()){
             return FRS.orig && ( FRS.orig.archivedAt || FRS.orig.archivedBy );
         }
+    },
+
+    // returns the list of known moderation strategies
+    moderations(){
+        return pwixI18n.group( FRSI18N, 'moderate.strategies' );
+    },
+
+    // if this forum use this moderation strategy ?
+    modSelected( m ){
+        const rv = Template.currentData().forum;
+        const f = rv ? rv.get() : null;
+        return f && f.moderation === m.id ? 'selected' : '';
     }
 });
 
@@ -171,14 +185,14 @@ Template.frs_forum_tab.events({
         const field = $( event.currentTarget ).data( 'frs-field' );
         instance.FRS.setField( field, value.trim());
     },
-    'change select.frs-cat-select'( event, instance ){
-        //console.log( 'cat', instance.$( 'select.frs-cat-select option:selected' ).val(), instance.$( 'select.frs-cat-select option:selected' ).text());
-        const value = instance.$( 'select.frs-cat-select option:selected' ).val();
+    'change select'( event, instance ){
+        //const value = instance.$( event.currentTarget+' option:selected' ).val();
+        const value = instance.$( event.currentTarget ).find( 'option:selected' ).val();
         const field = $( event.currentTarget ).data( 'frs-field' );
         instance.FRS.setField( field, value.trim());
     },
     'change input[type="checkbox"]'( event, instance ){
-        const checked = instance.$( 'input.frs-private' ).prop( 'checked' );
+        const checked = instance.$( event.currentTarget ).prop( 'checked' );
         const field = $( event.currentTarget ).data( 'frs-field' );
         instance.FRS.setField( field, checked );
     }

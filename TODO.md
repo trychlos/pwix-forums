@@ -66,7 +66,6 @@
 |   41 | 2023- 2-22 | frsThreads: ellipsize like in frsModerate |
 |   42 | 2023- 2-22 | review the view of the permissions in a forum |
 |   43 | 2023- 2-22 | when posting, publish or not depending of the forum moderation mode |
-|   45 | 2023- 2-22 | forum_panel: select the moderation strategy |
 |   46 | 2023- 2-22 | alert the moderator manager when there are too many pending posts |
 |   47 | | |
 
@@ -88,6 +87,8 @@
 |   34 | 2023- 2-21 | frsModerate posts: ellipsize the content + have 'plus' button/link |
 |      | 2023- 2-22 | done |
 |   44 | 2023- 2-22 | should be able to modify the category from forum_panel |
+|      | 2023- 2-22 | done |
+|   45 | 2023- 2-22 | forum_panel: select the moderation strategy |
 |      | 2023- 2-22 | done |
 
 ---

@@ -54,6 +54,7 @@ pwiForums.i18n = {
                 comment_placeholder: 'A comment which will be only visible to other administrators',
                 category_label: 'Category',
                 private_label: 'Private',
+                moderation_label: 'Moderation strategy',
                 show_deleted_for_admin_label: 'Show deleted posts to admins (as an expandable placeholder)',
                 show_deleted_for_user_label: 'Show deleted posts to users (as a placeholder)',
                 archive_label: 'Archive the forum, making it read-only',
@@ -110,6 +111,11 @@ pwiForums.i18n = {
                     { id: 'gtu', label: 'Non conform to General Terms of Use' },
                     { id: 'donotlove', label: 'I don\'t love you' }
                 ],
+                strategies: [
+                    { id: FRS_MODERATE_NONE, label: 'No moderation at all' },
+                    { id: FRS_MODERATE_APRIORI, label: 'Moderation a priori' },
+                    { id: FRS_MODERATE_APOSTERIORI, label: 'Moderation a posteriori' }
+                ]
             },
             post_edit: {
                 title_label: 'Have a title',

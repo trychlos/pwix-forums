@@ -154,6 +154,12 @@ The method should be called in same terms both in client and server sides, and f
 
     Provide a default value for new forums `moderation` parameter, defaulting to `FRS_MODERATE_APRIORI`.
 
+    Known values are:
+
+    - `FRS_MODERATE_NONE`
+    - `FRS_MODERATE_APRIORI`
+    - `FRS_MODERATE_APOSTERIORI`.
+
 - `verbosity`
 
     Configure the verbosity level of the package.

@@ -61,10 +61,12 @@ Meteor.methods({
             internalComment: o.internalComment || '',
             category: o.category || Categories.default,
             private: o.private,
-            privateUsers: o.privateUsers,
-            showDeletedForAdmin: o.showDeletedForAdmin,
-            showDeletedForUser: o.showDeletedForUser,
+            privateReaders: o.privateReaders,
+            privateWriters: o.privateWriters,
+            moderation: o.moderation,
             moderators: o.moderators,
+            showDeletedForAdmin: o.showDeletedForAdmin,
+            showDeletedForUser: o.showDeletedForUser
         };
         if( o && o.createdAt ){
             modifier.createdAt = o.createdAt;

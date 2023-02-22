@@ -58,6 +58,20 @@ pwiForums.Forums = {
         },
         "privateWriters.$": Object,
         "privateWriters.$.id": String,
+        // what is this forum moderation strategy ?
+        //  defaulting to the common configured one
+        moderation: {
+            type: String,
+            defaultValue: defaults.common.forums.moderation
+        },
+        // the list of the moderators of *this* forum
+        //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
+        moderators: {
+            type: Array,
+            defaultValue: []
+        },
+        "moderators.$": Object,
+        "moderators.$.id": String,
         // whether the moderated posts should be rendered with a placeholder for the forum moderators ?
         //  - true (a placeholder with an accordion which displayed the deleted post)
         //  - false: nothing is shown
@@ -103,14 +117,6 @@ pwiForums.Forums = {
             type: String,
             optional: true
         },
-        // the list of the moderators of *this* forum
-        //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
-        moderators: {
-            type: Array,
-            defaultValue: []
-        },
-        "moderators.$": Object,
-        "moderators.$.id": String,
         // Mongo identifier
         // mandatory (auto by Meteor+Mongo)
         _id: {
