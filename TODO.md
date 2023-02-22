@@ -52,7 +52,7 @@
 |   23 | 2023- 2-21 | add a view counter to the thread |
 |   29 | 2023- 2-21 | frsModerate: have an option to show already moderated posts |
 |   30 | 2023- 2-21 | frsModerate: have an option to show empty forums (forums without any to-be-moderated posts) |
-|   33 | 2023- 2-21 | frsModerate posts: display the creation date|
+|   33 | 2023- 2-21 | frsModerate posts: display the creation date |
 |   35 | 2023- 2-21 | frsModerate identify the author + add already moderated count and percent|
 |   36 | 2023- 2-21 | frsModerate have a checkbox for validate if moderation is a priori |
 |   37 | 2023- 2-21 | frsModerate have a button for moderate which goes to the moderation dialog |
@@ -66,7 +66,10 @@
 |   47 | 2023- 2-22 | forum_edit: restore edition of private readers, writers and moderators |
 |   48 | 2023- 2-22 | frsForums: ellipsize the forum description like in frsModerate |
 |   49 | 2023- 2-22 | frsPosts: have a single Reply button for the thread |
-|   50 | | |
+|   51 | 2023- 2-22 | frsModerate: have an option to include moderated posts since the date |
+|   52 | 2023- 2-22 | frsModerate: the publication shoul dtake into account the above option (with ou without moderated posts) |
+|   53 | | |
+|   54 | | |
 
 ---
 ## Done

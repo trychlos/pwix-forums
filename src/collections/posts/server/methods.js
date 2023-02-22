@@ -23,13 +23,12 @@ Meteor.methods({
         return res;
     },
 
-    // called after a moderator has confirmed the deletion
+    // called after a moderator has confirmed the moderation
     //  parms are an object with:
     //  - post: the just-moderated post
     //  - inform: whether the moderator has asked the user to be informed
     //  - stats: the user count stats
     //  - reason: the reason
-    // Note: we first call the upsert() method before callig this one just to not have to call upsert() from here
     'frsPosts.postModerate'( parms ){
         console.log( 'postModerate', parms );
     },
@@ -59,6 +58,8 @@ Meteor.methods({
         f_add( 'deletedAt' );
         f_add( 'deletedBy' );
         f_add( 'deletedBecause' );
+        f_add( 'validatedAt' );
+        f_add( 'validatedBy' );
         if( o && o._id ){
             modifier.updatedAt = new Date();
             modifier.updatedBy = Meteor.userId();
@@ -96,5 +97,20 @@ Meteor.methods({
         const res = { posts: posts, auto: auto, moderated: moderated };
         //console.log( 'userStats', res );
         return res;
-    }
+    },
+
+    // called when a moderator confirm the validation
+    'frsPosts.validate'( id ){
+        let post = pwiForums.server.collections.Posts.find({ _id: id });
+        if( post ){
+            const set = {
+                validatedAt: new Date(),
+                validatedBy: Meteor.userId()
+            };
+            const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set });
+            console.log( 'frsPosts.validate', set, res );
+            return res;
+        }
+        return null;
+    },
 });

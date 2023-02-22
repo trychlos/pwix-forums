@@ -83,7 +83,18 @@ pwiForums.Posts = {
         },
         // why a forum admin has he deleted this post ?
         //  null/unset when deleted by the owner
+        //  aka: set if and only if moderated
         deletedBecause: {
+            type: String,
+            optional: true
+        },
+        // validation timestamp by a moderator, only relevant in forums moderated a priori
+        validatedAt: {
+            type: Date,
+            optional: true
+        },
+        // the moderator who has validated the post
+        validatedBy: {
             type: String,
             optional: true
         },

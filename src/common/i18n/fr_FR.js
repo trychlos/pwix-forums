@@ -92,6 +92,12 @@ pwiForums.i18n = {
                 thread_title: 'In the thread «&nbsp;<b>%s</b>&nbsp;»',
                 ellipsis_more: '[Read more]',
                 ellipsis_less: '[Read less]',
+                moderate_date: 'Posted on %s',
+                owner_score: '%s posted messages<br />%s (%s) have already been moderated',
+                author: 'By %s (aka « %s »)',
+                moderate: 'Moderate',
+                validate: 'Validate',
+                validated: 'The post has been successfully validated',
                 // moderation operation
                 modal_title: 'Moderating a post',
                 pre_text: 'You are about to moderate a post.'

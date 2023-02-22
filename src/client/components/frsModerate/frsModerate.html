@@ -46,16 +46,31 @@
                                 {{#if threadNew f p }}
                                     <div class="frs-thread d-flex flex-align-items-center">
                                         <p class="frs-title">{{{ threadTitle p }}}</p>
+                                        <div class="frs-ml1"></div>
                                         {{{ badgeNew p }}}
                                     </div>
                                 {{/if}}
-                                <div class="frs-post {{ postFirst f p }}">
-                                    <div class="ellipsis-wrapper" id="post-{{ p._id }}-content">
+                                <div class="frs-post {{ postFirst f p }} d-flex align-items-start">
+                                    <div class="frs-authoring">
+                                        <p class="frs-date frs-nowrap">{{ postDate p }}</p>
+                                        <p class="frs-author frs-nowrap">{{ postAuthor p }}</p>
+                                        <p class="frs-score">{{{ postScore p }}}</p>
+                                    </div>
+                                    <div class="frs-ml1"></div>
+                                    <div class="ellipsis-wrapper flex-grow-1" id="post-{{ p._id }}-content">
                                         <div class="frs-content ellipsis-text">{{{ p.content }}}</div>
                                         <div class="d-flex justify-content-end align-items-center">
                                             <a class="ellipsis-more" href='#'>{{ i18n label="ellipsis_more" }}</a>&nbsp;
                                             <a class="ellipsis-less" href='#'>{{ i18n label="ellipsis_less" }}</a>
                                         </div>
+                                    </div>
+                                    <div class="frs-ml1"></div>
+                                    <div class="frs-actions d-flex flex-column align-items-center">
+                                        {{#if wantValidate f }}
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
+                                            <div class="frs-mt05"></div>
+                                        {{/if}}
+                                        <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="moderate" }}</button>
                                     </div>
                                 </div>
                                 {{ postEnd }}

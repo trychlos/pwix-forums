@@ -16,7 +16,6 @@ export class frsModerate {
 
     // static methods
     //
-
     /**
      * @returns {Array} the i18n group array which describe the moderation strategies
      */

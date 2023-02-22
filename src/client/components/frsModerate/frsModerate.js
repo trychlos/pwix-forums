@@ -4,6 +4,7 @@
 
 import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n } from 'meteor/pwix:i18n';
+import { tlTolert } from 'meteor/pwix:tolert';
 
 import dotdotdot from 'dotdotdot';
 
@@ -97,7 +98,7 @@ Template.frsModerate.onCreated( function(){
                     $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-less' ).hide();
                 }
             }
-            const maxHeight = 50;
+            const maxHeight = 72;
             const opts = {
                 height: maxHeight,
                 ellipsis: '',
@@ -256,9 +257,24 @@ Template.frsModerate.helpers({
         return pwiForums.fn.i18n( 'moderate.nonewpost', pwixI18n.date( Template.instance().FRS.date.get()));
     },
 
+    // the author of the post
+    postAuthor( p ){
+        return pwiForums.fn.i18n( 'moderate.author', p.rvAuthorEmail.get().label, p.rvAuthorUsername.get().label );
+    },
+
     // catch each rendered post
+    //  install a ReactiveVar which will hold the author username
     postCatch( f, p ){
         //console.log( 'postCatch' );
+        p.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
+        p.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
+        p.rvStats = new ReactiveVar( null );
+        Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.rvStats.set( res ); });
+    },
+
+    // when the post has it been created ?
+    postDate( p ){
+        return pwiForums.fn.i18n( 'moderate.moderate_date', pwixI18n.dateTime( p.createdAt ));
     },
 
     // end of a post
@@ -285,6 +301,13 @@ Template.frsModerate.helpers({
         return first ? 'frs-first' : '';
     },
 
+    // the moderation score of the author
+    postScore( p ){
+        const stats = p.rvStats.get();
+        const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
+        return pwiForums.fn.i18n( 'moderate.owner_score', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
+    },
+
     // returns the count of posts for this forum
     //  because this helper is executed before trying to display the list, we compute the cursor here
     postsCount( f ){
@@ -307,6 +330,11 @@ Template.frsModerate.helpers({
     // thread title
     threadTitle( p ){
         return pwiForums.fn.i18n( 'moderate.thread_title', p.threadTitle );
+    },
+
+    // whether the forum be moderated a priori ?
+    wantValidate( f ){
+        return f.moderation === FRS_MODERATE_APRIORI;
     }
 });
 
@@ -322,4 +350,20 @@ Template.frsModerate.events({
         return false;
     },
 
+    // validate the message
+    'click .frs-validate-btn'( event, instance ){
+        const postId = instance.$( event.currentTarget ).attr( 'data-frs-post' );
+        //console.log( 'postId', postId );
+        Meteor.call( 'frsPosts.validate', postId, ( err, res ) => {
+            if( err ){
+                tlTolert.error({ type:err.error, message:err.reason });
+            } else {
+                tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
+            }
+        });
+    },
+
+    // moderate the message
+    'click .frs-moderate-btn'( event, instance ){
+    }
 });

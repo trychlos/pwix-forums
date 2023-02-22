@@ -13,14 +13,14 @@
         {{#if showButtons }}
             <div class="d-flex justify-content-between align-items-center frs-buttons">
                 <div>
-                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-cancel-btn">{{ i18n label="cancel_btn" }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-cancel-btn">{{ i18n label="cancel_btn" }}</button>
                 </div>
                 <div>
                     <div class="frs-message frs-hidden"></div>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-preview-btn" {{ disablePreview }} data-bs-toggle="button">{{ i18n label="preview_btn" }}</button>
-                    <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-post-btn" {{ disablePost }}>{{ i18n label="post_btn" }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-preview-btn" {{ disablePreview }} data-bs-toggle="button">{{ i18n label="preview_btn" }}</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary frs-post-btn" {{ disablePost }}>{{ i18n label="post_btn" }}</button>
                 </div>
             </div>
         {{/if}}

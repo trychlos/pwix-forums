@@ -62,7 +62,7 @@ Template.frs_post_moderate.helpers({
         const post = Template.currentData().post;
         return post ? post.content : '';
     },
-    // the coutn of owner's message which have already been deleted
+    // the count of owner's message which have already been deleted
     deletedCount(){
         const stats = Template.instance().FRS.stats.get();
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';

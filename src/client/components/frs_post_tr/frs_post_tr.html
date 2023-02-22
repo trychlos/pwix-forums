@@ -7,10 +7,10 @@
                 <div class="frs-post-id">{{ post._id }}</div>
                 <div class="d-flex justify-content-around frs-edit-div">
                     {{#if canEdit post }}
-                        <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-edit-btn" data-bs-toggle="button">{{ i18n label="edit" }}</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary frs-edit-btn" data-bs-toggle="button">{{ i18n label="edit" }}</button>
                     {{/if}}
                     {{#if canDelete post }}
-                        <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-delete-btn">{{ i18n label="delete" }}</button>
+                        <button type="button" class="btn btn-sm btn-outline-primary frs-delete-btn">{{ i18n label="delete" }}</button>
                     {{/if}}
                 </div>
             </td>
@@ -27,12 +27,12 @@
                 {{#unless deleted }}
                     {{#if canReply post }}
                         <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-reply-btn" data-bs-toggle="button">{{ i18n label="reply" }}</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary frs-reply-btn" data-bs-toggle="button">{{ i18n label="reply" }}</button>
                         </div>
                     {{/if}}
                     {{#if isModerator }}
                         <div>
-                            <button type="button" class="btn btn-sm btn-outline-primary frs-btn frs-moderate-btn">{{ i18n label="moderate" }}</button>
+                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn">{{ i18n label="moderate" }}</button>
                         </div>
                     {{/if}}
                 {{/unless}}

@@ -60,7 +60,7 @@ pwiForums.client.htmlModeratorBadge = function( f ){
 // display a new thread badge
 pwiForums.client.htmlNewThreadBadge = function(){
     const html = ''
-        +'<span class="badge frs-bg-post frs-new-thread"'
+        +'<span class="badge frs-badge-label frs-bg-post"'
         +'  title="'+pwiForums.fn.i18n( 'badges.new_thread' )+'">'
         + pwiForums.fn.i18n( 'badges.new_label' )
         +'</span>';
