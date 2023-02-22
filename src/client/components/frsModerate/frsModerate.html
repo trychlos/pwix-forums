@@ -29,28 +29,33 @@
         </div>
 
         <div class="frs-content">
-            {{#each f in forumsList }}
-                {{ forumCatch f }}
-                <p class="frs-forum-title">{{ f.title }}</p>
-                <div class="frs-posts">
-                    {{#if postsListCount f }}
-                        {{#each p in postsList f }}
-                            {{ postCatch p }}
-                            {{#if threadNew f p }}
-                                <div class="frs-thread d-flex flex-align-items-center">
-                                    <p class="frs-title">{{{ threadTitle p }}}</p>
-                                    {{{ badgeNew p }}}
+            {{#if forumsCount }}
+                {{#each f in forumsList }}
+                    {{ forumCatch f }}
+                    <p class="frs-forum-title">{{ f.title }}</p>
+                    <div class="frs-posts">
+                        {{#if postsCount f }}
+                            {{#each p in postsList f }}
+                                {{ postCatch f p }}
+                                {{#if threadNew f p }}
+                                    <div class="frs-thread d-flex flex-align-items-center">
+                                        <p class="frs-title">{{{ threadTitle p }}}</p>
+                                        {{{ badgeNew p }}}
+                                    </div>
+                                {{/if}}
+                                <div class="frs-post {{ postFirst f p }}">
+                                    <div class="frs-content">{{{ p.content }}}</div>
                                 </div>
-                            {{/if}}
-                            <div class="frs-post {{ postFirst f p }}">
-                                <p class="frs-content">{{{ p.content }}}</p>
-                            </div>
-                        {{/each}}
-                    {{else}}
-                        <p class="frs-no-new-post">{{ noNewPost }}</p>
-                    {{/if}}
-                </div>
-            {{/each}}
+                                {{ postEnd }}
+                            {{/each}}
+                        {{else}}
+                            <p class="frs-no-new-post">{{ noNewPost }}</p>
+                        {{/if}}
+                    </div>
+                {{/each}}
+            {{else}}
+                <p class="frs-no-forum">{{ noForum }}</p>
+            {{/if}}
         </div>
 
         <div class="frs-bottom">

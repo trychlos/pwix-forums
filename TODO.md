@@ -53,7 +53,9 @@
 |   24 | 2023- 2-21 | review html externalizing to stylesheets all display classes from bootstrap  -> have container classes |
 |   25 | 2023- 2-21 | review stylesheets, distinguishing intrinsic format of an element (element classes) vs. positioning utilities (positioning classes) + js classes |
 |   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
-|   27 | | |
+|   27 | 2023- 2-21 | frsModerate: keep the last used date either as a user data |
+|   28 | 2023- 2-21 | BUG frsPosts: while I am logged in as admin, display 'You cannot participate as undefined.' |
+|   29 | | |
 
 ---
 ## Done
