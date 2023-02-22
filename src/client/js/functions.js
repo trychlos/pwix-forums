@@ -23,6 +23,64 @@ pwiForums.client.fn = {
         return pwiForums.opts()['routes.threads']().replace( ':forumId', id );
     },
 
+    /*
+     * @summary 
+     * @locus Client
+     * @param {String} name the (dot-) name of the user setting
+     * @returns {String} the named value, or null
+     */
+    userDataRead( name ){
+        const settings = pwiForums.opts()['collections.prefix']()+'settings.'+name;
+        let result = pwiForums.client.user.get();
+        settings.split( '.' ).every(( it ) => {
+            if( result && result[it] ){
+                result = result[it];
+                return true;
+            }
+            result = null;
+            return false; 
+        });
+        return result;
+    },
+
+    /*
+     * @summary 
+     * @locus Client
+     * @param {String} name the (non-dotted) name of the user setting
+     * @param {String} value a string value to be set
+     */
+    userDataUpdate(){
+        const userId = Meteor.userId();
+        if( userId ){
+            const dict = {
+                emails: 1,
+                username: 1
+            };
+            const settings = pwiForums.opts()['collections.prefix']()+'settings';
+            dict[settings] = 1;
+            Meteor.callPromise( 'frsForums.accountById', userId, dict )
+                .then(( res ) => {
+                    pwiForums.client.user.set( res );
+                    console.log( 'user data', res );
+                    return Promise.resolve( res );
+                });
+        } else {
+            pwiForums.client.user.set( null );
+        }
+    },
+
+    /*
+     * @summary 
+     * @locus Client
+     * @param {String} name the (non-dotted) name of the user setting
+     * @param {String} value a string value to be set
+     */
+    userDataWrite( name, value ){
+        const settings = pwiForums.opts()['collections.prefix']()+'settings';
+        pwixAccountsTools.writeData( Meteor.userId(), settings+'.'+name, value );
+        pwiForums.client.fn.userDataUpdate();
+    },
+
     // a callback defined for the pwiRoles:prView component
     //  must return a Promise
     viewRoles( tab ){

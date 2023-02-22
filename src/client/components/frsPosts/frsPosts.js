@@ -232,8 +232,11 @@ Template.frsPosts.helpers({
         return ( it.owner === userId && it.deletedAt && it.deletedBy === userId && !it.deletedBecause );
     },
 
-    // the reason for why the user cannot post in this forum
+    // the reason for why the user cannot post in this forum (if any)
     writableReason(){
+        if( Template.instance().FRS.writer.get()){
+            return '';
+        }
         const reason = Template.instance().FRS.reason.get();
         const group = i18n.group( FRSI18N, 'unwritable' );
         return pwiForums.fn.i18n( 'posts.not_writable', group[reason] );

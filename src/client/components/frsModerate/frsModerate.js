@@ -1,19 +1,5 @@
 /*
  * pwix:forums/src/cient/components/frsModerate/frsModerate.js
- *
- * TODO:
- * - have an option to show already moderated posts
- * - have an option to show empty forums (forums with to-be-moderated posts)
- * - for forum:
- *      - add a public/private badge
- * - for post:
- *      - display the creation date
- *      - ellipsize the content + have 'plus' button/link
- *      - identify the author + add already moderated count and percent
- *      - have a checkbox for validate if moderation is a priori
- *      - have a button for moderate which goes to the moderation dialog
- *      - if already moderated, say by who and why and when ?
- *      - if have unmoderator role, then have a button unmoderate (+ reason ?)
  */
 
 import { ReactiveVar } from 'meteor/reactive-var';
@@ -30,7 +16,7 @@ Template.frsModerate.onCreated( function(){
     self.FRS = {
         dpSelector: '.frsModerate input.frs-date',
         ellipSelector: '.frsModerate .frs-post .frs-content.frs-ellipsis-text',
-        date: new ReactiveVar( null ),  // Date object
+        date: new ReactiveVar( new Date()),         // Date object
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
             list: new ReactiveVar( [] ),            // the fetched list
@@ -62,14 +48,12 @@ Template.frsModerate.onCreated( function(){
             return self.FRS.posts.handle.get().ready() ? pwiForums.client.collections.Posts.find({ forum: forum._id }) : [];
         },
 
-        // set the 'dd/mm/yyyy' date if not empty and different
+        // set the Date date if not empty and different
         setDate( date ){
-            if( date ){
-                const newDate = $.datepicker.parseDate( 'dd/mm/yy', date );
-                if( newDate.getTime() !== self.FRS.date.get().getTime()){
-                    //console.log( 'setting date', newDate, 'previous was', self.FRS.date.get());
-                    self.FRS.date.set( newDate );
-                }
+            if( date && date.getTime() !== self.FRS.date.get().getTime()){
+                //console.log( 'setting date', newDate, 'previous was', self.FRS.date.get());
+                self.FRS.date.set( date );
+                pwiForums.client.fn.userDataWrite( 'lastModerationSince', date.toISOString().substring( 0,10 ));
             }
         },
 
@@ -141,15 +125,22 @@ Template.frsModerate.onCreated( function(){
             }
     };
 
-    // initialize date with yesterday
-    const today = new Date();
-    const initialDate = new Date();
-    initialDate.setTime( today.getTime()-( 24*3600000 ));
-    //console.log( 'initialDate', initialDate );
-    self.FRS.date.set( initialDate );
-
+    // initialize date with yesterday unless a date is found in user profile
+    const str = pwiForums.client.fn.userDataRead( 'lastModerationSince' );
+    let initialDate = new Date();
+    if( str ){
+        initialDate.setTime( Date.parse( str ));
+        console.log( 'str', str, 'initialDate', initialDate );
+    } else {
+        const today = new Date();
+        initialDate.setTime( today.getTime()-( 24*3600000 ));
+    }
+    console.log( 'setting date since', initialDate );
+    self.FRS.setDate( initialDate );
+    
     // subscribe to list of moderable forums
     self.autorun(() => {
+        console.log( 'subscribe frsForums.listModerables' );
         self.FRS.forums.handle = self.subscribe( 'frsForums.listModerables' );
     });
 
@@ -162,7 +153,6 @@ Template.frsModerate.onCreated( function(){
             self.FRS.forums.count.set( list.length );
             self.FRS.forums.ready.set( true );
             self.FRS.posts.expected = 0;
-            self.FRS.posts.displayed = 0;
         }
     });
 
@@ -179,6 +169,7 @@ Template.frsModerate.onCreated( function(){
     self.autorun(() => {
         if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
             self.FRS.posts.expected = pwiForums.client.collections.Posts.find().count();
+            self.FRS.posts.displayed = 0;
             self.FRS.posts.ready.set( true );
         }
     });
@@ -199,13 +190,13 @@ Template.frsModerate.onRendered( function(){
                 onClose: function( date, dp ){
                     // dp is the datepicker instance - not a JQuery object
                     // date is the date as text 'jj/mm/aaaa' - may be empty according to the doc
-                    self.FRS.setDate( date );
+                    self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', date ));
                 },
                 // called on each change, either by clicking on the widget, or by manually editing the input element
                 onUpdateDatepicker: function( dp ){
                     //console.log( dp );    // the datepicker instance
                     //console.log( this );  // the input DOM element
-                    self.FRS.setDate( dp.lastVal );
+                    self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
                 }
             });
             //console.log( 'datepicker', res );
@@ -220,10 +211,13 @@ Template.frsModerate.helpers({
         return threadDate > Template.instance().FRS.date.get() ? pwiForums.client.htmlNewThreadBadge() : '';
     },
 
+    // display a private badge
+    badgePrivate( f ){
+        return pwiForums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
+    },
+
     // current date to initialize the input element
     date(){
-        //console.log( 'helper', Template.instance().FRS.date.get());
-        //console.log( 'helper', $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.date.get()));
         return $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.date.get());
     },
 

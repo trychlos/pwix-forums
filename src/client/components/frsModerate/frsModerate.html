@@ -32,7 +32,11 @@
             {{#if forumsCount }}
                 {{#each f in forumsList }}
                     {{ forumCatch f }}
-                    <p class="frs-forum-title">{{ f.title }}</p>
+                    <div class="frs-forum d-flex align-items-center">
+                        <p class="frs-title">{{ f.title }}</p>
+                        <div class="frs-ml1"></div>
+                        {{{ badgePrivate f }}}
+                    </div>
                     <div class="frs-posts">
                         {{#if postsCount f }}
                             {{#each p in postsList f }}

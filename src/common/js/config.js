@@ -2,6 +2,8 @@
  * pwix:forums/src/common/js/config.js
  */
 
+import { ReactiveVar } from 'meteor/reactive-var';
+
 import merge from 'merge';
 
 import { frsOptions } from '../classes/options.class.js';
@@ -15,6 +17,7 @@ pwiForums = {
     // client-specific data and functions
     client: {
         collections: {},
+        user: new ReactiveVar( null )
     },
 
     // the collections used by the package
