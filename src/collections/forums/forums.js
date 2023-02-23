@@ -156,8 +156,11 @@ pwiForums.Forums = {
     //  sorted in ascending title alpha order
     queryModerables(){
         const userId = Meteor.userId();
-        // default is to select all public+private non-archived forums
-        let result = { selector: { $and: [{ archivedAt: { $eq: null }}, { archivedBy: { $eq: null }}] }, options: { sort: { title: 1 }}};
+        // default is to select all public+private non-archived and moderable forums
+        let result = {
+            selector: { $and: [{ archivedAt: { $eq: null }}, { archivedBy: { $eq: null }}, { moderation: { $ne: FRS_MODERATE_NONE }}] },
+            options: { sort: { title: 1 }}
+        };
 
         // to be able to moderate a forum, identified user must have
         //  - FRS_PRIVATE_MODERATOR role for a private forum

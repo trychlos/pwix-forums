@@ -103,6 +103,8 @@ Template.frsModerate.onCreated( function(){
                     $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-less' ).hide();
                 }
             }
+            // height=50 -> gives two display lines (2*24)
+            // height=72 -> gives three displayed lines (3*24)
             const maxHeight = 72;
             const opts = {
                 height: maxHeight,
