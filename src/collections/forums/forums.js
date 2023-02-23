@@ -156,9 +156,10 @@ pwiForums.Forums = {
     //  sorted in ascending title alpha order
     queryModerables(){
         const userId = Meteor.userId();
-        // default is to select all public+private non-archived and moderable forums
+        // default is to select all public+private and moderable forums
+        //  we do not consider here archived forums to get messages published between since date and archive date
         let result = {
-            selector: { $and: [{ archivedAt: { $eq: null }}, { archivedBy: { $eq: null }}, { moderation: { $ne: FRS_MODERATE_NONE }}] },
+            selector: { $and: [{ moderation: { $ne: FRS_MODERATE_NONE }}] },
             options: { sort: { title: 1 }}
         };
 
