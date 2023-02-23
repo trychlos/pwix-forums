@@ -95,20 +95,24 @@
                                 </td>
                                 <td class="frs-vatop frs-nowrap frs-pr1">
                                     <div class="frs-actions d-flex flex-column align-items-center">
-                                        {{#if wantValidate f }}
-                                            {{#if p.validatedAt }}
-                                                <p class="frs-validated">{{{ validatedBy p }}}</p>
-                                                <div class="frs-mt05"></div>
-                                                <button type="button" class="btn btn-sm btn-outline-primary frs-unvalidate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unvalidate" }}</button>
-                                            {{else}}
-                                                <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
-                                            {{/if}}
+                                        {{#if haveValidate f p }}
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
                                             <div class="frs-mt05"></div>
                                         {{/if}}
-                                        {{# if p.deletedBecause }}
+                                        {{#if haveUnvalidate f p }}
+                                            <p class="frs-validated">{{{ validatedBy p }}}</p>
+                                            <div class="frs-mt05"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unvalidate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unvalidate" }}</button>
+                                            <div class="frs-mt05"></div>
+                                        {{/if}}
+                                        {{#if haveModerate f p }}
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn"
+                                                                                            data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">{{ i18n label="moderate" }}</button>
+                                            <div class="frs-mt05"></div>
+                                        {{/if}}
+                                        {{#if haveUnmoderate f p }}
                                             <button type="button" class="btn btn-sm btn-outline-primary frs-unmoderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unmoderate" }}</button>
-                                        {{else}}
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="moderate" }}</button>
+                                            <div class="frs-mt05"></div>
                                         {{/if}}
                                     </div>
                                 </td>

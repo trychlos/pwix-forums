@@ -1,7 +1,7 @@
 /*
  * /src/client/components/frs_post_moderate/frs_post_moderate.js
  *
- * About to "moderate" a post (.i.e. to mark it deleted).
+ * About to "moderate" a post (.i.e. to mark it deleted with a reason).
  * 
  * Parms:
  *  - post: the Post to be 'moderated'
@@ -29,22 +29,21 @@ import './frs_post_moderate.less';
 
 Template.frs_post_moderate.onCreated( function(){
     const self = this;
-    //console.log( self );
 
-    self.FRS = {
-        stats: new ReactiveVar( null )
-    };
-
-    // get the stats
+    // get the stats and other dynamic vars
+    //  attaching them to 'post'
     self.autorun(() => {
         const post = Template.currentData().post;
+        post.rvStats = new ReactiveVar( null );
+        post.rvAuthorEmail = pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS );
+        post.rvAuthorUsername = pwiForums.fn.labelById( post.owner, AC_USERNAME );
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {
                 if( err ){
                     console.error( err );
                 } else {
                     //console.log( res );
-                    self.FRS.stats.set( res );
+                    post.rvStats.set( res )
                 }
             });
         }
@@ -59,19 +58,20 @@ Template.frs_post_moderate.onRendered( function(){
 Template.frs_post_moderate.helpers({
     // display the post content
     content(){
-        const post = Template.currentData().post;
-        return post ? post.content : '';
+        return this.post ? this.post.content : '';
     },
     // the count of owner's message which have already been deleted
     deletedCount(){
-        const stats = Template.instance().FRS.stats.get();
+        const post = this.post;
+        const stats = post ? post.rvStats.get() : null;
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
         return pwiForums.fn.i18n( 'moderate.owner_posted', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
     // email of user
     email(){
-        const post = Template.currentData().post;
-        return post ? post.dynOwnerEmail.get().label : '';
+        const post = this.post;
+        //return post ? post.dynOwnerEmail.get().label : '';
+        return post ? post.rvAuthorEmail.get().label : '';
     },
     // label translation
     i18n( opts ){
@@ -79,12 +79,12 @@ Template.frs_post_moderate.helpers({
     },
     // the post id
     id(){
-        const post = Template.currentData().post;
+        const post = this.post;
         return post ? post._id : '';
     },
     // returns the list of predefined reasons
     reasons(){
-        return i18n.group( pwiForums.strings, 'moderate' ).options;
+        return i18n.group( FRSI18N, 'moderate.options' );
     },
     // preselect the 'gtu' 'option
     selected( it ){
@@ -95,41 +95,39 @@ Template.frs_post_moderate.helpers({
 Template.frs_post_moderate.events({
 
     // confirm the operation
-    'click .frs-confirm'( event, instance ){
-        let post = Template.currentData().post;
-        if( post ){
-            post.deletedAt = new Date();
-            post.deletedBy = Meteor.userId();
-            post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val();
-            Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
-                if( err ){
-                    console.error( err );
-                    tlTolert.error( 'message_error' );
-                } else {
-                    //console.log( res );
-                    tlTolert.success( pwiForums.fn.i18n( 'moderate.message_success' ));
-                    let result = {
-                        inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
-                        reason: instance.$( '.frs-reason' ).find( ':selected' ).val(),
-                        stats: instance.FRS.stats.get(),
-                        post: post
-                    };
-                    instance.data.target.trigger( 'frs-post-moderate-moderated', result );
-                    Meteor.call( 'frsPosts.postModerate', result, ( err, res ) => {
-                        if( err ){
-                            console.error( err );
+    'md-click .frs-post-moderate'( event, instance, data ){
+        if( data.button === MD_BUTTON_OK ){
+            let post = Template.currentData().post;
+            if( post ){
+                post.deletedAt = new Date();
+                post.deletedBy = Meteor.userId();
+                post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val();
+                Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
+                    if( err ){
+                        console.error( err );
+                        tlTolert.error( 'message_error' );
+                    } else {
+                        //console.log( res );
+                        tlTolert.success( pwiForums.fn.i18n( 'moderate.message_success' ));
+                        pwixModal.close();
+                        let result = {
+                            inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
+                            reason: instance.$( '.frs-reason' ).find( ':selected' ).val(),
+                            stats: post.rvStats.get(),
+                            post: post
+                        };
+                        const target = Template.currentData().target;
+                        if( target ){
+                            instance.data.target.trigger( 'frs-post-moderate-moderated', result );
                         }
-                    });
-                }
-                instance.$( '.frs-modal' ).modal( 'hide' );
-            });
+                        Meteor.call( 'frsPosts.postModerate', result, ( err, res ) => {
+                            if( err ){
+                                console.error( err );
+                            }
+                        });
+                    }
+                });
+            }
         }
-        return false;
-    },
-
-    // remove the Blaze element from the DOM
-    'hidden.bs.modal .frs-post-moderate'( event, instance ){
-        // last cleaup the DOM
-        Blaze.remove( instance.view );
     }
 });

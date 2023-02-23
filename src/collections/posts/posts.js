@@ -171,34 +171,42 @@ pwiForums.Posts = {
             options: {
                 // first most recent threads (old threads can wait...)
                 //  in each thread, in the ascending order of the creations
-                sort: { forum: 1, threadSort: -1, createdAt: 1 }
+                sort: { postSort: 1 }
             }
         };
         // do not select posts deleted by the user himself
         // selfDeleted = deletedAt ne null and deletedBecause null
         result.selector.$and.push({ $or: [{ deletedAt: null }, { deletedBecause: { $ne: null }}] });
-        // split forums depending of their moderation strategy
         let aprioriIds = [];
-        let forumsIds = [];
+        let aposterIds = [];
         opts.forums.every(( f ) => {
-            if( f.moderation !== FRS_MODERATE_APOSTERIORI ){
+            if( f.moderation == FRS_MODERATE_APRIORI ){
                 aprioriIds.push( f._id );
+            } else {
+                aposterIds.push( f._id );
             }
-            forumsIds.push( f._id );
             return true;
         });
-        // in a priori forums, wants non-validated posts unless showValidated
-        // in all forums, wants non-moderated posts unless showModerated
+        // if we want moderated posts, this is just a 'or' clause more on all forums
+        //  if we don't, then add a 'and' clause do not select them
         let or = { $or: []};
+        if( opts.showModerated ){
+            or.$or.push({ $and: [{ deletedAt: { $ne: null }}, { deletedBecause: { $ne: null }}] });
+        } else {
+            result.selector.$and.push({ $and: [{ $or: [{ deletedAt: null }, { deletedBecause: null }] }] });
+        }
+        // in a priori forums, wants non-validated posts (unless showValidated) and non-moderated (unless showModerated)
+        //  remind that a post cannot be both validated and moderated...
         if( opts.showValidated ){
-            or.$or.push({ forum: { $in: aprioriIds }});
+            or.$or.push({ $and: [{ forum: { $in: aprioriIds }}] });
         } else {
             or.$or.push({ $and: [{ forum: { $in: aprioriIds }}, { validatedAt: null }] });
         }
+        // in a posteriori, wants non-moderated posts unless showModerated
         if( opts.showModerated ){
-            or.$or.push({ forum: { $in: forumsIds }});
+            or.$or.push({ forum: { $in: aposterIds }});
         } else {
-            or.$or.push({ $and: [{ forum: { $in: forumsIds }}, { deletedAt: { $ne: null }}] });
+            or.$or.push({ $and: [{ forum: { $in: aposterIds }}, { deletedAt: null }] });
         }
         result.selector.$and.push( or );
         result.parms = { ...opts };

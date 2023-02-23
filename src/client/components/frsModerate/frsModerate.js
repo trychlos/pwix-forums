@@ -9,6 +9,8 @@ import { tlTolert } from 'meteor/pwix:tolert';
 
 import dotdotdot from 'dotdotdot';
 
+import '../frs_post_moderate/frs_post_moderate.js';
+
 import './frsModerate.html';
 import './frsModerate.less';
 
@@ -58,6 +60,20 @@ Template.frsModerate.onCreated( function(){
                 const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
                 pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
             }
+        },
+
+        // return the post
+        post( forumId, postId ){
+            const posts = self.FRS.forums.posts.get( forumId ) || [];
+            let post = null;
+            posts.every(( p ) => {
+                if( p._id === postId ){
+                    post = p;
+                    return false;
+                }
+                return true;
+            });
+            return post;
         },
 
         // https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists
@@ -135,12 +151,10 @@ Template.frsModerate.onCreated( function(){
     let initialDate = new Date();
     if( str ){
         initialDate.setTime( Date.parse( str ));
-        console.log( 'str', str, 'initialDate', initialDate );
     } else {
         const today = new Date();
         initialDate.setTime( today.getTime()-( 24*3600000 ));
     }
-    console.log( 'setting date since', initialDate );
     self.FRS.setDate( initialDate );
 
     // creates and initialize ReactiveVar's from user data for checkboxes settings
@@ -173,16 +187,14 @@ Template.frsModerate.onCreated( function(){
                 forums: self.FRS.forums.list.get(),
                 since: self.FRS.date.get(),
                 showValidated: self.FRS.moderationShowValidated.get(),
-                showModerated: self.FRS.moderationShowValidated.get()
+                showModerated: self.FRS.moderationShowModerated.get()
             }));
-            /*
             console.log( pwiForums.Posts.queryModerables({
                 forums: self.FRS.forums.list.get(),
                 since: self.FRS.date.get(),
                 showValidated: self.FRS.moderationShowValidated.get(),
-                showModerated: self.FRS.moderationShowValidated.get()
+                showModerated: self.FRS.moderationShowModerated.get()
             }));
-            */
             self.FRS.posts.ready.set( false );
         }
     });
@@ -324,6 +336,42 @@ Template.frsModerate.helpers({
         return Template.instance().FRS.forums.displayable.get();
     },
 
+    // whether we have a moderate button ?
+    //  yes if message not yet moderated nor validated in a forum moderated a priori
+    //  and not self-deleted (these posts are read-only when displayed)
+    haveModerate( f, p ){
+        const selfDeleted = ( p.deletedAt && !p.deletedBecause );
+        const validated = ( f.moderation === FRS_MODERATE_APRIORI && p.validatedAt );
+        const moderated = ( p.deletedAt && p.deletedBecause );
+        return !selfDeleted && !validated && !moderated;
+    },
+
+    // whether we have a validate button ?
+    //  yes if message not yet validated in a forum moderated a priori, and not already moderated
+    //  and not self-deleted (these posts are read-only when displayed)
+    haveValidate( f, p ){
+        const selfDeleted = ( p.deletedAt && !p.deletedBecause );
+        const waitValidation = ( f.moderation === FRS_MODERATE_APRIORI && !p.validatedAt );
+        const moderated = ( p.deletedAt && p.deletedBecause );
+        return !selfDeleted && waitValidation && !moderated;
+    },
+
+    // whether we have an unmoderate button ?
+    //  yes if post has been moderated
+    haveUnmoderate( f, p ){
+        const selfDeleted = ( p.deletedAt && !p.deletedBecause );
+        const moderated = ( p.deletedAt && p.deletedBecause );
+        return !selfDeleted && moderated;
+    },
+
+    // whether we have an unvalidate button ?
+    //  yes if post have been validated
+    haveUnvalidate( f, p ){
+        const selfDeleted = ( p.deletedAt && !p.deletedBecause );
+        const validated = ( f.moderation === FRS_MODERATE_APRIORI && p.validatedAt );
+        return !selfDeleted && validated;
+    },
+
     // i18n
     i18n( opts ){
         return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
@@ -414,11 +462,6 @@ Template.frsModerate.helpers({
     // the posts has been validated by who and when ?
     validatedBy( p ){
         return pwiForums.fn.i18n( 'moderate.validated_by', p.rvValidator ? p.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
-    },
-
-    // whether the forum be moderated a priori ?
-    wantValidate( f ){
-        return f.moderation === FRS_MODERATE_APRIORI;
     }
 });
 
@@ -442,15 +485,33 @@ Template.frsModerate.events({
         pwiForums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
     },
 
-    // validate the message
-    'click .frs-validate-btn'( event, instance ){
-        const postId = instance.$( event.currentTarget ).attr( 'data-frs-post' );
+    // moderate the message
+    'click .frs-moderate-btn'( event, instance ){
+        const forumId = instance.$( event.currentTarget ).data( 'frs-forum' );
+        const postId = instance.$( event.currentTarget ).data( 'frs-post' );
+        const post = instance.FRS.post( forumId, postId );
+        //console.log( 'postId', postId, 'forumId', forumId, 'post', post );
+        pwixModal.run({
+            mdBody: 'frs_post_moderate',
+            mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
+            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
+            post: post,
+            target: instance.$( '.frsModerate' )
+        });
+        // last user action
+        const today = new Date();
+        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+    },
+
+    // unmoderate the message
+    'click .frs-unmoderate-btn'( event, instance ){
+        const postId = instance.$( event.currentTarget ).data( 'frs-post' );
         //console.log( 'postId', postId );
-        Meteor.call( 'frsPosts.validate', postId, ( err, res ) => {
+        Meteor.call( 'frsPosts.unmoderate', postId, ( err, res ) => {
             if( err ){
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
+                tlTolert.success( pwiForums.fn.i18n( 'moderate.unmoderated' ));
             }
         });
         // last user action
@@ -461,7 +522,7 @@ Template.frsModerate.events({
     // unvalidate the message
     //  this is not same than moderated - just post waits for an approbation
     'click .frs-unvalidate-btn'( event, instance ){
-        const postId = instance.$( event.currentTarget ).attr( 'data-frs-post' );
+        const postId = instance.$( event.currentTarget ).data( 'frs-post' );
         //console.log( 'postId', postId );
         Meteor.call( 'frsPosts.unvalidate', postId, ( err, res ) => {
             if( err ){
@@ -475,7 +536,24 @@ Template.frsModerate.events({
         pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
-    // moderate the message
-    'click .frs-moderate-btn'( event, instance ){
+    // validate the post
+    'click .frs-validate-btn'( event, instance ){
+        const postId = instance.$( event.currentTarget ).data( 'frs-post' );
+        //console.log( 'postId', postId );
+        Meteor.call( 'frsPosts.validate', postId, ( err, res ) => {
+            if( err ){
+                tlTolert.error({ type:err.error, message:err.reason });
+            } else {
+                tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
+            }
+        });
+        // last user action
+        const today = new Date();
+        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+    },
+
+    // a post has been moderated
+    'frs-post-moderate-moderated .frsModerated'( event, instance, data ){
+        console.log( event, data );
     }
 });

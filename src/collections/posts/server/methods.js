@@ -29,8 +29,21 @@ Meteor.methods({
     //  - inform: whether the moderator has asked the user to be informed
     //  - stats: the user count stats
     //  - reason: the reason
+    // this is always called, even if the moderator chooses to not inform the user
     'frsPosts.postModerate'( parms ){
         console.log( 'postModerate', parms );
+    },
+
+    // called when a moderator cancels a moderation
+    'frsPosts.unmoderate'( id ){
+        const unset = {
+            deletedAt: 1,
+            deletedBy: 1,
+            deletedBecause: 1
+        };
+        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
+        console.log( 'frsPosts.unmoderate', unset, res );
+        return res;
     },
 
     // called when a moderator cancels a validation

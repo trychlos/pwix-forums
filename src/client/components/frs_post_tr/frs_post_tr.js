@@ -131,8 +131,7 @@ Template.frs_post_tr.onCreated( function(){
     // get the owner username
     self.autorun(() => {
         let post = Template.currentData().post;
-        post.dynOwnerUsername = pwiForums.fn.labelById( post.owner, AC_USERNAME );
-        post.dynOwnerEmail = pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS );
+        post.rvAuthor = pwiForums.fn.labelById( post.owner, AC_USERNAME );
     })
 });
 
@@ -210,7 +209,7 @@ Template.frs_post_tr.helpers({
     },
 
     postOwner( it ){
-        const rv = it ? it.dynOwnerUsername.get() : null;
+        const rv = it ? it.rvAuthor.get() : null;
         return pwiForums.fn.i18n( 'threads.posted_by', rv ? rv.label : '' );
     },
 
@@ -253,13 +252,11 @@ Template.frs_post_tr.events({
     // moderate (delete) the post
     'click .frs-moderate-btn'( event, instance ){
         const post = Template.currentData().post;
-        //Blaze.renderWithData( Template.frs_post_moderate, { post: post, target: instance.$( 'tr.frs-post-tr' ).closest( '.frs-body' )}, $( 'body' )[0] );
         pwixModal.run({
-            mdTemplate: 'frs_post_moderate',
+            mdBody: 'frs_post_moderate',
             mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
-            post: post,
-            target: instance.$( 'tr.frs-post-tr' ).closest( '.frs-body' )
+            post: post
         });
         return false;
     },
