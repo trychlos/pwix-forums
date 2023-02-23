@@ -30,6 +30,11 @@ Template.frsModerate.onCreated( function(){
             displayed: 0,                           // total displayed posts
             ready: new ReactiveVar( false )         // ready after first postEnd()
         },
+        checkboxes: [
+            'moderationShowEmpty',
+            'moderationShowValidated',
+            'moderationShowModerated'
+        ],
 
         // clear the fields added by the helpers each time the postsList is re-run
         clearForums(){
@@ -54,7 +59,7 @@ Template.frsModerate.onCreated( function(){
             if( date && date.getTime() !== self.FRS.date.get().getTime()){
                 //console.log( 'setting date', newDate, 'previous was', self.FRS.date.get());
                 self.FRS.date.set( date );
-                pwiForums.client.fn.userDataWrite( 'lastModerationSince', date.toISOString().substring( 0,10 ));
+                pwiForums.client.fn.userDataWrite( 'moderationSince', date.toISOString().substring( 0,10 ));
             }
         },
 
@@ -127,7 +132,7 @@ Template.frsModerate.onCreated( function(){
     };
 
     // initialize date with yesterday unless a date is found in user profile
-    const str = pwiForums.client.fn.userDataRead( 'lastModerationSince' );
+    const str = pwiForums.client.fn.userDataRead( 'moderationSince' );
     let initialDate = new Date();
     if( str ){
         initialDate.setTime( Date.parse( str ));
@@ -138,7 +143,13 @@ Template.frsModerate.onCreated( function(){
     }
     console.log( 'setting date since', initialDate );
     self.FRS.setDate( initialDate );
-    
+
+    // creates and initialize ReactiveVar's from user data for checkboxes settings
+    self.FRS.checkboxes.every(( data ) => {
+        self.FRS[data] = new ReactiveVar( pwiForums.client.fn.userDataRead( data ) === 'true' );
+        return true;
+    });
+
     // subscribe to list of moderable forums
     self.autorun(() => {
         console.log( 'subscribe frsForums.listModerables' );
@@ -146,6 +157,7 @@ Template.frsModerate.onCreated( function(){
     });
 
     // get the moderable forums when ready
+    //  *all* moderables forums are returned, whatever be the user display options
     self.autorun(() => {
         if( self.FRS.forums.handle.ready()){
             const query = pwiForums.Forums.queryModerables();
@@ -157,10 +169,15 @@ Template.frsModerate.onCreated( function(){
         }
     });
 
-    // subscribe to list of all posts from the moderable forums since the given date
+    // subscribe to list of all posts from the moderable forums since the given date regarding the display options
     self.autorun(() => {
         if( self.FRS.forums.ready.get()){
-            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', self.FRS.forums.list.get(), self.FRS.date.get()));
+            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', {
+                forums: self.FRS.forums.list.get(),
+                since: self.FRS.date.get(),
+                validated: self.FRS.moderationShowValidated.get(),
+                moderated: self.FRS.moderationShowValidated.get()
+            }));
             self.FRS.posts.ready.set( false );
             //console.log( pwiForums.Posts.queryModerables( self.FRS.forums.list.get(), self.FRS.date.get().toISOString()));
         }
@@ -202,6 +219,14 @@ Template.frsModerate.onRendered( function(){
             });
             //console.log( 'datepicker', res );
         });
+
+    // setup the checkboxes settings depending of the corresponding ReactiveVar
+    self.autorun(() => {
+        self.FRS.checkboxes.every(( data ) => {
+            self.$( 'input[type="checkbox"][data-frs-field="'+data+'"]' ).prop( 'checked', self.FRS[data].get());
+            return true;
+        });
+    });
 });
 
 Template.frsModerate.helpers({
@@ -350,6 +375,14 @@ Template.frsModerate.events({
         return false;
     },
 
+    // manage settings change
+    'change input[type="checkbox"]'( event, instance ){
+        const checked = instance.$( event.currentTarget ).prop( 'checked' );
+        const field = $( event.currentTarget ).data( 'frs-field' );
+        instance.FRS[field].set( checked );
+        pwiForums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
+    },
+
     // validate the message
     'click .frs-validate-btn'( event, instance ){
         const postId = instance.$( event.currentTarget ).attr( 'data-frs-post' );
@@ -361,6 +394,9 @@ Template.frsModerate.events({
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
             }
         });
+        // last user action
+        const today = new Date();
+        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
     // moderate the message

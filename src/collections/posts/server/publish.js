@@ -90,15 +90,19 @@ Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
     self.ready();
 });
 
-// returns the list of posts to be moderated
-//  - for the given list of forums
-//  - since the specified Date object
-//  ordered by increasing creation date (most old first)
+// returns the list of to-be-moderated posts depending of user display options
+// opts is
+//  - forums: an array of all forums moderable by the user
+//  - since: the date to not go before (as a Date object)
+//  - validated: whether to also return the already validated posts
+//  - moderated: whether to also return the already moderated posts
+//
+// returned cursor is ordered by increasing creation date (most old first)
 
-Meteor.publish( 'frsPosts.moderables', function( forumsList, date ){
+Meteor.publish( 'frsPosts.moderables', function( opts ){
     const self = this;
     const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
-    const query = pwiForums.Posts.queryModerables( forumsList, date );
+    const query = pwiForums.Posts.queryModerables( opts );
     //console.log( query.selector );
     //query.selector.$and.every(( it ) => {
     //    console.log( it );

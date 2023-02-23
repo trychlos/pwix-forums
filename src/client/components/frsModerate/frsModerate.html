@@ -6,25 +6,43 @@
                 <div class="frs-title">
                     {{ i18n label="page_title" }}
                 </div>
-            </div>
-            <div class="frs-right">
-            </div>
-        </div>
-
-        <div class="frs-header">
-            <div class="frs-left flex-grow-1">
-                <div class="frs-comment">
-                    {{ i18n label="page_comment" }}
-                </div>
-            </div>
-            <div class="frs-right">
-                <div class="d-flex align-items-center">
-                    <p class="frs-nowrap frs-mr05">{{ i18n label="date" }}</p>
-                    <div class="input-date d-flex">
-                        <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ date }}"/>
-                        <span class="fa-regular fa-sm fa-calendar-days calendar-icon"></span>
+                <div class="frs-header">
+                    <div class="frs-left flex-grow-1">
+                        <div class="frs-comment">
+                            {{ i18n label="page_comment" }}
+                        </div>
+                    </div>
+                    <div class="frs-right">
                     </div>
                 </div>
+            </div>
+            <div class="frs-right">
+                <form class="frs-settings">
+                    <div class="frs-settings-colone">
+                        <p class="frs-nowrap frs-mr05">{{ i18n label="date" }}</p>
+                        <div class="input-date d-flex">
+                            <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ date }}"/>
+                            <span class="fa-regular fa-sm fa-calendar-days calendar-icon"></span>
+                        </div>
+                        <div></div>
+                        <div class="frs-two">
+                            <input type="checkbox" class="form-check-input form-check-input-sm" id="ad1c4e54-eb60-416e-b6af-4e921a8dfcb7" data-frs-field="moderationShowEmpty" />
+                            <label class="form-check-label form-check-label-sm" for="ad1c4e54-eb60-416e-b6af-4e921a8dfcb7">{{ i18n label="empty_checkbox" }}</label>
+                        </div>
+                    </div>
+                    <div class="frs-settings-coltwo">
+                        <div></div>
+                        <div class="frs-two">
+                            <input type="checkbox" class="form-check-input form-check-input-sm" id="4c6d32b3-2051-474e-9f7e-9a55ec7efcad" data-frs-field="moderationShowValidated" />
+                            <label class="form-check-label form-check-label-sm" for="4c6d32b3-2051-474e-9f7e-9a55ec7efcad">{{ i18n label="validated_checkbox" }}</label>
+                        </div>
+                        <div></div>
+                        <div class="frs-two">
+                            <input type="checkbox" class="form-check-input form-check-input-sm" id="a67508fa-4d30-411e-ae5f-2080ab2b86de" data-frs-field="moderationShowModerated" />
+                            <label class="form-check-label form-check-label-sm" for="a67508fa-4d30-411e-ae5f-2080ab2b86de">{{ i18n label="moderated_checkbox" }}</label>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
 

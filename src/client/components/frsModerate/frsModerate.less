@@ -1,16 +1,36 @@
 .frsModerate {
+    .frs-settings {
+        margin: 0.5em;
+        padding: 1em;
+        border: 1px solid lightgray;
+        border-radius: 0.25em;
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 1em;
+        align-items: center;
+        .frs-settings-colone,
+        .frs-settings-coltwo {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 0.5em;
+            align-items: center;
+        }
+        .frs-two {
+            text-align: left;
+        }
+    }
+    .input-date {
+        width: 8em;
+        .calendar-icon {
+            margin-left: -22px;
+            color: var( --bs-gray );
+            position: relative;
+            bottom: -0.5em;
+        }
+    }
     .frs-header {
         display: flex;
         align-items: center;
-        .input-date {
-            width: 8em;
-            .calendar-icon {
-                margin-left: -22px;
-                color: var( --bs-gray );
-                position: relative;
-                bottom: -0.5em;
-            }
-        }
     }
     .frs-content {
         .frs-forum {

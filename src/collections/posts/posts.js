@@ -160,17 +160,20 @@ pwiForums.Posts = {
     },
 
     // returns an object { selector, options } suitable to list the posts to be moderated
-    //  - in the list of forums
-    //  - since the specified Date object
-    queryModerables( forumsList, date ){
+    // opts is
+    //  - forums: an array of all forums moderable by the user
+    //  - since: the date to not go before (as a Date object)
+    //  - validated: whether to also return the already validated posts
+    //  - moderated: whether to also return the already moderated posts
+    queryModerables( opts ){
         let result = {
-            selector: { $and: [{ deletedAt: null }, { createdAt: { $gte: date }}] },
+            selector: { $and: [{ deletedAt: null }, { createdAt: { $gte: opts.since }}] },
             options: {
                 sort: { threadSort: 1, createdAt: 1 }
             }
         };
         let forumsIds = [];
-        forumsList.every(( f ) => {
+        opts.forums.every(( f ) => {
             forumsIds.push( f._id );
             return true;
         });
