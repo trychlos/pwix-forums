@@ -2,6 +2,7 @@
  * pwix:forums/src/cient/components/frsModerate/frsModerate.js
  */
 
+import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n } from 'meteor/pwix:i18n';
 import { tlTolert } from 'meteor/pwix:tolert';
@@ -20,9 +21,10 @@ Template.frsModerate.onCreated( function(){
         date: new ReactiveVar( new Date()),         // Date object
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
-            list: new ReactiveVar( [] ),            // the fetched list
-            count: new ReactiveVar( 0 ),            // the count fo found forums
-            ready: new ReactiveVar( false )         // ready after fetch
+            list: new ReactiveVar( [] ),            // the fetched list of all moderable forums
+            displayable: new ReactiveVar( [] ),     // the displayable list
+            ready: new ReactiveVar( false ),        // ready after fetch
+            posts: new ReactiveDict()               // posts per forum: forum.id -> array of posts
         },
         posts: {
             handle: new ReactiveVar( null ),        // a global subscription (for all forums by the user)
@@ -49,17 +51,12 @@ Template.frsModerate.onCreated( function(){
             self.FRS.posts.displayed = 0;
         },
 
-        // returns the cursor to the posts to be moderated for this forum
-        postsCursor( forum ){
-            return self.FRS.posts.handle.get().ready() ? pwiForums.client.collections.Posts.find({ forum: forum._id }) : [];
-        },
-
         // set the Date date if not empty and different
         setDate( date ){
             if( date && date.getTime() !== self.FRS.date.get().getTime()){
-                //console.log( 'setting date', newDate, 'previous was', self.FRS.date.get());
                 self.FRS.date.set( date );
-                pwiForums.client.fn.userDataWrite( 'moderationSince', date.toISOString().substring( 0,10 ));
+                const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
+                pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
             }
         },
 
@@ -105,7 +102,7 @@ Template.frsModerate.onCreated( function(){
             }
             // height=50 -> gives two display lines (2*24)
             // height=72 -> gives three displayed lines (3*24)
-            const maxHeight = 72;
+            const maxHeight = 75;
             const opts = {
                 height: maxHeight,
                 ellipsis: '',
@@ -165,9 +162,7 @@ Template.frsModerate.onCreated( function(){
             const query = pwiForums.Forums.queryModerables();
             const list = pwiForums.client.collections.Forums.find( query.selector ).fetch();
             self.FRS.forums.list.set( list );
-            self.FRS.forums.count.set( list.length );
             self.FRS.forums.ready.set( true );
-            self.FRS.posts.expected = 0;
         }
     });
 
@@ -177,20 +172,77 @@ Template.frsModerate.onCreated( function(){
             self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', {
                 forums: self.FRS.forums.list.get(),
                 since: self.FRS.date.get(),
-                validated: self.FRS.moderationShowValidated.get(),
-                moderated: self.FRS.moderationShowValidated.get()
+                showValidated: self.FRS.moderationShowValidated.get(),
+                showModerated: self.FRS.moderationShowValidated.get()
             }));
+            /*
+            console.log( pwiForums.Posts.queryModerables({
+                forums: self.FRS.forums.list.get(),
+                since: self.FRS.date.get(),
+                showValidated: self.FRS.moderationShowValidated.get(),
+                showModerated: self.FRS.moderationShowValidated.get()
+            }));
+            */
             self.FRS.posts.ready.set( false );
-            //console.log( pwiForums.Posts.queryModerables( self.FRS.forums.list.get(), self.FRS.date.get().toISOString()));
         }
     });
 
-    // subscription is ready: we are so able to anticipate the total count of posts
+    // posts subscription is ready: we are so able to anticipate the total count of posts
+    //  also:
+    //  - count posts per forum to build displayable list
+    //  - set thread breaks
+    //  - set first thread of the forum
+    //  - set first post of the thread 
     self.autorun(() => {
         if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
-            self.FRS.posts.expected = pwiForums.client.collections.Posts.find().count();
+            self.FRS.posts.expected = 0;
+            self.FRS.forums.posts.clear();
+            let previousSortKey = null;
+            let previousForum = null;
+            let posts = [];
+            console.log( 'fetching published posts' );
+            pwiForums.client.collections.Posts.find().fetch().every(( p ) => {
+                self.FRS.posts.expected += 1;
+                p.threadDifferent = ( p.threadSort !== previousSortKey );
+                p.firstPost = p.threadDifferent;
+                p.firstThread = ( previousForum !== p.forum );
+                if( p.firstThread && previousForum ){
+                    self.FRS.forums.posts.set( previousForum, posts );
+                    posts = [];
+                }
+                previousForum = p.forum;
+                previousSortKey = p.threadSort;
+                //console.log( p );
+                posts.push( p );
+                return true;
+            });
+            if( previousForum ){
+                self.FRS.forums.posts.set( previousForum, posts );
+            }
+            console.log( 'posts.expected', self.FRS.posts.expected );
             self.FRS.posts.displayed = 0;
             self.FRS.posts.ready.set( true );
+        }
+    });
+
+    // after posts have been received, we are able to compute a list of the displayable forums
+    self.autorun(() => {
+        if( self.FRS.posts.ready.get()){
+            console.log( 'recompute displayable forums' );
+            let displayable = [];
+            let first = true;
+            self.FRS.forums.list.get().every(( f ) => {
+                const posts = self.FRS.forums.posts.get( f._id );
+                const count = posts ? posts.length : 0;
+                if( self.FRS.moderationShowEmpty.get() || count ){
+                    f.firstForum = first;
+                    f.postsCount = count;
+                    displayable.push( f );
+                    first = false;
+                }
+                return true;
+            });
+            self.FRS.forums.displayable.set( displayable );
         }
     });
 });
@@ -210,12 +262,14 @@ Template.frsModerate.onRendered( function(){
                 onClose: function( date, dp ){
                     // dp is the datepicker instance - not a JQuery object
                     // date is the date as text 'jj/mm/aaaa' - may be empty according to the doc
+                    //console.log( date );
                     self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', date ));
                 },
                 // called on each change, either by clicking on the widget, or by manually editing the input element
                 onUpdateDatepicker: function( dp ){
                     //console.log( dp );    // the datepicker instance
                     //console.log( this );  // the input DOM element
+                    //console.log( dp.lastVal );
                     self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
                 }
             });
@@ -249,24 +303,25 @@ Template.frsModerate.helpers({
         return pwiForums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
     },
 
-    // current date to initialize the input element
-    date(){
-        return $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.date.get());
-    },
-
     // do we have something to do with the current forum ?
     forumCatch( f ){
     },
 
-    // returns the count of forums
+    // if we are the first forum of the list ?
+    forumFirst( f ){
+        //console.log( 'forumFirst', f.firstForum );
+        return f.firstForum ? 'frs-first' : '';
+    },
+
+    // returns the count of displayable forums
     forumsCount(){
-        return Template.instance().FRS.forums.count.get();
+        return Template.instance().FRS.forums.displayable.get().length;
     },
 
     // list the forums the user is allowed to moderate
     forumsList(){
         //console.log( 'forumsList' );
-        return Template.instance().FRS.forums.list.get();
+        return Template.instance().FRS.forums.displayable.get();
     },
 
     // i18n
@@ -290,11 +345,12 @@ Template.frsModerate.helpers({
     },
 
     // catch each rendered post
-    //  install a ReactiveVar which will hold the author username
+    //  install a ReactiveVar which will hold the needed labels
     postCatch( f, p ){
         //console.log( 'postCatch' );
         p.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
         p.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
+        p.rvValidator = p.validatedBy ? pwiForums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
         p.rvStats = new ReactiveVar( null );
         Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.rvStats.set( res ); });
     },
@@ -314,18 +370,11 @@ Template.frsModerate.helpers({
         }
     },
 
-    // add a 'frs-first' class is first post to be moderated in the thread
+    // add a 'frs-first' class to first post to be moderable in the thread
     //  first post of each thread set the title in the object
     postFirst( f, p ){
-        let o = f.threadsList || {};
-        let first = true;
-        if( o[p.threadTitle] ){
-            first = false;
-        } else {
-            o[p.threadTitle] = true;
-            f.threadsList = { ...o };
-        }
-        return first ? 'frs-first' : '';
+        //console.log( 'postFirst', p.firstPost );
+        return p.firstPost ? 'frs-first' : '';
     },
 
     // the moderation score of the author
@@ -335,28 +384,36 @@ Template.frsModerate.helpers({
         return pwiForums.fn.i18n( 'moderate.owner_score', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
 
-    // returns the count of posts for this forum
-    //  because this helper is executed before trying to display the list, we compute the cursor here
-    postsCount( f ){
-        const cursor = Template.instance().FRS.postsCursor( f );
-        return cursor.count ? cursor.count() : 0;
+    // list the posts displayed in this forum
+    postsList( f ){
+        //console.log( 'postsList' );
+        return Template.instance().FRS.forums.posts.get( f._id ) || [];
     },
 
-    // list the posts to be moderated
-    postsList( f ){
-        return Template.instance().FRS.postsCursor( f );
-   },
+    // current since date to initialize the input element
+    since(){
+        return $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.date.get());
+    },
 
     // if this post belongs to another thread (relatively to this forum) ?
-    threadNew( f, p ){
-        const another = ( p.threadTitle !== f.previousThread );
-        f.previousThread = p.threadTitle;
-        return another;
+    threadDifferent( f, p ){
+        //console.log( 'threadDifferent', p.threadDifferent );
+        return p.threadDifferent;
+    },
+
+    // if this thread the first in the forum ?
+    threadFirst( f, p ){
+        return p.firstThread ? 'frs-first' : '';
     },
 
     // thread title
     threadTitle( p ){
         return pwiForums.fn.i18n( 'moderate.thread_title', p.threadTitle );
+    },
+
+    // the posts has been validated by who and when ?
+    validatedBy( p ){
+        return pwiForums.fn.i18n( 'moderate.validated_by', p.rvValidator ? p.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
     },
 
     // whether the forum be moderated a priori ?
@@ -394,6 +451,23 @@ Template.frsModerate.events({
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
+            }
+        });
+        // last user action
+        const today = new Date();
+        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+    },
+
+    // unvalidate the message
+    //  this is not same than moderated - just post waits for an approbation
+    'click .frs-unvalidate-btn'( event, instance ){
+        const postId = instance.$( event.currentTarget ).attr( 'data-frs-post' );
+        //console.log( 'postId', postId );
+        Meteor.call( 'frsPosts.unvalidate', postId, ( err, res ) => {
+            if( err ){
+                tlTolert.error({ type:err.error, message:err.reason });
+            } else {
+                tlTolert.success( pwiForums.fn.i18n( 'moderate.unvalidated' ));
             }
         });
         // last user action

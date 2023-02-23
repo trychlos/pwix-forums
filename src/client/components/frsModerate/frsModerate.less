@@ -1,3 +1,7 @@
+// as of 2023- 2-23, Chrome doesn't support grid-template-columns: subgrid;
+//  see https://caniuse.com/?search=grid-template-columns
+//  so get stuck to old tables
+//
 .frsModerate {
     .frs-settings {
         margin: 0.5em;
@@ -33,39 +37,37 @@
         align-items: center;
     }
     .frs-content {
+        // display forum informations
         .frs-forum {
             .frs-title {
                 font-weight: bold;
                 font-size: 110%;
             }
         }
-        .frs-forum:not( :first-child ){
+        .frs-forum:not( .frs-first ){
             margin-top: 0.5em;
             padding-top: 0.5em;
             border-top: 1px solid lightgray;
         }
-        .frs-posts {
-            margin-left: 1em;
-            margin-right: 1em;
-        }
-        .frs-post {
-            margin-left: 1em;
-            margin-right: 1em;
-        }
-        .frs-thread:not( :first-child ){
+        // gather all posts in this forum
+        //  with a thread informations row for each thread
+        .frs-thread:not( .frs-first ){
             margin-top: 0.5em;
             padding-top: 0.5em;
             border-top: 1px solid blue;
         }
-        .frs-post {
-            margin-top: 0.5em;
-            .frs-content {
-                background-color: #e0e0e0;
-            }
+        .frs-post td {
+            padding-bottom: 0.5em;
         }
-        .frs-post:not( .frs-first ){
+        .frs-post .frs-content {
+            background-color: #e0e0e0;
+        }
+        .frs-post:not( .frs-first ) td {
             padding-top: 0.5em;
             border-top: 1px solid lightblue;
+        }
+        .frs-actions {
+            text-align: center;
         }
         .frs-no-new-post,
         .frs-no-forum {
@@ -75,6 +77,11 @@
         }
         .frs-authoring {
             font-size: 90%;
+        }
+        .frs-validated {
+            font-size: 90%;
+            font-style: italic;
+            color: gray;
         }
     }
 }

@@ -163,21 +163,43 @@ pwiForums.Posts = {
     // opts is
     //  - forums: an array of all forums moderable by the user
     //  - since: the date to not go before (as a Date object)
-    //  - validated: whether to also return the already validated posts
-    //  - moderated: whether to also return the already moderated posts
+    //  - showValidated: whether to also return the already validated posts
+    //  - showModerated: whether to also return the already moderated posts
     queryModerables( opts ){
         let result = {
-            selector: { $and: [{ deletedAt: null }, { createdAt: { $gte: opts.since }}] },
+            selector: { $and: [{ createdAt: { $gte: opts.since }}] },
             options: {
-                sort: { threadSort: 1, createdAt: 1 }
+                // first most recent threads (old threads can wait...)
+                //  in each thread, in the ascending order of the creations
+                sort: { forum: 1, threadSort: -1, createdAt: 1 }
             }
         };
+        // do not select posts deleted by the user himself
+        result.selector.$and.push({ $or: [{ deletedAt: null }, { deletedBecause: null }] });
+        // split forums depending of their moderation strategy
+        let aprioriIds = [];
         let forumsIds = [];
         opts.forums.every(( f ) => {
+            if( f.moderation !== FRS_MODERATE_APOSTERIORI ){
+                aprioriIds.push( f._id );
+            }
             forumsIds.push( f._id );
             return true;
         });
-        result.selector.$and.push({ forum: { $in: forumsIds }});
+        // in a priori forums, wants non-validated posts unless showValidated
+        // in all forums, wants non-moderated posts unless showModerated
+        let or = { $or: []};
+        if( opts.showValidated ){
+            or.$or.push({ forum: { $in: aprioriIds }});
+        } else {
+            or.$or.push({ $and: [{ forum: { $in: aprioriIds }}, { validatedAt: null }] });
+        }
+        if( opts.showModerated ){
+            or.$or.push({ forum: { $in: forumsIds }});
+        } else {
+            or.$or.push({ $and: [{ forum: { $in: forumsIds }}, { deletedAt: { $ne: null }}] });
+        }
+        result.selector.$and.push( or );
         return result;
     },
 

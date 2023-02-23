@@ -50,11 +50,6 @@
 |   21 | 2023- 2-21 | export more bulding elements, e.g. methods who answer some common questions as who is able to read, to write, to moderate, and so on |
 |   22 | 2023- 2-21 | frsModerate: internationalize (register in i18n) datepicker formats |
 |   23 | 2023- 2-21 | add a view counter to the thread |
-|   29 | 2023- 2-21 | frsModerate: have an option to show already moderated posts |
-|   30 | 2023- 2-21 | frsModerate: have an option to show empty forums (forums without any to-be-moderated posts) |
-|   33 | 2023- 2-21 | frsModerate posts: display the creation date |
-|   35 | 2023- 2-21 | frsModerate identify the author + add already moderated count and percent|
-|   36 | 2023- 2-21 | frsModerate have a checkbox for validate if moderation is a priori |
 |   37 | 2023- 2-21 | frsModerate have a button for moderate which goes to the moderation dialog |
 |   38 | 2023- 2-21 | frsModerate if already moderated, say by who and why and when ? |
 |   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
@@ -66,8 +61,6 @@
 |   47 | 2023- 2-22 | forum_edit: restore edition of private readers, writers and moderators |
 |   48 | 2023- 2-22 | frsForums: ellipsize the forum description like in frsModerate |
 |   49 | 2023- 2-22 | frsPosts: have a single Reply button for the thread |
-|   51 | 2023- 2-22 | frsModerate: have an option to include moderated posts since the date |
-|   52 | 2023- 2-22 | frsModerate: the publication shoul dtake into account the above option (with ou without moderated posts) |
 |   53 | | |
 |   54 | | |
 
@@ -88,20 +81,34 @@
 |      | 2023- 2-22 | done |
 |   26 | 2023- 2-21 | review badge: have a class for each type of these, and be able to derive these types |
 |      | 2023- 2-22 | done |
-|   28 | 2023- 2-21 | BUG frsPosts: while I am logged in as admin, display 'You cannot participate as undefined.' |
-|      | 2023- 2-22 | fixed |
 |   27 | 2023- 2-21 | frsModerate: keep the last used date either as a user data |
 |      | 2023- 2-22 | done |
+|   28 | 2023- 2-21 | BUG frsPosts: while I am logged in as admin, display 'You cannot participate as undefined.' |
+|      | 2023- 2-22 | fixed |
+|   29 | 2023- 2-21 | frsModerate: have an option to show already moderated posts |
+|      | 2023- 2-23 | done |
+|   30 | 2023- 2-21 | frsModerate: have an option to show empty forums (forums without any to-be-moderated posts) |
+|      | 2023- 2-23 | done |
 |   31 | 2023- 2-21 | frsModerate forums: add a public/private badge |
 |      | 2023- 2-22 | done |
 |   32 | 2023- 2-21 | frsModerate forums: display the moderation strategy |
 |      | 2023- 2-22 | done |
+|   33 | 2023- 2-21 | frsModerate posts: display the creation date |
+|      | 2023- 2-23 | done |
 |   34 | 2023- 2-21 | frsModerate posts: ellipsize the content + have 'plus' button/link |
 |      | 2023- 2-22 | done |
+|   35 | 2023- 2-21 | frsModerate identify the author + add already moderated count and percent|
+|      | 2023- 2-23 | done |
+|   36 | 2023- 2-21 | frsModerate have a checkbox for validate if moderation is a priori |
+|      | 2023- 2-23 | done |
 |   44 | 2023- 2-22 | should be able to modify the category from forum_panel |
 |      | 2023- 2-22 | done |
 |   45 | 2023- 2-22 | forum_panel: select the moderation strategy |
 |      | 2023- 2-22 | done |
+|   51 | 2023- 2-22 | frsModerate: have an option to include moderated posts since the date |
+|      | 2023- 2-23 | done |
+|   52 | 2023- 2-22 | frsModerate: the publication should take into account the above option (with ou without moderated posts) |
+|      | 2023- 2-23 | done |
 
 ---
 P. Wieser

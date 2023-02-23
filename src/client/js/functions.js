@@ -31,7 +31,7 @@ pwiForums.client.fn = {
      */
     userDataRead( name ){
         const settings = pwiForums.opts()['collections.prefix']()+'settings.'+name;
-        let result = pwiForums.client.user.get();
+        let result = pwiForums.client.userSettings.get();
         settings.split( '.' ).every(( it ) => {
             if( result && result[it] ){
                 result = result[it];
@@ -58,14 +58,14 @@ pwiForums.client.fn = {
             };
             const settings = pwiForums.opts()['collections.prefix']()+'settings';
             dict[settings] = 1;
-            Meteor.callPromise( 'frsForums.accountById', userId, dict )
+            Meteor.callPromise( 'frsUsers.accountById', userId, dict )
                 .then(( res ) => {
-                    pwiForums.client.user.set( res );
+                    pwiForums.client.userSettings.set( res );
                     console.log( 'user data', res );
                     return Promise.resolve( res );
                 });
         } else {
-            pwiForums.client.user.set( null );
+            pwiForums.client.userSettings.set( null );
         }
     },
 
@@ -77,6 +77,7 @@ pwiForums.client.fn = {
      */
     userDataWrite( name, value ){
         const settings = pwiForums.opts()['collections.prefix']()+'settings';
+        //console.log( settings+'.'+name, value );
         pwixAccountsTools.writeData( Meteor.userId(), settings+'.'+name, value );
         pwiForums.client.fn.userDataUpdate();
     },

@@ -94,8 +94,8 @@ Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
 // opts is
 //  - forums: an array of all forums moderable by the user
 //  - since: the date to not go before (as a Date object)
-//  - validated: whether to also return the already validated posts
-//  - moderated: whether to also return the already moderated posts
+//  - showValidated: whether to also return the already validated posts
+//  - showModerated: whether to also return the already moderated posts
 //
 // returned cursor is ordered by increasing creation date (most old first)
 
@@ -113,7 +113,7 @@ Meteor.publish( 'frsPosts.moderables', function( opts ){
     function f_addFields( doc ){
         const originalPost = doc.threadId ? pwiForums.server.collections.Posts.findOne({ _id: doc.threadId }) : doc;
         doc.threadTitle = originalPost.title;
-        doc.threadSort = originalPost.createdAt;
+        doc.threadSort = originalPost.createdAt+'-'+originalPost._id;
         return doc;
     }
 

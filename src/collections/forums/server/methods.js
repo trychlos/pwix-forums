@@ -1,10 +1,6 @@
 
 Meteor.methods({
 
-    'frsForums.accountById'( id, fields ){
-        return Meteor.users.findOne({ _id: id }, { fields: fields });
-    },
-
     // a category has been deleted
     //  categorize all attached forum to 'none'
     //  returns the impacted forums

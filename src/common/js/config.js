@@ -17,7 +17,7 @@ pwiForums = {
     // client-specific data and functions
     client: {
         collections: {},
-        user: new ReactiveVar( null )
+        userSettings: new ReactiveVar( null )
     },
 
     // the collections used by the package

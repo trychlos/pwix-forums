@@ -21,7 +21,7 @@
                     <div class="frs-settings-colone">
                         <p class="frs-nowrap frs-mr05">{{ i18n label="date" }}</p>
                         <div class="input-date d-flex">
-                            <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ date }}"/>
+                            <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ since }}"/>
                             <span class="fa-regular fa-sm fa-calendar-days calendar-icon"></span>
                         </div>
                         <div></div>
@@ -46,35 +46,45 @@
             </div>
         </div>
 
-        <div class="frs-content">
+        <!-- As of 2023- 2-23, only Safari/IOS supposts grid-template-columns: subgrid; - so get stuck with table presentation -->
+        <table class="frs-content frs-w100">
             {{#if forumsCount }}
                 {{#each f in forumsList }}
                     {{ forumCatch f }}
-                    <div class="frs-forum d-flex align-items-center">
-                        <p class="frs-title">{{ f.title }}</p>
-                        <div class="frs-ml1"></div>
-                        {{{ badgePrivate f }}}
-                        <div class="frs-ml05"></div>
-                        {{{ badgeModeration f }}}
-                    </div>
-                    <div class="frs-posts">
-                        {{#if postsCount f }}
-                            {{#each p in postsList f }}
-                                {{ postCatch f p }}
-                                {{#if threadNew f p }}
-                                    <div class="frs-thread d-flex flex-align-items-center">
-                                        <p class="frs-title">{{{ threadTitle p }}}</p>
-                                        <div class="frs-ml1"></div>
-                                        {{{ badgeNew p }}}
-                                    </div>
-                                {{/if}}
-                                <div class="frs-post {{ postFirst f p }} d-flex align-items-start">
-                                    <div class="frs-authoring">
+                    <tr>
+                        <td colspan="3">
+                            <div class="frs-forum {{ forumFirst f }} d-flex align-items-center">
+                                <p class="frs-title">{{ f.title }}</p>
+                                <div class="frs-pl1"></div>
+                                {{{ badgePrivate f }}}
+                                <div class="frs-ml05"></div>
+                                {{{ badgeModeration f }}}
+                            </div>
+                        </td>
+                    </tr>
+                    {{#if f.postsCount }}
+                        {{#each p in postsList f }}
+                            {{ postCatch f p }}
+                            {{#if threadDifferent f p }}
+                                <tr>
+                                    <td class="frs-pl1 frs-pr1 frs-pb05" colspan="3">
+                                        <div class="frs-thread {{ threadFirst f p }} d-flex flex-align-items-center">
+                                            <p class="frs-title">{{{ threadTitle p }}}</p>
+                                            <div class="frs-ml1"></div>
+                                            {{{ badgeNew p }}}
+                                        </div>
+                                    </td>
+                                </tr>
+                            {{/if}}
+                            <tr class="frs-post {{ postFirst f p }}">
+                                <td class="frs-authoring frs-vatop frs-pl2">
+                                    <div>
                                         <p class="frs-date frs-nowrap">{{ postDate p }}</p>
                                         <p class="frs-author frs-nowrap">{{ postAuthor p }}</p>
-                                        <p class="frs-score">{{{ postScore p }}}</p>
+                                        <p class="frs-score frs-nowrap">{{{ postScore p }}}</p>
                                     </div>
-                                    <div class="frs-ml1"></div>
+                                </td>
+                                <td class="frs-vatop frs-pl1 frs-pr1 frs-w100">
                                     <div class="ellipsis-wrapper flex-grow-1" id="post-{{ p._id }}-content">
                                         <div class="frs-content ellipsis-text">{{{ p.content }}}</div>
                                         <div class="d-flex justify-content-end align-items-center">
@@ -82,26 +92,37 @@
                                             <a class="ellipsis-less" href='#'>{{ i18n label="ellipsis_less" }}</a>
                                         </div>
                                     </div>
-                                    <div class="frs-ml1"></div>
+                                </td>
+                                <td class="frs-vatop frs-nowrap frs-pr1">
                                     <div class="frs-actions d-flex flex-column align-items-center">
                                         {{#if wantValidate f }}
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
+                                            {{#if p.validatedAt }}
+                                                <p class="frs-validated">{{{ validatedBy p }}}</p>
+                                                <div class="frs-mt05"></div>
+                                                <button type="button" class="btn btn-sm btn-outline-primary frs-unvalidate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unvalidate" }}</button>
+                                            {{else}}
+                                                <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
+                                            {{/if}}
                                             <div class="frs-mt05"></div>
                                         {{/if}}
-                                        <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="moderate" }}</button>
+                                        {{# if p.deletedBecause }}
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unmoderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unmoderate" }}</button>
+                                        {{else}}
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="moderate" }}</button>
+                                        {{/if}}
                                     </div>
-                                </div>
-                                {{ postEnd }}
-                            {{/each}}
-                        {{else}}
-                            <p class="frs-no-new-post">{{ noNewPost }}</p>
-                        {{/if}}
-                    </div>
+                                </td>
+                            </tr>
+                            {{ postEnd }}
+                        {{/each}}
+                    {{else}}
+                        <p class="frs-no-new-post">{{ noNewPost }}</p>
+                    {{/if}}
                 {{/each}}
             {{else}}
                 <p class="frs-no-forum">{{ noForum }}</p>
             {{/if}}
-        </div>
+        </table>
 
         <div class="frs-bottom">
         </div>

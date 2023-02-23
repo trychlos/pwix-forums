@@ -33,6 +33,17 @@ Meteor.methods({
         console.log( 'postModerate', parms );
     },
 
+    // called when a moderator cancels a validation
+    'frsPosts.unvalidate'( id ){
+        const unset = {
+            validatedAt: 1,
+            validatedBy: 1
+        };
+        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
+        console.log( 'frsPosts.unvalidate', unset, res );
+        return res;
+    },
+
     // create a new post
     //  the passed-in object may or may not contains an _id
     'frsPosts.upsert'( o ){
@@ -101,16 +112,12 @@ Meteor.methods({
 
     // called when a moderator confirm the validation
     'frsPosts.validate'( id ){
-        let post = pwiForums.server.collections.Posts.find({ _id: id });
-        if( post ){
-            const set = {
-                validatedAt: new Date(),
-                validatedBy: Meteor.userId()
-            };
-            const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set });
-            console.log( 'frsPosts.validate', set, res );
-            return res;
-        }
-        return null;
-    },
+        const set = {
+            validatedAt: new Date(),
+            validatedBy: Meteor.userId()
+        };
+        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set });
+        console.log( 'frsPosts.validate', set, res );
+        return res;
+    }
 });
