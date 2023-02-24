@@ -94,25 +94,6 @@ Meteor.publish( 'frsForums.listVisiblePrivate', function( userId ){
 
 // returns the list of forums which this user is authorized to moderate
 Meteor.publish( 'frsForums.listModerables', function( userId ){
-    const self = this;
-    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
-    const query = pwiForums.Forums.queryModerables();
-
-    const observer = pwiForums.server.collections.Forums.find( query.selector, query.options ).observe({
-        added: function( doc ){
-            self.added( collectionName, doc._id, doc );
-        },
-        changed: function( newDoc, oldDoc ){
-            self.changed( collectionName, newDoc._id, newDoc );
-        },
-        removed: function( oldDoc ){
-            self.removed( collectionName, oldDoc._id );
-        }
-    });
-
-    self.onStop( function(){
-        observer.stop();
-    });
-
-    self.ready();
+    const query = pwiForums.Forums.queryModerables( userId );
+    return pwiForums.server.collections.Forums.find( query.selector, query.options );
 });

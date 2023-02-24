@@ -154,8 +154,7 @@ pwiForums.Forums = {
     // returns an object { selector, options } suitable to list all forums moderable by the current user
     //  to be used both on the server-side publication and on the client fetch
     //  sorted in ascending title alpha order
-    queryModerables(){
-        const userId = Meteor.userId();
+    queryModerables( userId ){
         // default is to select all public+private and moderable forums
         //  we do not consider here archived forums to get messages published between since date and archive date
         let result = {
@@ -188,6 +187,9 @@ pwiForums.Forums = {
         } else {
             result.selector = { xxxxxx: 'EMPTY_SELECTION' };
         }
+        result.parms = {
+            userId: userId
+        };
         return result;
     },
 
