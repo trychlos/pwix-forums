@@ -75,7 +75,7 @@ Template.frsThreads.onCreated( function(){
     self.autorun(() => {
         const forumId = self.FRS.forum.id.get();
         if( forumId ){
-            self.FRS.forum.handle.set( self.subscribe( 'frsForums.listOne', forumId ));
+            self.FRS.forum.handle.set( self.subscribe( 'frsForums.byId', forumId ));
         }
     });
 

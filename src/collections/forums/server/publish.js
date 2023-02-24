@@ -1,4 +1,9 @@
 
+// returns the asked forum cursor
+Meteor.publish( 'frsForums.byId', function( id ){
+    return pwiForums.server.collections.Forums.find({ _id: id });
+});
+
 // returns the list of visible forums
 //  adds count of threads and total count of posts
 // rules are:
@@ -41,11 +46,6 @@ Meteor.publish( 'frsForums.listVisible', function(){
     });
 
     self.ready();
-});
-
-// returns the asked forum cursor
-Meteor.publish( 'frsForums.listOne', function( id ){
-    return pwiForums.server.collections.Forums.find({ _id: id });
 });
 
 // returns the list of private forums visible to this user
