@@ -106,7 +106,7 @@ Meteor.methods({
         // the moderated (i.e. deleted by someone else)
         const moderated = pwiForums.server.collections.Posts.find({ owner: userId, deletedAt: { $ne: null }, deletedBy: { $ne: userId }}).count();
         const res = { posts: posts, auto: auto, moderated: moderated };
-        //console.log( 'userStats', res );
+        console.log( 'userStats', res );
         return res;
     },
 

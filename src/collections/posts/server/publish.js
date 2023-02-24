@@ -113,7 +113,9 @@ Meteor.publish( 'frsPosts.moderables', function( opts ){
     function f_addFields( doc ){
         const originalPost = doc.threadId ? pwiForums.server.collections.Posts.findOne({ _id: doc.threadId }) : doc;
         doc.threadTitle = originalPost.title;
-        doc.threadSort = originalPost.createdAt+'-'+originalPost._id;
+        doc.threadDate = originalPost.createdAt;
+        doc.threadSort = originalPost._id;   // needed to display a title per thread
+        doc.postSort = originalPost._id+'-'+doc.createdAt;  // sort order (so not sorted by forum)
         return doc;
     }
 

@@ -175,7 +175,8 @@ pwiForums.Posts = {
             }
         };
         // do not select posts deleted by the user himself
-        result.selector.$and.push({ $or: [{ deletedAt: null }, { deletedBecause: null }] });
+        // selfDeleted = deletedAt ne null and deletedBecause null
+        result.selector.$and.push({ $or: [{ deletedAt: null }, { deletedBecause: { $ne: null }}] });
         // split forums depending of their moderation strategy
         let aprioriIds = [];
         let forumsIds = [];
@@ -200,6 +201,7 @@ pwiForums.Posts = {
             or.$or.push({ $and: [{ forum: { $in: forumsIds }}, { deletedAt: { $ne: null }}] });
         }
         result.selector.$and.push( or );
+        result.parms = { ...opts };
         return result;
     },
 
