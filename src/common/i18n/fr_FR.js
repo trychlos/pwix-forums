@@ -86,7 +86,7 @@ pwiForums.i18n = {
                 // moderation page
                 page_title: 'Forums moderation',
                 page_comment: 'You are seeing here all messages since the specified date, posted in the forums you are allowed to moderate.',
-                date: 'Depuis le :',
+                date: 'Since :',
                 noforum: 'Nothing to moderate',
                 nonewpost: 'No new post since %s',
                 thread_title: 'In the thread «&nbsp;<b>%s</b>&nbsp;»',
