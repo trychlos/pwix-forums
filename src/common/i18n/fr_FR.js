@@ -105,6 +105,7 @@ pwiForums.i18n = {
                 moderated_checkbox: 'Also show moderated posts',
                 empty_checkbox: 'Display forums without to-be-moderated posts',
                 validated_by: 'Validated by %s<br />on %s',
+                moderated_by: 'Moderated by %s<br />on %s',
                 // moderation operation
                 modal_title: 'Moderating a post',
                 pre_text: 'You are about to moderate a post.'
