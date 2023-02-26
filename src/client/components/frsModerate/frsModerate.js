@@ -61,7 +61,7 @@ Template.frsModerate.onCreated( function(){
 
         // ellipsize the content when DOM is ready
         ellipsizeContent( post ){
-            const selector = '.frsModerate .ellipsis-wrapper#post-'+post._id+'-content ellipsis-text';
+            const selector = '.frsModerate .ellipsis-wrapper#post-'+post._id+'-content .ellipsis-text';
             console.log( 'ellipsizing', selector );
             // called for each div.ellipSelector, event if too small to be truncated
             //  - isTruncated: true|false
