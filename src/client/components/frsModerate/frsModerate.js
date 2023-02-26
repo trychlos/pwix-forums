@@ -14,6 +14,19 @@ import '../frs_post_moderate/frs_post_moderate.js';
 import './frsModerate.html';
 import './frsModerate.less';
 
+const ST_START = 'ST_START';                            // start of the work
+                                                        //  wants to subscribe to all moderable forums
+const ST_FORUMS_SUBSCRIBED = 'ST_FORUMS_SUBSCRIBED';    // have subscribed to moderable forums
+                                                        //  waits for the subscription be ready
+const ST_FORUMS_FETCHED = 'ST_FORUMS_FETCHED';          // moderables forums are fetched
+                                                        //  time to subscribe to posts depending of user display options
+const ST_POSTS_SUBSCRIBED = 'ST_POSTS_SUBSCRIBED';      // have subscribed to moderable posts
+                                                        //  waits for the subscription be ready
+const ST_POSTS_FETCHED = 'ST_POSTS_FETCHED';            // moderable posts to be displayed depending of user options are fetched
+                                                        //  wants recompute now the displayable forums
+const ST_FORUMS_RECOMPUTED = 'ST_FORUMS_RECOMPUTED';    // displayable forums have been recomputed
+                                                        //  ready to go
+
 Template.frsModerate.onCreated( function(){
     const self = this;
 
@@ -23,13 +36,12 @@ Template.frsModerate.onCreated( function(){
         state: new ReactiveVar( null ),
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
-            moderables: null,                       // the fetched list of all moderable forums
+            moderables: new ReactiveVar( [] ),      // the fetched list of all moderable forums
             displayable: new ReactiveVar( [] ),     // the displayable list
-            ready: new ReactiveVar( false ),        // ready after fetch
             posts: new ReactiveDict()               // posts per forum: forum.id -> array of posts
         },
         posts: {
-            handle: new ReactiveVar( null ),        // a global subscription (for all forums by the user)
+            handle: null,                           // a subscription to all moderable posts (for all forums by the user)
             expected: 0,                            // total expected posts 
             displayed: 0,                           // total displayed posts
             ready: new ReactiveVar( false )         // ready after first postEnd()
@@ -153,39 +165,47 @@ Template.frsModerate.onCreated( function(){
         return true;
     });
 
+    // initialize the start of the work
+    self.FRS.state.set( ST_START );
+
+    // trace to state dynamic
+    self.autorun(() => {
+        console.log( self.FRS.state.get());
+    });
+
     // subscribe to list of moderable forums
     self.autorun(() => {
-        console.log( 'subscribe frsForums.listModerables' );
-        self.FRS.forums.handle = self.subscribe( 'frsForums.listModerables' );
+        if( !self.FRS.forums.handle ){
+            self.FRS.forums.handle = self.subscribe( 'frsForums.listModerables', Meteor.userId());
+            self.FRS.state.set( ST_FORUMS_SUBSCRIBED );
+        }
     });
 
     // get the moderable forums when ready
     //  *all* moderables forums are returned, whatever be the user display options
     self.autorun(() => {
         if( self.FRS.forums.handle.ready()){
-            const query = pwiForums.Forums.queryModerables();
-            self.FRS.forums.moderables = pwiForums.client.collections.Forums.find( query.selector ).fetch();
-            self.FRS.forums.ready.set( true );
+            const query = pwiForums.Forums.queryModerables( Meteor.userId());
+            self.FRS.forums.moderables.set( pwiForums.client.collections.Forums.find( query.selector ).fetch());
+            self.FRS.state.set( ST_FORUMS_FETCHED );
         }
     });
 
     // subscribe to list of all posts from the moderable forums since the given date regarding the display options
     self.autorun(() => {
-        if( self.FRS.forums.ready.get()){
-            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', {
-                forums: self.FRS.forums.moderables,
-                since: self.FRS.opts.since.get(),
-                showValidated: self.FRS.opts.moderationShowValidated.get(),
-                showModerated: self.FRS.opts.moderationShowModerated.get()
-            }));
-            console.log( pwiForums.Posts.queryModerables({
-                forums: self.FRS.forums.moderables,
-                since: self.FRS.opts.since.get(),
-                showValidated: self.FRS.opts.moderationShowValidated.get(),
-                showModerated: self.FRS.opts.moderationShowModerated.get()
-            }));
-            self.FRS.posts.ready.set( false );
-        }
+        self.FRS.posts.handle = self.subscribe( 'frsPosts.moderables', {
+            forums: self.FRS.forums.moderables.get(),
+            since: self.FRS.opts.since.get(),
+            showValidated: self.FRS.opts.moderationShowValidated.get(),
+            showModerated: self.FRS.opts.moderationShowModerated.get()
+        });
+        console.log( pwiForums.Posts.queryModerables({
+            forums: self.FRS.forums.moderables.get(),
+            since: self.FRS.opts.since.get(),
+            showValidated: self.FRS.opts.moderationShowValidated.get(),
+            showModerated: self.FRS.opts.moderationShowModerated.get()
+        }));
+        self.FRS.state.set( ST_POSTS_SUBSCRIBED );
     });
 
     // posts subscription is ready: we are so able to anticipate the total count of posts
@@ -195,7 +215,7 @@ Template.frsModerate.onCreated( function(){
     //  - set first thread of the forum
     //  - set first post of the thread 
     self.autorun(() => {
-        if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
+        if( self.FRS.posts.handle.ready()){
             self.FRS.posts.expected = 0;
             self.FRS.forums.posts.clear();
             let previousSortKey = null;
@@ -223,6 +243,7 @@ Template.frsModerate.onCreated( function(){
             console.log( 'posts.expected', self.FRS.posts.expected );
             self.FRS.posts.displayed = 0;
             self.FRS.posts.ready.set( true );
+            self.FRS.state.set( ST_POSTS_FETCHED );
         }
     });
 
@@ -232,10 +253,10 @@ Template.frsModerate.onCreated( function(){
             console.log( 'recompute displayable forums' );
             let displayable = [];
             let first = true;
-            self.FRS.forums.moderables.every(( f ) => {
+            self.FRS.forums.moderables.get().every(( f ) => {
                 const posts = self.FRS.forums.posts.get( f._id );
                 const count = posts ? posts.length : 0;
-                if( self.FRS.moderationShowEmpty.get() || count ){
+                if( self.FRS.opts.moderationShowEmpty.get() || count ){
                     f.firstForum = first;
                     f.postsCount = count;
                     displayable.push( f );
@@ -244,6 +265,7 @@ Template.frsModerate.onCreated( function(){
                 return true;
             });
             self.FRS.forums.displayable.set( displayable );
+            self.FRS.state.set( ST_FORUMS_RECOMPUTED );
         }
     });
 });
@@ -366,6 +388,11 @@ Template.frsModerate.helpers({
         return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
     },
 
+    // the posts has been moderated by who and when ?
+    moderatedBy( p ){
+        return pwiForums.fn.i18n( 'moderate.moderated_by', p.rvModerator ? p.rvModerator.get().label : '', pwixI18n.dateTime( p.deletedAt ));
+    },
+
     // no moderable forum
     noForum(){
         return pwiForums.fn.i18n( 'moderate.noforum' );
@@ -388,6 +415,7 @@ Template.frsModerate.helpers({
         p.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
         p.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
         p.rvValidator = p.validatedBy ? pwiForums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
+        p.rvModerator = p.deletedBy && p.deletedBecause ? pwiForums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
         p.rvStats = new ReactiveVar( null );
         Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.rvStats.set( res ); });
     },

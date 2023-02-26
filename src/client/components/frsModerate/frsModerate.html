@@ -96,22 +96,31 @@
                                 <td class="frs-vatop frs-nowrap frs-pr1">
                                     <div class="frs-actions d-flex flex-column align-items-center">
                                         {{#if haveValidate f p }}
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}">{{ i18n label="validate" }}</button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-validate-btn" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
+                                                {{ i18n label="validate" }}
+                                            </button>
                                             <div class="frs-mt05"></div>
                                         {{/if}}
                                         {{#if haveUnvalidate f p }}
                                             <p class="frs-validated">{{{ validatedBy p }}}</p>
                                             <div class="frs-mt05"></div>
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unvalidate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unvalidate" }}</button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unvalidate-btn" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
+                                                {{ i18n label="unvalidate" }}
+                                            </button>
                                             <div class="frs-mt05"></div>
                                         {{/if}}
                                         {{#if haveModerate f p }}
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn"
-                                                                                            data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">{{ i18n label="moderate" }}</button>
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-moderate-btn" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
+                                                {{ i18n label="moderate" }}
+                                            </button>
                                             <div class="frs-mt05"></div>
                                         {{/if}}
                                         {{#if haveUnmoderate f p }}
-                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unmoderate-btn" data-frs-post="{{ p._id }}">{{ i18n label="unmoderate" }}</button>
+                                            <p class="frs-moderated">{{{ moderatedBy p }}}</p>
+                                            <div class="frs-mt05"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary frs-unmoderate-btn" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
+                                                {{ i18n label="unmoderate" }}
+                                            </button>
                                             <div class="frs-mt05"></div>
                                         {{/if}}
                                     </div>
