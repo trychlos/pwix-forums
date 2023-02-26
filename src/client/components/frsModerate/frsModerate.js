@@ -20,9 +20,10 @@ Template.frsModerate.onCreated( function(){
     self.FRS = {
         dpSelector: '.frsModerate input.frs-date',
         ellipSelector: '.frsModerate .frs-post .frs-content.ellipsis-text',
+        state: new ReactiveVar( null ),
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
-            list: new ReactiveVar( [] ),            // the fetched list of all moderable forums
+            moderables: null,                       // the fetched list of all moderable forums
             displayable: new ReactiveVar( [] ),     // the displayable list
             ready: new ReactiveVar( false ),        // ready after fetch
             posts: new ReactiveDict()               // posts per forum: forum.id -> array of posts
@@ -40,19 +41,6 @@ Template.frsModerate.onCreated( function(){
                 'moderationShowValidated',
                 'moderationShowModerated'
             ]
-        },
-
-        // clear the fields added by the helpers each time the postsList is re-run
-        clearForums(){
-            let list = self.FRS.forums.list.get();
-            list.every(( f ) => {
-                f.previousThread = null;
-                f.threadsList = null;
-                return true;
-            });
-            self.FRS.forums.list.set( list );
-            self.FRS.posts.expected = 0;
-            self.FRS.posts.displayed = 0;
         },
 
         // set the Date date if not empty and different
@@ -176,8 +164,7 @@ Template.frsModerate.onCreated( function(){
     self.autorun(() => {
         if( self.FRS.forums.handle.ready()){
             const query = pwiForums.Forums.queryModerables();
-            const list = pwiForums.client.collections.Forums.find( query.selector ).fetch();
-            self.FRS.forums.list.set( list );
+            self.FRS.forums.moderables = pwiForums.client.collections.Forums.find( query.selector ).fetch();
             self.FRS.forums.ready.set( true );
         }
     });
@@ -186,13 +173,13 @@ Template.frsModerate.onCreated( function(){
     self.autorun(() => {
         if( self.FRS.forums.ready.get()){
             self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', {
-                forums: self.FRS.forums.list.get(),
+                forums: self.FRS.forums.moderables,
                 since: self.FRS.opts.since.get(),
                 showValidated: self.FRS.opts.moderationShowValidated.get(),
                 showModerated: self.FRS.opts.moderationShowModerated.get()
             }));
             console.log( pwiForums.Posts.queryModerables({
-                forums: self.FRS.forums.list.get(),
+                forums: self.FRS.forums.moderables,
                 since: self.FRS.opts.since.get(),
                 showValidated: self.FRS.opts.moderationShowValidated.get(),
                 showModerated: self.FRS.opts.moderationShowModerated.get()
@@ -245,7 +232,7 @@ Template.frsModerate.onCreated( function(){
             console.log( 'recompute displayable forums' );
             let displayable = [];
             let first = true;
-            self.FRS.forums.list.get().every(( f ) => {
+            self.FRS.forums.moderables.every(( f ) => {
                 const posts = self.FRS.forums.posts.get( f._id );
                 const count = posts ? posts.length : 0;
                 if( self.FRS.moderationShowEmpty.get() || count ){
