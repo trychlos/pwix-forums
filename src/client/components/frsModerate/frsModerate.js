@@ -16,10 +16,12 @@ import './frsModerate.less';
 
 const ST_START = 'ST_START';                            // start of the work
                                                         //  wants to subscribe to all moderable forums
+const ST_FORUMS_QUERY = 'ST_FORUMS_QUERY';              // have a dynamic query on forums
 const ST_FORUMS_SUBSCRIBED = 'ST_FORUMS_SUBSCRIBED';    // have subscribed to moderable forums
                                                         //  waits for the subscription be ready
 const ST_FORUMS_FETCHED = 'ST_FORUMS_FETCHED';          // moderables forums are fetched
                                                         //  time to subscribe to posts depending of user display options
+const ST_POSTS_QUERY = 'ST_POSTS_QUERY';                // have a dynamic query on posts
 const ST_POSTS_SUBSCRIBED = 'ST_POSTS_SUBSCRIBED';      // have subscribed to moderable posts
                                                         //  waits for the subscription be ready
 const ST_POSTS_FETCHED = 'ST_POSTS_FETCHED';            // moderable posts to be displayed depending of user options are fetched
@@ -36,12 +38,13 @@ Template.frsModerate.onCreated( function(){
         state: new ReactiveVar( null ),
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
+            query: new ReactiveVar( null ),         // the dynamically-built query
             moderables: new ReactiveVar( [] ),      // the fetched list of all moderable forums
-            displayable: new ReactiveVar( [] ),     // the displayable list
-            posts: new ReactiveDict()               // posts per forum: forum.id -> array of posts
+            displayable: new ReactiveVar( [] )      // the displayable list
         },
         posts: {
             handle: null,                           // a subscription to all moderable posts (for all forums by the user)
+            query: new ReactiveVar( null ),         // the dynamically-built query
             expected: 0,                            // total expected posts 
             displayed: 0,                           // total displayed posts
             ready: new ReactiveVar( false )         // ready after first postEnd()
@@ -54,19 +57,55 @@ Template.frsModerate.onCreated( function(){
                 'moderationShowModerated'
             ]
         },
+        postsPerForum: new ReactiveDict(),           // posts per forum: forum.id -> array of posts
 
-        // set the Date date if not empty and different
-        setSinceDate( date ){
-            if( date && date.getTime() !== self.FRS.opts.since.get().getTime()){
-                self.FRS.opts.since.set( date );
-                const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
-                pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
+        // ellipsize the content when DOM is ready
+        ellipsizeContent( post ){
+            const selector = '.frsModerate .ellipsis-wrapper#post-'+post._id+'-content ellipsis-text';
+            console.log( 'ellipsizing', selector );
+            // called for each div.ellipSelector, event if too small to be truncated
+            //  - isTruncated: true|false
+            //  - originalContent: the jQuery object with oroginal content
+            //  - this: the DOM element with current content
+            const dddCallback = function( isTruncated, originalContent ){
+                if( !isTruncated ){
+                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-more, a.ellipsis-less' ).hide();
+                } else {
+                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-less' ).hide();
+                }
             }
+            // height=50 -> gives two display lines (2*24)
+            // height=72 -> gives three displayed lines (3*24)
+            const maxHeight = 75;
+            const opts = {
+                height: maxHeight,
+                ellipsis: '',
+                callback: dddCallback
+            };
+            self.FRS.waitForElements( selector )
+                .then(( nodes ) => {
+                    //console.log( 'initializing dotdotdot', nodes );
+                    self.$( selector ).dotdotdot( opts );
+                    self.$( selector ).closest( '.ellipsis-wrapper' ).on( 'click', 'a', function(){
+                        //console.log( this );  // 'this' is the 'a' DOM element
+                        const wrapper = $( this ).closest( '.ellipsis-wrapper' );
+                        if( $( this ).hasClass( 'ellipsis-more' )){
+                            wrapper.find( 'a.ellipsis-more' ).hide();
+                            wrapper.find( 'a.ellipsis-less' ).show();
+                            wrapper.find( '.ellipsis-text' ).dotdotdot( 'restore' );
+                        }
+                        else {
+                            wrapper.find( 'a.ellipsis-more' ).show();
+                            wrapper.find( 'a.ellipsis-less' ).hide();
+                            wrapper.find( '.ellipsis-text' ).dotdotdot( opts );
+                        }
+                    });
+                });
         },
 
         // return the post
         post( forumId, postId ){
-            const posts = self.FRS.forums.posts.get( forumId ) || [];
+            const posts = self.FRS.postsPerForum.get( forumId ) || [];
             let post = null;
             posts.every(( p ) => {
                 if( p._id === postId ){
@@ -76,6 +115,15 @@ Template.frsModerate.onCreated( function(){
                 return true;
             });
             return post;
+        },
+
+        // set the Date date if not empty and different
+        setSinceDate( date ){
+            if( date && date.getTime() !== self.FRS.opts.since.get().getTime()){
+                self.FRS.opts.since.set( date );
+                const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
+                pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
+            }
         },
 
         // https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists
@@ -173,6 +221,12 @@ Template.frsModerate.onCreated( function(){
         console.log( self.FRS.state.get());
     });
 
+    // build the moderable forums query
+    self.autorun(() => {
+        self.FRS.forums.query.set( pwiForums.Forums.queryModerables( Meteor.userId()));
+        self.FRS.state.set( ST_FORUMS_QUERY );
+    });
+
     // subscribe to list of moderable forums
     self.autorun(() => {
         if( !self.FRS.forums.handle ){
@@ -185,10 +239,22 @@ Template.frsModerate.onCreated( function(){
     //  *all* moderables forums are returned, whatever be the user display options
     self.autorun(() => {
         if( self.FRS.forums.handle.ready()){
-            const query = pwiForums.Forums.queryModerables( Meteor.userId());
-            self.FRS.forums.moderables.set( pwiForums.client.collections.Forums.find( query.selector ).fetch());
+            const query = self.FRS.forums.query.get();
+            self.FRS.forums.moderables.set( pwiForums.client.collections.Forums.find( query.selector, query.options ).fetch());
             self.FRS.state.set( ST_FORUMS_FETCHED );
         }
+    });
+
+    // build the moderable forums query
+    self.autorun(() => {
+        self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
+            forums: self.FRS.forums.moderables.get(),
+            since: self.FRS.opts.since.get(),
+            showValidated: self.FRS.opts.moderationShowValidated.get(),
+            showModerated: self.FRS.opts.moderationShowModerated.get()
+        }));
+        console.log( self.FRS.posts.query.get());
+        self.FRS.state.set( ST_POSTS_QUERY );
     });
 
     // subscribe to list of all posts from the moderable forums since the given date regarding the display options
@@ -199,12 +265,6 @@ Template.frsModerate.onCreated( function(){
             showValidated: self.FRS.opts.moderationShowValidated.get(),
             showModerated: self.FRS.opts.moderationShowModerated.get()
         });
-        console.log( pwiForums.Posts.queryModerables({
-            forums: self.FRS.forums.moderables.get(),
-            since: self.FRS.opts.since.get(),
-            showValidated: self.FRS.opts.moderationShowValidated.get(),
-            showModerated: self.FRS.opts.moderationShowModerated.get()
-        }));
         self.FRS.state.set( ST_POSTS_SUBSCRIBED );
     });
 
@@ -217,18 +277,21 @@ Template.frsModerate.onCreated( function(){
     self.autorun(() => {
         if( self.FRS.posts.handle.ready()){
             self.FRS.posts.expected = 0;
-            self.FRS.forums.posts.clear();
+            self.FRS.postsPerForum.clear();
             let previousSortKey = null;
             let previousForum = null;
             let posts = [];
             console.log( 'fetching published posts' );
-            pwiForums.client.collections.Posts.find().fetch().every(( p ) => {
+            const query = self.FRS.posts.query.get();
+            const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
+            console.log( allPosts );
+            allPosts.every(( p ) => {
                 self.FRS.posts.expected += 1;
                 p.threadDifferent = ( p.threadSort !== previousSortKey );
                 p.firstPost = p.threadDifferent;
                 p.firstThread = ( previousForum !== p.forum );
                 if( p.firstThread && previousForum ){
-                    self.FRS.forums.posts.set( previousForum, posts );
+                    self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
                     posts = [];
                 }
                 previousForum = p.forum;
@@ -238,9 +301,10 @@ Template.frsModerate.onCreated( function(){
                 return true;
             });
             if( previousForum ){
-                self.FRS.forums.posts.set( previousForum, posts );
+                self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
             }
             console.log( 'posts.expected', self.FRS.posts.expected );
+            console.log( self.FRS.postsPerForum.all());
             self.FRS.posts.displayed = 0;
             self.FRS.posts.ready.set( true );
             self.FRS.state.set( ST_POSTS_FETCHED );
@@ -254,7 +318,7 @@ Template.frsModerate.onCreated( function(){
             let displayable = [];
             let first = true;
             self.FRS.forums.moderables.get().every(( f ) => {
-                const posts = self.FRS.forums.posts.get( f._id );
+                const posts = self.FRS.postsPerForum.get( f._id );
                 const count = posts ? posts.length : 0;
                 if( self.FRS.opts.moderationShowEmpty.get() || count ){
                     f.firstForum = first;
@@ -328,11 +392,12 @@ Template.frsModerate.helpers({
 
     // do we have something to do with the current forum ?
     forumCatch( f ){
+        console.log( f );
     },
 
     // if we are the first forum of the list ?
     forumFirst( f ){
-        //console.log( 'forumFirst', f.firstForum );
+        console.log( 'forumFirst', f.firstForum );
         return f.firstForum ? 'frs-first' : '';
     },
 
@@ -426,13 +491,15 @@ Template.frsModerate.helpers({
     },
 
     // end of a post
-    postEnd(){
+    postEnd( p ){
         const FRS = Template.instance().FRS;
         FRS.posts.displayed += 1;
-        //console.log( 'expected', FRS.posts.expected, 'displayed', FRS.posts.displayed );
+        console.log( p._id, 'expected', FRS.posts.expected, 'displayed', FRS.posts.displayed );
+        /*
         if( FRS.posts.displayed === FRS.posts.expected ){
             FRS.waitForPostsDom();
-        }
+        }*/
+        FRS.ellipsizeContent( p );
     },
 
     // add a 'frs-first' class to first post to be moderable in the thread
@@ -451,8 +518,8 @@ Template.frsModerate.helpers({
 
     // list the posts displayed in this forum
     postsList( f ){
-        //console.log( 'postsList' );
-        return Template.instance().FRS.forums.posts.get( f._id ) || [];
+        console.log( 'postsList' );
+        return Template.instance().FRS.postsPerForum.get( f._id ) || [];
     },
 
     // current since date to initialize the input element

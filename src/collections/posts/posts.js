@@ -171,7 +171,7 @@ pwiForums.Posts = {
             options: {
                 // first most recent threads (old threads can wait...)
                 //  in each thread, in the ascending order of the creations
-                sort: { postSort: 1 }
+                sort: { forum: 1, threadSort: 1, createdAt: 1 }
             }
         };
         // do not select posts deleted by the user himself
