@@ -20,7 +20,6 @@ Template.frsModerate.onCreated( function(){
     self.FRS = {
         dpSelector: '.frsModerate input.frs-date',
         ellipSelector: '.frsModerate .frs-post .frs-content.ellipsis-text',
-        date: new ReactiveVar( new Date()),         // Date object
         forums: {
             handle: null,                           // a subscription to all forums moderable by the current user
             list: new ReactiveVar( [] ),            // the fetched list of all moderable forums
@@ -34,11 +33,14 @@ Template.frsModerate.onCreated( function(){
             displayed: 0,                           // total displayed posts
             ready: new ReactiveVar( false )         // ready after first postEnd()
         },
-        checkboxes: [
-            'moderationShowEmpty',
-            'moderationShowValidated',
-            'moderationShowModerated'
-        ],
+        opts: {
+            since: new ReactiveVar( new Date()),     // Date object
+            checkboxes: [
+                'moderationShowEmpty',
+                'moderationShowValidated',
+                'moderationShowModerated'
+            ]
+        },
 
         // clear the fields added by the helpers each time the postsList is re-run
         clearForums(){
@@ -54,9 +56,9 @@ Template.frsModerate.onCreated( function(){
         },
 
         // set the Date date if not empty and different
-        setDate( date ){
-            if( date && date.getTime() !== self.FRS.date.get().getTime()){
-                self.FRS.date.set( date );
+        setSinceDate( date ){
+            if( date && date.getTime() !== self.FRS.opts.since.get().getTime()){
+                self.FRS.opts.since.set( date );
                 const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
                 pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
             }
@@ -155,11 +157,11 @@ Template.frsModerate.onCreated( function(){
         const today = new Date();
         initialDate.setTime( today.getTime()-( 24*3600000 ));
     }
-    self.FRS.setDate( initialDate );
+    self.FRS.setSinceDate( initialDate );
 
     // creates and initialize ReactiveVar's from user data for checkboxes settings
-    self.FRS.checkboxes.every(( data ) => {
-        self.FRS[data] = new ReactiveVar( pwiForums.client.fn.userDataRead( data ) === 'true' );
+    self.FRS.opts.checkboxes.every(( data ) => {
+        self.FRS.opts[data] = new ReactiveVar( pwiForums.client.fn.userDataRead( data ) === 'true' );
         return true;
     });
 
@@ -185,15 +187,15 @@ Template.frsModerate.onCreated( function(){
         if( self.FRS.forums.ready.get()){
             self.FRS.posts.handle.set( self.subscribe( 'frsPosts.moderables', {
                 forums: self.FRS.forums.list.get(),
-                since: self.FRS.date.get(),
-                showValidated: self.FRS.moderationShowValidated.get(),
-                showModerated: self.FRS.moderationShowModerated.get()
+                since: self.FRS.opts.since.get(),
+                showValidated: self.FRS.opts.moderationShowValidated.get(),
+                showModerated: self.FRS.opts.moderationShowModerated.get()
             }));
             console.log( pwiForums.Posts.queryModerables({
                 forums: self.FRS.forums.list.get(),
-                since: self.FRS.date.get(),
-                showValidated: self.FRS.moderationShowValidated.get(),
-                showModerated: self.FRS.moderationShowModerated.get()
+                since: self.FRS.opts.since.get(),
+                showValidated: self.FRS.opts.moderationShowValidated.get(),
+                showModerated: self.FRS.opts.moderationShowModerated.get()
             }));
             self.FRS.posts.ready.set( false );
         }
@@ -275,14 +277,14 @@ Template.frsModerate.onRendered( function(){
                     // dp is the datepicker instance - not a JQuery object
                     // date is the date as text 'jj/mm/aaaa' - may be empty according to the doc
                     //console.log( date );
-                    self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', date ));
+                    self.FRS.setSinceDate( $.datepicker.parseDate( 'dd/mm/yy', date ));
                 },
                 // called on each change, either by clicking on the widget, or by manually editing the input element
                 onUpdateDatepicker: function( dp ){
                     //console.log( dp );    // the datepicker instance
                     //console.log( this );  // the input DOM element
                     //console.log( dp.lastVal );
-                    self.FRS.setDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
+                    self.FRS.setSinceDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
                 }
             });
             //console.log( 'datepicker', res );
@@ -290,8 +292,8 @@ Template.frsModerate.onRendered( function(){
 
     // setup the checkboxes settings depending of the corresponding ReactiveVar
     self.autorun(() => {
-        self.FRS.checkboxes.every(( data ) => {
-            self.$( 'input[type="checkbox"][data-frs-field="'+data+'"]' ).prop( 'checked', self.FRS[data].get());
+        self.FRS.opts.checkboxes.every(( data ) => {
+            self.$( 'input[type="checkbox"][data-frs-field="'+data+'"]' ).prop( 'checked', self.FRS.opts[data].get());
             return true;
         });
     });
@@ -307,7 +309,7 @@ Template.frsModerate.helpers({
     // whether this is a new thread (created after the date)
     badgeNew( p ){
         const threadDate = new Date( p.threadSort );
-        return threadDate > Template.instance().FRS.date.get() ? pwiForums.client.htmlNewThreadBadge() : '';
+        return threadDate > Template.instance().FRS.opts.since.get() ? pwiForums.client.htmlNewThreadBadge() : '';
     },
 
     // display a private badge
@@ -384,7 +386,7 @@ Template.frsModerate.helpers({
 
     // no new post
     noNewPost(){
-        return pwiForums.fn.i18n( 'moderate.nonewpost', pwixI18n.date( Template.instance().FRS.date.get()));
+        return pwiForums.fn.i18n( 'moderate.nonewpost', pwixI18n.date( Template.instance().FRS.opts.since.get()));
     },
 
     // the author of the post
@@ -440,7 +442,7 @@ Template.frsModerate.helpers({
 
     // current since date to initialize the input element
     since(){
-        return $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.date.get());
+        return $.datepicker.formatDate( 'dd/mm/yy', Template.instance().FRS.opts.since.get());
     },
 
     // if this post belongs to another thread (relatively to this forum) ?
@@ -481,7 +483,7 @@ Template.frsModerate.events({
     'change input[type="checkbox"]'( event, instance ){
         const checked = instance.$( event.currentTarget ).prop( 'checked' );
         const field = $( event.currentTarget ).data( 'frs-field' );
-        instance.FRS[field].set( checked );
+        instance.FRS.opts[field].set( checked );
         pwiForums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
     },
 
