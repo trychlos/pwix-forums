@@ -8,6 +8,7 @@ import { pwixI18n } from 'meteor/pwix:i18n';
 import { tlTolert } from 'meteor/pwix:tolert';
 
 import dotdotdot from 'dotdotdot';
+import printf from 'printf';
 
 import '../frs_post_moderate/frs_post_moderate.js';
 
@@ -119,7 +120,9 @@ Template.frsModerate.onCreated( function(){
         setSinceDate( date ){
             if( date && date.getTime() !== self.FRS.opts.since.get().getTime()){
                 self.FRS.opts.since.set( date );
-                const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
+                //const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
+                const dateStr = date.toISOString().split( 'T' )[0];
+                //console.log( 'setSinceDate', date, dateStr );
                 pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
             }
         },
@@ -292,6 +295,12 @@ Template.frsModerate.onRendered( function(){
     self.FRS.waitForElements( self.FRS.dpSelector )
         .then(( nodes ) => {
             //console.log( 'initializing datepicker', nodes );
+            const toUTC = function( str ){
+                const local = $.datepicker.parseDate( 'dd/mm/yy', str );
+                const utc = new Date( Date.UTC( local.getFullYear(), local.getMonth(), local.getDate(), 0, 0, 0 ));
+                //console.log( 'local', local, 'utc', utc );
+                return utc;
+            };
             const res = self.$( nodes[0] ).datepicker({
                 format: 'dd/mm/yyyy',
                 todayHighlight: true,
@@ -299,15 +308,14 @@ Template.frsModerate.onRendered( function(){
                     // dp is the datepicker instance - not a JQuery object
                     // date is the date as text 'jj/mm/aaaa' - may be empty according to the doc
                     //console.log( date );
-                    self.FRS.setSinceDate( $.datepicker.parseDate( 'dd/mm/yy', date ));
+                    self.FRS.setSinceDate( toUTC( date ));
                 },
                 // called on each change, either by clicking on the widget, or by manually editing the input element
                 onUpdateDatepicker: function( dp ){
                     //console.log( dp );    // the datepicker instance
                     //console.log( this );  // the input DOM element
                     //console.log( dp.lastVal );
-                    console.log( dp.lastVal, $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
-                    self.FRS.setSinceDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
+                    self.FRS.setSinceDate( toUTC( dp.lastVal ));
                 }
             });
             //console.log( 'datepicker', res );

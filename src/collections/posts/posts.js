@@ -166,7 +166,7 @@ pwiForums.Posts = {
     //  - showValidated: whether to also return the already validated posts
     //  - showModerated: whether to also return the already moderated posts
     queryModerables( opts ){
-        console.log( opts.since );
+        //console.log( opts.since );
         let result = {
             selector: { $and: [{ createdAt: { $gte: opts.since }}] },
             options: {
