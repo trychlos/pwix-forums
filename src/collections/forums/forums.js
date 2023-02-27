@@ -250,6 +250,7 @@ pwiForums.Forums = {
                 result.reason = FRS_REASON_NOTCONNECTED;
             }
         } else {
+            forum.publicWriter = forum.publicWriter || defaults.common.forums.publicWriter;
             switch( forum.publicWriter ){
                 case FRS_USER_ANYBODY:
                     result.reason = FRS_USER_ANYBODY;
