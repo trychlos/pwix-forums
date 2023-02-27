@@ -14,6 +14,12 @@ export class frsModerate {
         FRS_MODERATE_APOSTERIORI
     ];
 
+    static Inform = [
+        FRS_INFORM_NONE,
+        FRS_INFORM_MAY,
+        FRS_INFORM_MUST
+    ];
+
     // static methods
     //
     /**

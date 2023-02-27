@@ -20,8 +20,6 @@
 |    6 | 2022-10-30 | pwix:forums keep a count of deleted posts per user + inform the moderator above a given configurable limit (was app #98) |
 |      | 2022-11- 2 | the count of moderated is automatically computed in frsPosts publications |
 |      | 2022-11- 3 | the limit should it be a count or a percent ? |
-|    7 | 2022-10-30 | pwix:forums have a page for the moderator with the published posts since a date (to be moderated) (was app #99) |
-|      |            | this is the not same page than frsPosts as the to-be-moderated posts may come from several forums |
 |    8 | 2022-10-30 | pwix:forums a thread creator may want to be notified of replies in his thread (was app #102) |
 |      | 2022-11- 9 | like anyone may want to be notified of any reply to one of his post |
 |      |            | like anyone may want subscribe to any new post in a thread or a forum |
@@ -37,21 +35,13 @@
 |      | 2022-11- 2 | note that, while frsThreads have right bg color while mouse is hover, the mouse pointer is not ok in all columns |
 |      | 2022-11- 3 | was actually 'review frsThreads to be the same than frsForums' -> that's done but had to remove <a> tags |
 |      |            | -> have set tooltips, but they do not show |
-|   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
 |   14 | 2022-11- 3 | pwix:forums let a moderator choose his own setting for showDeletedForAdmin which would override the forum property (was app #116) |
-|   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |
-|      |            | as of today, we have first verification mail, later verification mail, reset password, contact form |
-|      |            | + subscription mail + moderation information |
-|      |            | an option only opened to mail redactor ? or to app administrator |
-|   17 | 2023- 2-13 | have the ability to unmoderate a post |
 |   18 | 2023- 2-18 | frsForums frs-right column; items are not aligned |
 |   19 | 2023- 2-19 | tree_tab.cat_edit, cat_delete, for_edit, for_delete should have double quotes, but doesn't work |
 |   20 | 2023- 2-21 | get rid of FRS_MODERATOR_ACCESS role, replacing with a function |
 |   21 | 2023- 2-21 | export more bulding elements, e.g. methods who answer some common questions as who is able to read, to write, to moderate, and so on |
 |   22 | 2023- 2-21 | frsModerate: internationalize (register in i18n) datepicker formats |
 |   23 | 2023- 2-21 | add a view counter to the thread |
-|   37 | 2023- 2-21 | frsModerate have a button for moderate which goes to the moderation dialog |
-|   38 | 2023- 2-21 | frsModerate if already moderated, say by who and why and when ? |
 |   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
 |   40 | 2023- 2-22 | frsPosts: ellipsize like in frsModerate |
 |   41 | 2023- 2-22 | frsThreads: ellipsize like in frsModerate |
@@ -73,8 +63,20 @@
 | ---: | :---       | :---                       |
 |    2 | 2022-10- 2 | forums: have an icon per category (was app #8) |
 |      | 2023- 2-2à | replaced with a color per category - done |
+|    7 | 2022-10-30 | pwix:forums have a page for the moderator with the published posts since a date (to be moderated) (was app #99) |
+|      |            | this is the not same page than frsPosts as the to-be-moderated posts may come from several forums |
+|      | 2023- 2-27 | done with frsModerate template |
+|   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
+|      | 2023- 2-27 | done with FRS_MODERATE_APRIORI option |
+|   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |
+|      |            | as of today, we have first verification mail, later verification mail, reset password, contact form |
+|      |            | + subscription mail + moderation information |
+|      |            | an option only opened to mail redactor ? or to app administrator |
+|      | 2023- 2-27 | cancelled as app-related only |
 |   16 | 2023- 2- 5 | have a color per category |
 |      | 2023- 2-19 | done |
+|   17 | 2023- 2-13 | have the ability to unmoderate a post |
+|      | 2023- 2-27 | done |
 |   24 | 2023- 2-21 | review html externalizing to stylesheets all display classes from bootstrap  -> have container classes |
 |      | 2023- 2-22 | should have container classes for grid, flex and so on |
 |      |            | but keep (Bootstrap) display classes for the same reason we introduce positioning classes |
@@ -103,6 +105,10 @@
 |      | 2023- 2-23 | done |
 |   36 | 2023- 2-21 | frsModerate have a checkbox for validate if moderation is a priori |
 |      | 2023- 2-23 | done |
+|   37 | 2023- 2-21 | frsModerate have a button for moderate which goes to the moderation dialog |
+|      | 2023- 2-27 | done |
+|   38 | 2023- 2-21 | frsModerate if already moderated, say by who and why and when ? |
+|      | 2023- 2-27 | done |
 |   44 | 2023- 2-22 | should be able to modify the category from forum_panel |
 |      | 2023- 2-22 | done |
 |   45 | 2023- 2-22 | forum_panel: select the moderation strategy |

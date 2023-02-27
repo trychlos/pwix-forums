@@ -75,6 +75,15 @@ export class frsOptions extends pwixOptions.Options {
 
     /**
      * Getter/Setter
+     * @param {String|Function} value whether the author of a moderated post is informed
+     * @returns {String}
+     */
+    'forums.inform'( value ){
+        return this.getset_String_Fn( 'forums.inform', value, { default: defaults.common.forums.inform, ref: frsModerate.Inform });
+    }
+
+    /**
+     * Getter/Setter
      * @param {String|Function} value the default access mode of a new forum
      * @returns {String}
      */

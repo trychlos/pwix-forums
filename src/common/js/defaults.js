@@ -26,7 +26,8 @@ defaults = {
             access: FRS_FORUM_PUBLIC,
             publicWriter: FRS_USER_EMAILVERIFIED,
             publicWriterAppFn: _false,
-            moderation: FRS_MODERATE_APRIORI
+            moderation: FRS_MODERATE_APRIORI,
+            inform: FRS_INFORM_MUST
         },
         verbosity: FRS_VERBOSE_CONFIGURE|FRS_VERBOSE_READY
     }

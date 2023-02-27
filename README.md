@@ -160,6 +160,24 @@ The method should be called in same terms both in client and server sides, and f
     - `FRS_MODERATE_APRIORI`
     - `FRS_MODERATE_APOSTERIORI`.
 
+- `forums.inform`
+
+    Provide a default value for new forums `information` parameter, defaulting to `FRS_INFORM_MUST`.
+
+    Known values are:
+
+    - `FRS_INFORM_NONE`
+
+        The author is not informed of the moderation of his/her post.
+
+    - `FRS_INFORM_MAY`
+
+        The moderator may choose to inform, or not the author.
+
+    - `FRS_INFORM_MUST`.
+
+        The author must be informed.
+
 - `verbosity`
 
     Configure the verbosity level of the package.
@@ -236,6 +254,10 @@ Per forum configuration is available through the forums manager page.
     - `FRS_MODERATE_APOSTERIORI`
     
         Moderation _a posteriori_, posts are visible as soon as published by the user.
+
+- `moderators`
+
+    The list of users which are allowed to moderate this particular forum, even if they do not have any MODERATOR role.
 
 Private forums also have:
 
