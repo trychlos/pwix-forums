@@ -184,7 +184,7 @@ Template.frsModerate.onCreated( function(){
     // subscribe to list of moderable forums
     self.autorun(() => {
         if( !self.FRS.forums.handle ){
-            self.FRS.forums.handle = self.subscribe( 'frsForums.listModerables', Meteor.userId());
+            self.FRS.forums.handle = self.subscribe( 'frsForums.listModerablesByQuery', self.FRS.forums.query.get());
             self.FRS.state.set( ST_FORUMS_SUBSCRIBED );
         }
     });
@@ -214,12 +214,7 @@ Template.frsModerate.onCreated( function(){
 
     // subscribe to list of all posts from the moderable forums since the given date regarding the display options
     self.autorun(() => {
-        self.FRS.posts.handle = self.subscribe( 'frsPosts.moderables', {
-            forums: self.FRS.forums.moderables.get(),
-            since: self.FRS.opts.since.get(),
-            showValidated: self.FRS.opts.moderationShowValidated.get(),
-            showModerated: self.FRS.opts.moderationShowModerated.get()
-        });
+        self.FRS.posts.handle = self.subscribe( 'frsPosts.moderablesByQuery', self.FRS.posts.query.get());
         self.FRS.state.set( ST_POSTS_SUBSCRIBED );
     });
 
@@ -256,8 +251,8 @@ Template.frsModerate.onCreated( function(){
             if( previousForum ){
                 self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
             }
-            //console.log( 'expected posts', allPosts.length );
-            //console.log( self.FRS.postsPerForum.all());
+            console.log( 'expected posts', allPosts.length );
+            console.log( 'postsPerForum', self.FRS.postsPerForum.all());
             self.FRS.posts.ready.set( true );
             self.FRS.state.set( ST_POSTS_FETCHED );
         }

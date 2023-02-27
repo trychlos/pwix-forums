@@ -12,7 +12,114 @@ pwiForums.Posts = {
     // name radical
     radical: 'posts',
 
-    // Posts schema
+    // Posts schema description
+    fields: {
+        // the post title (a single line)
+        //  cannot be empty for the initial post of the thread
+        //  always empty for all replies in this thread
+        title: {
+            type: String,
+            optional: true
+        },
+        content: {
+            type: String,
+            optional: true
+        },
+        // the forum identifier
+        //  cannot be empty
+        forum: {
+            type: String
+        },
+        // the post id this one replies to
+        //  empty for the initial post of a thread
+        replyTo: {
+            type: String,
+            optional: true
+        },
+        // the initial post id of this thread
+        //  empty for this same initial post
+        threadId: {
+            type: String,
+            optional: true
+        },
+        // the user id of the creator
+        //  this is the id of the record in the Meteor.users collection
+        //  same than createdBy...
+        owner: {
+            type: String
+        },
+        // whether this post is pinned on top of the forum
+        pinned: {
+            type: Boolean,
+            defaultValue: false,
+        },
+        // whether this post may be replied to
+        //  this is a facility for the forum admin to forbid this feature for the posts he pins
+        replyable: {
+            type: Boolean,
+            defaultValue: true,
+        },
+        // creation timestamp
+        // mandatory
+        createdAt: {
+            type: Date,
+            defaultValue: new Date()
+        },
+        // last update timestamp (by the owner only)
+        updatedAt: {
+            type: Date,
+            optional: true
+        },
+        // delete timestamp (by the owner or a forum admin)
+        //  when deleted, a post is still in the collection, but no more visible
+        deletedAt: {
+            type: Date,
+            optional: true
+        },
+        // either the user himself or a moderator
+        deletedBy: {
+            type: String,
+            optional: true
+        },
+        // why a forum admin has he deleted this post ?
+        //  null/unset when deleted by the owner
+        //  aka: set if and only if moderated
+        deletedBecause: {
+            type: String,
+            optional: true
+        },
+        // validation timestamp by a moderator, only relevant in forums moderated a priori
+        validatedAt: {
+            type: Date,
+            optional: true
+        },
+        // the moderator who has validated the post
+        validatedBy: {
+            type: String,
+            optional: true
+        },
+        // unvalidation timestamp by a moderator, only relevant in forums moderated a priori
+        unvalidatedAt: {
+            type: Date,
+            optional: true
+        },
+        // the moderator who has unvalidated the post
+        unvalidatedBy: {
+            type: String,
+            optional: true
+        },
+        // Mongo identifier
+        // mandatory (auto by Meteor+Mongo)
+        _id: {
+            type: String,
+            optional: true
+        },
+        xxxxxx: {   // unused key to be sure we always have something to unset
+            type: String,
+            optional: true
+        }
+    },
+
     schema: new SimpleSchema({
         // the post title (a single line)
         //  cannot be empty for the initial post of the thread
@@ -98,6 +205,16 @@ pwiForums.Posts = {
             type: String,
             optional: true
         },
+        // unvalidation timestamp by a moderator, only relevant in forums moderated a priori
+        unvalidatedAt: {
+            type: Date,
+            optional: true
+        },
+        // the moderator who has unvalidated the post
+        unvalidatedBy: {
+            type: String,
+            optional: true
+        },
         // Mongo identifier
         // mandatory (auto by Meteor+Mongo)
         _id: {
@@ -109,6 +226,18 @@ pwiForums.Posts = {
             optional: true
         }
     }),
+
+    // a function which returns the whole list of fields, suitable for the queries
+    allFields(){
+        console.log( pwiForums.Posts.schema );
+        /*
+        let list = {};
+        Object.keys( pwiForums.Posts.fields ).every(( f ) => {
+            list[f] = 1;
+        });
+        */
+        return {}; //list;
+    },
 
     // Deny all client-side updates
     // cf. https://guide.meteor.com/security.html#allow-deny
@@ -172,7 +301,8 @@ pwiForums.Posts = {
             options: {
                 // first most recent threads (old threads can wait...)
                 //  in each thread, in the ascending order of the creations
-                sort: { forum: 1, threadIdentifier: 1, createdAt: 1 }
+                sort: { forum: 1, threadIdentifier: 1, createdAt: 1 },
+                fields: pwiForums.Posts.allFields()
             }
         };
         // do not select posts deleted by the user himself

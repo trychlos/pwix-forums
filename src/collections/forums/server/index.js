@@ -2,6 +2,7 @@
  * pwix:forums/src/collections/forums/server/index.js 
  */
 
+import './functions.js';
 import './methods.js';
 import './publish.js';
 

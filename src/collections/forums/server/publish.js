@@ -93,7 +93,12 @@ Meteor.publish( 'frsForums.listVisiblePrivate', function( userId ){
 });
 
 // returns the list of forums which this user is authorized to moderate
-Meteor.publish( 'frsForums.listModerables', function( userId ){
+Meteor.publish( 'frsForums.listModerablesByUSerId', function( userId ){
     const query = pwiForums.Forums.queryModerables( userId );
-    return pwiForums.server.collections.Forums.find( query.selector, query.options );
+    return pwiForums.server.Forums.findByQuery( query );
+});
+
+// returns the list of forums which this user is authorized to moderate
+Meteor.publish( 'frsForums.listModerablesByQuery', function( query ){
+    return pwiForums.server.Forums.findByQuery( query );
 });
