@@ -97,7 +97,8 @@ Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
 //  - showValidated: whether to also return the already validated posts
 //  - showModerated: whether to also return the already moderated posts
 //
-// returned cursor is ordered by increasing creation date (most old first)
+// returned cursor is ordered by forumId, threadId, increasing creation date (most old first)
+//  may be not the actual display order, but enough to compute display breaks
 
 Meteor.publish( 'frsPosts.moderables', function( opts ){
     const self = this;
@@ -114,8 +115,7 @@ Meteor.publish( 'frsPosts.moderables', function( opts ){
         const originalPost = doc.threadId ? pwiForums.server.collections.Posts.findOne({ _id: doc.threadId }) : doc;
         doc.threadTitle = originalPost.title;
         doc.threadDate = originalPost.createdAt;
-        doc.threadSort = originalPost._id;
-        doc.postSort = doc.forum+'-'+originalPost._id+'-'+doc.createdAt;    // sort per forum first, then thread, then creation date
+        doc.threadIdentifier = originalPost._id;
         return doc;
     }
 

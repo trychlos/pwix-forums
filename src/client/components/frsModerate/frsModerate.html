@@ -53,7 +53,7 @@
                     {{ forumCatch f }}
                     <tr>
                         <td colspan="3">
-                            <div class="frs-forum {{ forumFirst f }} d-flex align-items-center">
+                            <div class="frs-forum {{ forumFirstClass f }} d-flex align-items-center">
                                 <p class="frs-title">{{ f.title }}</p>
                                 <div class="frs-pl1"></div>
                                 {{{ badgePrivate f }}}
@@ -68,7 +68,7 @@
                             {{#if threadDifferent f p }}
                                 <tr>
                                     <td class="frs-pl1 frs-pr1 frs-pb05" colspan="3">
-                                        <div class="frs-thread {{ threadFirst f p }} d-flex flex-align-items-center">
+                                        <div class="frs-thread {{ threadFirstClass f p }} d-flex flex-align-items-center">
                                             <p class="frs-title">{{{ threadTitle p }}}</p>
                                             <div class="frs-ml1"></div>
                                             {{{ badgeNew p }}}
@@ -76,7 +76,7 @@
                                     </td>
                                 </tr>
                             {{/if}}
-                            <tr class="frs-post {{ postFirst f p }}">
+                            <tr class="frs-post {{ postFirstClass f p }}">
                                 <td class="frs-authoring frs-vatop frs-pl2">
                                     <div>
                                         <p class="frs-date frs-nowrap">{{ postDate p }}</p>

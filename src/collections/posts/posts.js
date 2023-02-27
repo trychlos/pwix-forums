@@ -166,12 +166,13 @@ pwiForums.Posts = {
     //  - showValidated: whether to also return the already validated posts
     //  - showModerated: whether to also return the already moderated posts
     queryModerables( opts ){
+        console.log( opts.since );
         let result = {
             selector: { $and: [{ createdAt: { $gte: opts.since }}] },
             options: {
                 // first most recent threads (old threads can wait...)
                 //  in each thread, in the ascending order of the creations
-                sort: { forum: 1, threadSort: 1, createdAt: 1 }
+                sort: { forum: 1, threadIdentifier: 1, createdAt: 1 }
             }
         };
         // do not select posts deleted by the user himself

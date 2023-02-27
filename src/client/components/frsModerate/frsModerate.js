@@ -45,8 +45,6 @@ Template.frsModerate.onCreated( function(){
         posts: {
             handle: null,                           // a subscription to all moderable posts (for all forums by the user)
             query: new ReactiveVar( null ),         // the dynamically-built query
-            expected: 0,                            // total expected posts 
-            displayed: 0,                           // total displayed posts
             ready: new ReactiveVar( false )         // ready after first postEnd()
         },
         opts: {
@@ -146,54 +144,7 @@ Template.frsModerate.onCreated( function(){
                     subtree: true
                 });
             });
-        },
-
-        // we have displayed as posts as expected (though maybe the last is still being building)
-        //  apply ellipsize when DOM is ready
-        waitForPostsDom(){
-            //console.log( 'waitForPostsDom' );
-            // called for each div.ellipSelector, event if too small to be truncated
-            //  - isTruncated: true|false
-            //  - originalContent: the jQuery object with oroginal content
-            //  - this: the DOM element with current content
-            const dddCallback = function( isTruncated, originalContent ){
-                //console.log( 'ddddcb', arguments );
-                //console.log( 'dddcb', this );
-                //console.log( $( 'a', this ));
-                if( !isTruncated ){
-                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-more, a.ellipsis-less' ).hide();
-                } else {
-                    $( this ).closest( '.ellipsis-wrapper' ).find( 'a.ellipsis-less' ).hide();
-                }
-            }
-            // height=50 -> gives two display lines (2*24)
-            // height=72 -> gives three displayed lines (3*24)
-            const maxHeight = 75;
-            const opts = {
-                height: maxHeight,
-                ellipsis: '',
-                callback: dddCallback
-            };
-            self.FRS.waitForElements( self.FRS.ellipSelector, self.FRS.posts.expected )
-                .then(( nodes ) => {
-                    //console.log( 'initializing dotdotdot', nodes );
-                    self.$( self.FRS.ellipSelector ).dotdotdot( opts );
-                    self.$( self.FRS.ellipSelector ).closest( '.ellipsis-wrapper' ).on( 'click', 'a', function(){
-                        //console.log( this );  // 'this' is the 'a' DOM element
-                        const wrapper = $( this ).closest( '.ellipsis-wrapper' );
-                        if( $( this ).hasClass( 'ellipsis-more' )){
-                            wrapper.find( 'a.ellipsis-more' ).hide();
-                            wrapper.find( 'a.ellipsis-less' ).show();
-                            wrapper.find( '.ellipsis-text' ).dotdotdot( 'restore' );
-                        }
-                        else {
-                            wrapper.find( 'a.ellipsis-more' ).show();
-                            wrapper.find( 'a.ellipsis-less' ).hide();
-                            wrapper.find( '.ellipsis-text' ).dotdotdot( opts );
-                        }
-                    });
-                });
-            }
+        }
     };
 
     // initialize date with yesterday unless a date is found in user profile
@@ -247,6 +198,7 @@ Template.frsModerate.onCreated( function(){
 
     // build the moderable forums query
     self.autorun(() => {
+        console.log( self.FRS.opts.since.get());
         self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
             forums: self.FRS.forums.moderables.get(),
             since: self.FRS.opts.since.get(),
@@ -276,9 +228,8 @@ Template.frsModerate.onCreated( function(){
     //  - set first post of the thread 
     self.autorun(() => {
         if( self.FRS.posts.handle.ready()){
-            self.FRS.posts.expected = 0;
             self.FRS.postsPerForum.clear();
-            let previousSortKey = null;
+            let previousThread = null;
             let previousForum = null;
             let posts = [];
             console.log( 'fetching published posts' );
@@ -286,8 +237,7 @@ Template.frsModerate.onCreated( function(){
             const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
             console.log( allPosts );
             allPosts.every(( p ) => {
-                self.FRS.posts.expected += 1;
-                p.threadDifferent = ( p.threadSort !== previousSortKey );
+                p.threadDifferent = ( p.threadIdentifier !== previousThread );
                 p.firstPost = p.threadDifferent;
                 p.firstThread = ( previousForum !== p.forum );
                 if( p.firstThread && previousForum ){
@@ -295,7 +245,7 @@ Template.frsModerate.onCreated( function(){
                     posts = [];
                 }
                 previousForum = p.forum;
-                previousSortKey = p.threadSort;
+                previousThread = p.threadIdentifier;
                 //console.log( p );
                 posts.push( p );
                 return true;
@@ -303,9 +253,8 @@ Template.frsModerate.onCreated( function(){
             if( previousForum ){
                 self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
             }
-            console.log( 'posts.expected', self.FRS.posts.expected );
+            console.log( 'expected posts', allPosts.length );
             console.log( self.FRS.postsPerForum.all());
-            self.FRS.posts.displayed = 0;
             self.FRS.posts.ready.set( true );
             self.FRS.state.set( ST_POSTS_FETCHED );
         }
@@ -357,6 +306,7 @@ Template.frsModerate.onRendered( function(){
                     //console.log( dp );    // the datepicker instance
                     //console.log( this );  // the input DOM element
                     //console.log( dp.lastVal );
+                    console.log( dp.lastVal, $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
                     self.FRS.setSinceDate( $.datepicker.parseDate( 'dd/mm/yy', dp.lastVal ));
                 }
             });
@@ -381,7 +331,7 @@ Template.frsModerate.helpers({
 
     // whether this is a new thread (created after the date)
     badgeNew( p ){
-        const threadDate = new Date( p.threadSort );
+        const threadDate = new Date( p.threadDate );
         return threadDate > Template.instance().FRS.opts.since.get() ? pwiForums.client.htmlNewThreadBadge() : '';
     },
 
@@ -392,12 +342,12 @@ Template.frsModerate.helpers({
 
     // do we have something to do with the current forum ?
     forumCatch( f ){
-        console.log( f );
+        //console.log( f );
     },
 
     // if we are the first forum of the list ?
-    forumFirst( f ){
-        console.log( 'forumFirst', f.firstForum );
+    forumFirstClass( f ){
+        //console.log( 'forumFirst', f.firstForum );
         return f.firstForum ? 'frs-first' : '';
     },
 
@@ -492,19 +442,12 @@ Template.frsModerate.helpers({
 
     // end of a post
     postEnd( p ){
-        const FRS = Template.instance().FRS;
-        FRS.posts.displayed += 1;
-        console.log( p._id, 'expected', FRS.posts.expected, 'displayed', FRS.posts.displayed );
-        /*
-        if( FRS.posts.displayed === FRS.posts.expected ){
-            FRS.waitForPostsDom();
-        }*/
-        FRS.ellipsizeContent( p );
+        Template.instance().FRS.ellipsizeContent( p );
     },
 
     // add a 'frs-first' class to first post to be moderable in the thread
     //  first post of each thread set the title in the object
-    postFirst( f, p ){
+    postFirstClass( f, p ){
         //console.log( 'postFirst', p.firstPost );
         return p.firstPost ? 'frs-first' : '';
     },
@@ -518,7 +461,7 @@ Template.frsModerate.helpers({
 
     // list the posts displayed in this forum
     postsList( f ){
-        console.log( 'postsList' );
+        //console.log( 'postsList' );
         return Template.instance().FRS.postsPerForum.get( f._id ) || [];
     },
 
@@ -534,7 +477,7 @@ Template.frsModerate.helpers({
     },
 
     // if this thread the first in the forum ?
-    threadFirst( f, p ){
+    threadFirstClass( f, p ){
         return p.firstThread ? 'frs-first' : '';
     },
 
