@@ -87,6 +87,11 @@ pwiForums.Posts = {
             type: String,
             optional: true
         },
+        // a supplementary text which may be provided by the moderator who wants argument his decision
+        deletedText: {
+            type: String,
+            optional: true
+        },
         // validation timestamp by a moderator, only relevant in forums moderated a priori
         validatedAt: {
             type: Date,

@@ -102,6 +102,19 @@ Template.frsModerate.onCreated( function(){
                 });
         },
 
+        // returns the forum
+        forum( forumId ){
+            let found = null;
+            self.FRS.forums.moderables.get().every(( f ) => {
+                if( f._id === forumId ){
+                    found = f;
+                    return false;
+                }
+                return true;
+            });
+            return found;
+        },
+
         // return the post
         post( forumId, postId ){
             const posts = self.FRS.postsPerForum.get( forumId ) || [];
@@ -546,13 +559,14 @@ Template.frsModerate.events({
     'click .frs-moderate-btn'( event, instance ){
         const forumId = instance.$( event.currentTarget ).data( 'frs-forum' );
         const postId = instance.$( event.currentTarget ).data( 'frs-post' );
-        const post = instance.FRS.post( forumId, postId );
         //console.log( 'postId', postId, 'forumId', forumId, 'post', post );
         pwixModal.run({
             mdBody: 'frs_post_moderate',
+            mdClasses: 'modal-lg',
             mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
-            post: post,
+            forum: instance.FRS.forum( forumId ),
+            post: instance.FRS.post( forumId, postId ),
             target: instance.$( '.frsModerate' )
         });
         // last user action

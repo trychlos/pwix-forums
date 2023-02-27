@@ -42,7 +42,6 @@
 |   21 | 2023- 2-21 | export more bulding elements, e.g. methods who answer some common questions as who is able to read, to write, to moderate, and so on |
 |   22 | 2023- 2-21 | frsModerate: internationalize (register in i18n) datepicker formats |
 |   23 | 2023- 2-21 | add a view counter to the thread |
-|   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
 |   40 | 2023- 2-22 | frsPosts: ellipsize like in frsModerate |
 |   41 | 2023- 2-22 | frsThreads: ellipsize like in frsModerate |
 |   42 | 2023- 2-22 | review the display of the permissions in a forum |
@@ -54,7 +53,8 @@
 |   53 | 2023- 2-23 | use ellipsizer in frs_post_moderate |
 |   54 | 2023- 2-27 | BUG it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actaully see changes |
 |      |            | current work-around is to stop and relaunch the subscription |
-|   55 | | |
+|   55 | 2023- 2-27 | handle pagination in all relevant pages |
+|   56 | | |
 
 ---
 ## Done
@@ -109,6 +109,8 @@
 |      | 2023- 2-27 | done |
 |   38 | 2023- 2-21 | frsModerate if already moderated, say by who and why and when ? |
 |      | 2023- 2-27 | done |
+|   39 | 2023- 2-21 | frsModerate if have unmoderator role, then have a button unmoderate (+ reason ?) |
+|      | 2023- 2-27 | unmoderate is OK, no reason will be given |
 |   44 | 2023- 2-22 | should be able to modify the category from forum_panel |
 |      | 2023- 2-22 | done |
 |   45 | 2023- 2-22 | forum_panel: select the moderation strategy |

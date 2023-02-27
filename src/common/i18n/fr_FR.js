@@ -73,6 +73,11 @@ pwiForums.i18n = {
                     { id: FRS_INFORM_NONE, label: 'Author is not informed' },
                     { id: FRS_INFORM_MAY, label: 'Moderator can choose to inform the author' },
                     { id: FRS_INFORM_MUST, label: 'Author must be informed' }
+                ],
+                informs_long: [
+                    { id: FRS_INFORM_NONE, label: 'Due to the forum information option set, the author will not be informed of your decision.' },
+                    { id: FRS_INFORM_MAY, label: 'The forum information option let you choose to inform - or not - the author, and to provide him/her a reason.' },
+                    { id: FRS_INFORM_MUST, label: 'The forum information option makes mandatory for you to inform the author, and to provide him/her a reason.' }
                 ]
             },
             forums_home: {
@@ -115,8 +120,7 @@ pwiForums.i18n = {
                 // moderation operation
                 modal_title: 'Moderating a post',
                 pre_text: 'You are about to moderate a post.'
-                    +'<br />After your operation, the message will no longer be visible to standard users.'
-                    +'<br />You have the ability to inform the user of your decision, and to give him/her a reason.',
+                    +'<br />After your operation, the message will no longer be visible to standard users.',
                 post_text: 'Are you sure ?',
                 inform_label: 'Send an information email to the user',
                 reason_label: 'Choose a reason (an easy way to motivate your decision):',
@@ -141,7 +145,9 @@ pwiForums.i18n = {
                     { id: FRS_MODERATE_NONE, label: 'None' },
                     { id: FRS_MODERATE_APRIORI, label: 'A priori' },
                     { id: FRS_MODERATE_APOSTERIORI, label: 'A posteriori' }
-                ]
+                ],
+                supplement_label: 'You may argument your decision and provide a supplementary reason:',
+                supplement_placeholder: 'Some optional words here as an added argument',
             },
             post_edit: {
                 title_label: 'Have a title',

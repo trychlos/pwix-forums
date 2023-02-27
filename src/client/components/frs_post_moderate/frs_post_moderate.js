@@ -4,6 +4,7 @@
  * About to "moderate" a post (.i.e. to mark it deleted with a reason).
  * 
  * Parms:
+ *  - forum: the originating Forum
  *  - post: the Post to be 'moderated'
  *  - target: the jQuery target of the message sent when the moderation is confirmed
  * 
@@ -60,6 +61,7 @@ Template.frs_post_moderate.helpers({
     content(){
         return this.post ? this.post.content : '';
     },
+
     // the count of owner's message which have already been deleted
     deletedCount(){
         const post = this.post;
@@ -67,25 +69,51 @@ Template.frs_post_moderate.helpers({
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
         return pwiForums.fn.i18n( 'moderate.owner_posted', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
+
     // email of user
     email(){
         const post = this.post;
         //return post ? post.dynOwnerEmail.get().label : '';
         return post ? post.rvAuthorEmail.get().label : '';
     },
+
+    // whether we have to provide a reason to the author ?
+    haveReason(){
+        return this.forum.inform !== FRS_INFORM_NONE;
+    },
+
     // label translation
     i18n( opts ){
         return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
     },
-    // the post id
-    id(){
-        const post = this.post;
-        return post ? post._id : '';
+
+    // whether the moderator can choose to inform the author or not ?
+    //  disable the checkbox if information is mandatory
+    informEnabled(){
+        this.forum.inform = this.forum.inform || defaults.common.forums.inform;
+        return this.forum.inform === FRS_INFORM_MUST ? 'disabled': '';
     },
+
+    // display the information option as a long (HTML) text
+    informText(){
+        const options = i18n.group( FRSI18N, 'forum_edit.informs_long' );
+        const id = this.forum && this.forum.inform ? this.forum.inform : defaults.common.forums.inform;
+        let label = '';
+        options.every(( it ) => {
+            if( it.id === id ){
+                label = it.label;
+                return false;
+            }
+            return true;
+        });
+        return label;
+    },
+
     // returns the list of predefined reasons
     reasons(){
         return i18n.group( FRSI18N, 'moderate.options' );
     },
+
     // preselect the 'gtu' 'option
     selected( it ){
         return it.id === 'gtu' ? 'selected' : '';
@@ -98,10 +126,12 @@ Template.frs_post_moderate.events({
     'md-click .frs-post-moderate'( event, instance, data ){
         if( data.button === MD_BUTTON_OK ){
             let post = Template.currentData().post;
+            const target = Template.currentData().target;
             if( post ){
                 post.deletedAt = new Date();
                 post.deletedBy = Meteor.userId();
                 post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val();
+                post.deletedText = instance.$( '.frs-supplement' ).val().trim();
                 Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
                     if( err ){
                         console.error( err );
@@ -116,9 +146,8 @@ Template.frs_post_moderate.events({
                             stats: post.rvStats.get(),
                             post: post
                         };
-                        const target = Template.currentData().target;
                         if( target ){
-                            instance.data.target.trigger( 'frs-post-moderate-moderated', result );
+                            target.trigger( 'frs-post-moderate-moderated', result );
                         }
                         Meteor.call( 'frsPosts.postModerate', result, ( err, res ) => {
                             if( err ){

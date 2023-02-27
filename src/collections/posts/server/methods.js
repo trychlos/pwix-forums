@@ -39,7 +39,8 @@ Meteor.methods({
         const unset = {
             deletedAt: 1,
             deletedBy: 1,
-            deletedBecause: 1
+            deletedBecause: 1,
+            deletedText: 1
         };
         const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
         console.log( 'frsPosts.unmoderate', unset, res );
@@ -84,6 +85,7 @@ Meteor.methods({
         f_add( 'deletedAt' );
         f_add( 'deletedBy' );
         f_add( 'deletedBecause' );
+        f_add( 'deletedText' );
         f_add( 'validatedAt' );
         f_add( 'validatedBy' );
         if( o && o._id ){

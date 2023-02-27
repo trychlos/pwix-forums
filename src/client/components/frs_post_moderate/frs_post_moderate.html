@@ -1,9 +1,12 @@
 <template name="frs_post_moderate">
     <div class="frs-post-moderate">
 
-        <div class="frs-text frs-pre">
+        <p class="frs-text frs-pre">
             {{{ i18n label="pre_text" }}}
-        </div>
+        </p>
+        <p class="frs-text frs-inform">
+            {{{ informText }}}
+        </p>
         <div class="frs-origin">
             <div class="frs-ellipsize frs-ellipsize-4 frs-content">
                 <div class="frs-content-label">
@@ -22,18 +25,24 @@
             </div>
         </div>
         <div class="form">
-            <div class="frs-inform">
-                <input type="checkbox" class="form-check-input form-check-input-sm frs-inform" id="inform_{{ id }}" checked />
-                <label class="form-check-label form-check-label-sm" for="inform_{{ id }}">{{ i18n label="inform_label" }}</label>
-            </div>
-            <div class="frs-reason">
-                <label class="form-check-label form-check-label-sm" for="reason_{{ id }}">{{ i18n label="reason_label" }}</label>
-                <select class="form-select form-select-sm frs-reason" id="reason_{{ id }}" aria-label="Reason selection">
-                    {{#each it in reasons }}
-                        <option {{ selected it }} value="{{ it.id }}">{{ it.label }}</option>
-                    {{/each}}
-                </select>
-            </div>
+            {{#if haveReason }}
+                <div class="frs-inform">
+                    <input type="checkbox" class="form-check-input form-check-input-sm frs-inform" id="inform_{{ post._id }}" checked {{ informEnabled }} />
+                    <label class="form-check-label form-check-label-sm" for="inform_{{ post._id }}">{{ i18n label="inform_label" }}</label>
+                </div>
+                <div class="frs-reason">
+                    <label class="form-check-label form-check-label-sm" for="reason_{{ post._id }}">{{ i18n label="reason_label" }}</label>
+                    <select class="form-select form-select-sm frs-reason" id="reason_{{ post._id }}" aria-label="Reason selection">
+                        {{#each it in reasons }}
+                            <option {{ selected it }} value="{{ it.id }}">{{ it.label }}</option>
+                        {{/each}}
+                    </select>
+
+                    <div class="frs-mt05"></div>
+                    <label class="form-check-label form-check-label-sm" for="supplement_{{ post._id }}">{{ i18n label="supplement_label" }}</label>
+                    <textarea class="form-control frs-supplement" id="supplement_{{ post._id }}" aria-label="Supplementary reason" rows="4" placeholder="{{ i18n label="supplement_placeholder" }}"></textarea>
+                </div>
+            {{/if}}
         </div>
         <div class="frs-text frs-post">
             {{{ i18n label="post_text" }}}

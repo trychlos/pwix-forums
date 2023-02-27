@@ -254,8 +254,10 @@ Template.frs_post_tr.events({
         const post = Template.currentData().post;
         pwixModal.run({
             mdBody: 'frs_post_moderate',
+            mdClasses: 'modal-lg',
             mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
+            forum: forum,
             post: post
         });
         return false;
