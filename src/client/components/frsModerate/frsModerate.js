@@ -61,7 +61,7 @@ Template.frsModerate.onCreated( function(){
         // ellipsize the content when DOM is ready
         ellipsizeContent( post ){
             const selector = '.frsModerate .ellipsis-wrapper#post-'+post._id+'-content .ellipsis-text';
-            console.log( 'ellipsizing', selector );
+            //console.log( 'ellipsizing', selector );
             // called for each div.ellipSelector, event if too small to be truncated
             //  - isTruncated: true|false
             //  - originalContent: the jQuery object with oroginal content
@@ -199,16 +199,16 @@ Template.frsModerate.onCreated( function(){
         }
     });
 
-    // build the moderable forums query
+    // build the moderable posts query
     self.autorun(() => {
-        console.log( self.FRS.opts.since.get());
+        //console.log( self.FRS.opts.since.get());
         self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
             forums: self.FRS.forums.moderables.get(),
             since: self.FRS.opts.since.get(),
             showValidated: self.FRS.opts.moderationShowValidated.get(),
             showModerated: self.FRS.opts.moderationShowModerated.get()
         }));
-        console.log( self.FRS.posts.query.get());
+        //console.log( self.FRS.posts.query.get());
         self.FRS.state.set( ST_POSTS_QUERY );
     });
 
@@ -235,10 +235,10 @@ Template.frsModerate.onCreated( function(){
             let previousThread = null;
             let previousForum = null;
             let posts = [];
-            console.log( 'fetching published posts' );
+            //console.log( 'fetching published posts' );
             const query = self.FRS.posts.query.get();
             const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
-            console.log( allPosts );
+            //console.log( allPosts );
             allPosts.every(( p ) => {
                 p.threadDifferent = ( p.threadIdentifier !== previousThread );
                 p.firstPost = p.threadDifferent;
@@ -256,8 +256,8 @@ Template.frsModerate.onCreated( function(){
             if( previousForum ){
                 self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
             }
-            console.log( 'expected posts', allPosts.length );
-            console.log( self.FRS.postsPerForum.all());
+            //console.log( 'expected posts', allPosts.length );
+            //console.log( self.FRS.postsPerForum.all());
             self.FRS.posts.ready.set( true );
             self.FRS.state.set( ST_POSTS_FETCHED );
         }
@@ -266,7 +266,7 @@ Template.frsModerate.onCreated( function(){
     // after posts have been received, we are able to compute a list of the displayable forums
     self.autorun(() => {
         if( self.FRS.posts.ready.get()){
-            console.log( 'recompute displayable forums' );
+            //console.log( 'recompute displayable forums' );
             let displayable = [];
             let first = true;
             self.FRS.forums.moderables.get().every(( f ) => {
