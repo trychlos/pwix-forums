@@ -86,6 +86,12 @@ pwiForums.Forums = {
             type: Boolean,
             defaultValue: false
         },
+        // whether to inform the author when a post is moderated ?
+        //  defaulting to the common configured one
+        inform: {
+            type: String,
+            defaultValue: defaults.common.forums.inform
+        },
         // creation timestamp
         // mandatory
         createdAt: {

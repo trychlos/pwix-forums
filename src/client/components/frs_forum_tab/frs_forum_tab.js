@@ -139,9 +139,28 @@ Template.frs_forum_tab.helpers({
         return f ? f.title : '';
     },
 
+    // whether the forum is moderated ?
+    haveModeration(){
+        const rv = Template.currentData().forum;
+        const f = rv ? rv.get() : null;
+        return f ? f.moderation !== FRS_MODERATE_NONE : true;
+    },
+
     // get a translated label
     i18n( opts ){
         return pwiForums.fn.i18n( 'forum_edit.'+opts.hash.label );
+    },
+
+    // returns the list of known information options
+    informs(){
+        return frsModerate.informLabels();
+    },
+
+    // if this forum uses this information option ?
+    infoSelected( it ){
+        const rv = Template.currentData().forum;
+        const f = rv ? rv.get() : null;
+        return f && f.inform === it.id ? 'selected' : '';
     },
 
     // returns the object id
@@ -165,7 +184,7 @@ Template.frs_forum_tab.helpers({
         return frsModerate.strategyLabels();
     },
 
-    // if this forum use this moderation strategy ?
+    // if this forum uses this moderation strategy ?
     modSelected( m ){
         const rv = Template.currentData().forum;
         const f = rv ? rv.get() : null;

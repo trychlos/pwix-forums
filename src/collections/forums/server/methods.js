@@ -62,7 +62,8 @@ Meteor.methods({
             moderation: o.moderation,
             moderators: o.moderators,
             showDeletedForAdmin: o.showDeletedForAdmin,
-            showDeletedForUser: o.showDeletedForUser
+            showDeletedForUser: o.showDeletedForUser,
+            inform: o.inform,
         };
         if( o && o.createdAt ){
             modifier.createdAt = o.createdAt;

@@ -56,6 +56,7 @@ pwiForums.i18n = {
                 category_label: 'Category',
                 private_label: 'Private',
                 moderation_label: 'Moderation strategy',
+                inform_label: 'Informing the author',
                 show_deleted_for_admin_label: 'Show deleted posts to admins (as an expandable placeholder)',
                 show_deleted_for_user_label: 'Show deleted posts to users (as a placeholder)',
                 archive_label: 'Archive the forum, making it read-only',
@@ -67,7 +68,12 @@ pwiForums.i18n = {
                 btn_private: 'Private users',
                 message_error: 'Sorry, I am unable to update this record',
                 message_updated: 'Forum "%s" successfully updated',
-                message_created: 'Forum "%s" successfully created'
+                message_created: 'Forum "%s" successfully created',
+                informs: [
+                    { id: FRS_INFORM_NONE, label: 'Author is not informed' },
+                    { id: FRS_INFORM_MAY, label: 'Moderator can choose to inform the author' },
+                    { id: FRS_INFORM_MUST, label: 'Author must be informed' }
+                ]
             },
             forums_home: {
                 page_title: 'Discussion forums',

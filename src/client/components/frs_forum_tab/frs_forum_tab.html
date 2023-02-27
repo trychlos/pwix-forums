@@ -34,7 +34,7 @@
             <div>
                 <input type="checkbox" class="form-check-input form-check-input-sm frs-show-deleted-user" {{ forDeletedUser }} id="users_{{ id }}" data-frs-field="showDeletedForUsers" />
                 <label class="form-check-label form-check-label-sm" for="users_{{ id }}">{{ i18n label="show_deleted_for_user_label" }}</label>
-                </div>
+            </div>
 
             <label for="" class="form-label form-label-sm frs-one">{{ i18n label="moderation_label" }}</label>
             <select class="form-select frs-moderate-select" data-frs-field="moderation">
@@ -42,6 +42,15 @@
                     <option {{ modSelected m }} value="{{ m.id }}">{{ m.label }}</option>
                 {{/each}}
             </select>
+
+            {{#if haveModeration }}
+                <label for="" class="form-label form-label-sm frs-one">{{ i18n label="inform_label" }}</label>
+                <select class="form-select frs-inform-select" data-frs-field="inform">
+                    {{#each it in informs }}
+                        <option {{ infoSelected it }} value="{{ it.id }}">{{ it.label }}</option>
+                    {{/each}}
+                </select>
+            {{/if}}
 
             {{#if isArchived }}
                 <div></div>

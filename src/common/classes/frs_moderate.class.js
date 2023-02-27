@@ -23,6 +23,13 @@ export class frsModerate {
     // static methods
     //
     /**
+     * @returns {Array} the i18n group array which describe the information options
+     */
+    static informLabels(){
+        return pwixI18n.group( FRSI18N, 'forum_edit.informs' );
+    }
+
+    /**
      * @returns {Array} the i18n group array which describe the moderation strategies
      */
     static strategyLabels(){

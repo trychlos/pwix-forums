@@ -26,6 +26,12 @@ Meteor.publish( 'frsForums.listVisible', function(){
         } else {
             doc.lastPost = null;
         }
+        if( !doc.moderation ){
+            doc.mderation = defaults.common.forums.moderation;
+        }
+        if( !doc.inform ){
+            doc.inform = defaults.common.forums.inform;
+        }
         return doc;
     }
 
