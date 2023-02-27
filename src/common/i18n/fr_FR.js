@@ -154,12 +154,6 @@ pwiForums.i18n = {
                 no_supplement: 'No additionnal argument was given',
                 supplement_text: 'Additional argument was: "%s".'
             },
-            moderate_info: {
-                moderated_by: 'The post was moderated by %s<br />on %s',
-                no_supplement: 'No additionnal argument was given',
-                supplement_text: 'Additional argument was: "%s"',
-                title: 'Informations'
-            },
             post_edit: {
                 title_label: 'Have a title',
                 title_placeholder: 'Some nice title as a summary of the new thread',
