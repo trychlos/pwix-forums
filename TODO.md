@@ -61,8 +61,10 @@
 |   47 | 2023- 2-22 | forum_edit: restore edition of private readers, writers and moderators |
 |   48 | 2023- 2-22 | frsForums: ellipsize the forum description like in frsModerate |
 |   49 | 2023- 2-22 | frsPosts: have a single Reply button for the thread |
-|   53 | 2023- 2-23 | use allipsizer in frs_post_moderate |
-|   54 | | |
+|   53 | 2023- 2-23 | use ellipsizer in frs_post_moderate |
+|   54 | 2023- 2-27 | it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actaully see changes |
+|      |            | -> have to find a work-around |
+|   55 | | |
 
 ---
 ## Done

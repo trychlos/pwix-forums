@@ -116,6 +116,38 @@ Template.frsModerate.onCreated( function(){
             return post;
         },
 
+        postsQuery(){
+            self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
+                forums: self.FRS.forums.moderables.get(),
+                since: self.FRS.opts.since.get(),
+                showValidated: self.FRS.opts.moderationShowValidated.get(),
+                showModerated: self.FRS.opts.moderationShowModerated.get()
+            }));
+            self.FRS.state.set( ST_POSTS_QUERY );
+        },
+
+        postsSubscribe(){
+            self.FRS.posts.handle = self.subscribe( 'frsPosts.moderablesByQuery', self.FRS.posts.query.get());
+            self.FRS.state.set( ST_POSTS_SUBSCRIBED );
+        },
+
+        // as a work-around to todo #54, unset the provided list of fields in our ReactiveDict
+        postsUpdate( forumId, postId, fields ){
+            let posts = self.FRS.postsPerForum.get( forumId );
+            posts.every(( p ) => {
+                if( p._id === postId ){
+                    Object.keys( fields ).every(( f ) => {
+                        delete p[f];
+                        return true;
+                    });
+                    self.FRS.postsPerForum.set( forumId, [...posts] );
+                    console.log( posts );
+                    return false;
+                }
+                return true;
+            });
+        },
+
         // set the Date date if not empty and different
         setSinceDate( date ){
             if( date && date.getTime() !== self.FRS.opts.since.get().getTime()){
@@ -201,21 +233,12 @@ Template.frsModerate.onCreated( function(){
 
     // build the moderable posts query
     self.autorun(() => {
-        //console.log( self.FRS.opts.since.get());
-        self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
-            forums: self.FRS.forums.moderables.get(),
-            since: self.FRS.opts.since.get(),
-            showValidated: self.FRS.opts.moderationShowValidated.get(),
-            showModerated: self.FRS.opts.moderationShowModerated.get()
-        }));
-        //console.log( self.FRS.posts.query.get());
-        self.FRS.state.set( ST_POSTS_QUERY );
+        self.FRS.postsQuery();
     });
 
     // subscribe to list of all posts from the moderable forums since the given date regarding the display options
     self.autorun(() => {
-        self.FRS.posts.handle = self.subscribe( 'frsPosts.moderablesByQuery', self.FRS.posts.query.get());
-        self.FRS.state.set( ST_POSTS_SUBSCRIBED );
+        self.FRS.postsSubscribe();
     });
 
     // posts subscription is ready: we are so able to anticipate the total count of posts
@@ -547,6 +570,8 @@ Template.frsModerate.events({
         // last user action
         const today = new Date();
         pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+        // work-around to todo #54
+        location.reload();
     },
 
     // unvalidate the message
@@ -564,6 +589,8 @@ Template.frsModerate.events({
         // last user action
         const today = new Date();
         pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+        // work-around to todo #54
+        location.reload();
     },
 
     // validate the post

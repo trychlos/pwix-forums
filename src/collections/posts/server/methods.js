@@ -47,30 +47,15 @@ Meteor.methods({
     },
 
     // called when a moderator cancels a validation
-    //  unfortunately, as of 2023- 2-27 and Meteor 2.10, seems that $unset doesn't trigger a subscription refresh
-    //  so have to write something to update the client
+    //  unfortunately, as of 2023- 2-27 and Meteor 2.10, seems that $unset doesn't trigger a subscription refresh (see todo #54)
+    //  the publication observer sees the right change. So, as far as I know, this is the most I can do/check server side
     'frsPosts.unvalidate'( id ){
-        // setting a field doesn't refresh the subscription
-        /*
-        const set = {
-            unvalidatedAt: new Date(),
-            unvalidatedBy: Meteor.userId()
-        };
-        */
-       // unsetting the field doesn't refresh the subscription
-       /*
         const unset = {
             validatedAt: 1,
             validatedBy: 1
         };
-        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set, $unset: unset });
-        */
-       const set = {
-            validatedAt: '',
-            validatedBy: ''
-       };
-        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set });
-        console.log( 'frsPosts.unvalidate', set, res );
+        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
+        console.log( 'frsPosts.unvalidate', unset, res );
         return res;
     },
 
