@@ -127,8 +127,13 @@ Template.frsModerate.onCreated( function(){
         },
 
         postsSubscribe(){
-            self.FRS.posts.handle = self.subscribe( 'frsPosts.moderablesByQuery', self.FRS.posts.query.get());
-            self.FRS.state.set( ST_POSTS_SUBSCRIBED );
+            self.autorun(() => {
+                if( self.FRS.posts.handle ){
+                    self.FRS.posts.handle.stop();
+                }
+                self.FRS.posts.handle = self.subscribe( 'frsPosts.moderablesByQuery', self.FRS.posts.query.get());
+                self.FRS.state.set( ST_POSTS_SUBSCRIBED );
+            });
         },
 
         // as a work-around to todo #54, unset the provided list of fields in our ReactiveDict
@@ -237,9 +242,8 @@ Template.frsModerate.onCreated( function(){
     });
 
     // subscribe to list of all posts from the moderable forums since the given date regarding the display options
-    self.autorun(() => {
-        self.FRS.postsSubscribe();
-    });
+    //  as part of an autorun inside of the function
+    self.FRS.postsSubscribe();
 
     // posts subscription is ready: we are so able to anticipate the total count of posts
     //  also:
@@ -567,11 +571,11 @@ Template.frsModerate.events({
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.unmoderated' ));
             }
         });
+        // work-around to todo #54: stop and relaunch the subscription
+        instance.FRS.postsSubscribe();
         // last user action
         const today = new Date();
         pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
-        // work-around to todo #54
-        location.reload();
     },
 
     // unvalidate the message
@@ -586,11 +590,11 @@ Template.frsModerate.events({
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.unvalidated' ));
             }
         });
+        // work-around to todo #54: stop and relaunch the subscription
+        instance.FRS.postsSubscribe();
         // last user action
         const today = new Date();
         pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
-        // work-around to todo #54
-        location.reload();
     },
 
     // validate the post
