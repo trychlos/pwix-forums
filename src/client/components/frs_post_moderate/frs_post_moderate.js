@@ -131,7 +131,7 @@ Template.frs_post_moderate.events({
                 post.deletedAt = new Date();
                 post.deletedBy = Meteor.userId();
                 post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val();
-                post.deletedText = instance.$( '.frs-supplement' ).val().trim();
+                post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim();
                 Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
                     if( err ){
                         console.error( err );

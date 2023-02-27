@@ -115,6 +115,28 @@ Template.frsModerate.onCreated( function(){
             return found;
         },
 
+        // informations about the moderation
+        popoverInfo( f, p ){
+            let content = '';
+            if( p.deletedBecause ){
+                pwixI18n.group( FRSI18N, 'moderate.options' ).every(( it ) => {
+                    if( it.id === p.deletedBecause ){
+                        label = it.label;
+                        return false;
+                    }
+                    return true;
+                });
+                content = pwixI18n.label( FRSI18N, 'moderate.reason', label );
+            }
+            content += '<br />';
+            if( p.deletedText ){
+                content += pwixI18n.label( FRSI18N, 'moderate.supplement_text', p.deletedText );
+            } else {
+                content += pwixI18n.label( FRSI18N, 'moderate.no_supplement', label );
+            }
+            return content;
+        },
+
         // return the post
         post( forumId, postId ){
             const posts = self.FRS.postsPerForum.get( forumId ) || [];
@@ -445,6 +467,41 @@ Template.frsModerate.helpers({
     i18n( opts ){
         return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
     },
+
+    // popover initialization
+    popoverInit( f, p ){
+        const FRS = Template.instance().FRS;
+        FRS.waitForElements( 'a#popover-'+p._id ).then(( nodes ) => {
+            $( nodes[0] ).popover({
+                html: true,
+                content: FRS.popoverInfo( f, p )
+            });
+        });
+    },
+
+    // informations about the moderation
+    /*
+    popoverInfo( f, p ){
+        let content = '';
+        if( p.deletedBecause ){
+            pwixI18n.group( FRSI18N, 'moderate.options' ).every(( it ) => {
+                if( it.id === p.deletedBecause ){
+                    label = it.label;
+                    return false;
+                }
+                return true;
+            });
+            content = pwixI18n.label( FRSI18N, 'moderate_info.reason', label );
+        }
+        content += '<br />';
+        if( p.deletedText ){
+            content += pwixI18n.label( FRSI18N, 'moderate.supplement_text', p.deletedText );
+        } else {
+            content += pwixI18n.label( FRSI18N, 'moderate.no_supplement', label );
+        }
+        return content;
+    },
+    */
 
     // the posts has been moderated by who and when ?
     moderatedBy( p ){

@@ -146,8 +146,19 @@ pwiForums.i18n = {
                     { id: FRS_MODERATE_APRIORI, label: 'A priori' },
                     { id: FRS_MODERATE_APOSTERIORI, label: 'A posteriori' }
                 ],
-                supplement_label: 'You may argument your decision and provide a supplementary reason:',
+                supplement_label: 'You may argument your decision and provide an additional reason:',
                 supplement_placeholder: 'Some optional words here as an added argument',
+                // moderation informations
+                info_title: 'Moderation informations',
+                reason: 'Reason was: "%s".',
+                no_supplement: 'No additionnal argument was given',
+                supplement_text: 'Additional argument was: "%s".'
+            },
+            moderate_info: {
+                moderated_by: 'The post was moderated by %s<br />on %s',
+                no_supplement: 'No additionnal argument was given',
+                supplement_text: 'Additional argument was: "%s"',
+                title: 'Informations'
             },
             post_edit: {
                 title_label: 'Have a title',

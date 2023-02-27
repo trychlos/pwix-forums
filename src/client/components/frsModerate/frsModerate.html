@@ -116,7 +116,18 @@
                                             <div class="frs-mt05"></div>
                                         {{/if}}
                                         {{#if haveUnmoderate f p }}
+                                            <a tabindex="0" role="button" class="btn btn-sm btn-outline-secondary frs-unmoderate-reason-btn"
+                                                id="popover-{{ p._id }}"
+                                                data-bs-toggle="popover"
+                                                data-bs-placement="left"
+                                                data-bs-trigger="focus"
+                                                data-bs-title="{{ i18n label="info_title" }}" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
+                                                {{{ moderatedBy p }}}
+                                            </a>
+                                            {{ popoverInit f p }}
+                                            <!--
                                             <p class="frs-moderated">{{{ moderatedBy p }}}</p>
+                                            -->
                                             <div class="frs-mt05"></div>
                                             <button type="button" class="btn btn-sm btn-outline-primary frs-unmoderate-btn" data-frs-post="{{ p._id }}" data-frs-forum="{{ p.forum }}">
                                                 {{ i18n label="unmoderate" }}

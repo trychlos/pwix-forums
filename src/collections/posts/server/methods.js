@@ -78,6 +78,9 @@ Meteor.methods({
         if( o.title ){
             modifier.title = o.title.trim();
         }
+        if( o.deletedText ){
+            modifier.deletedText = o.deletedText.trim();
+        }
         f_add( 'replyTo' );
         f_add( 'threadId' );
         f_add( 'pinned' );
