@@ -626,27 +626,25 @@ Template.frsModerate.events({
             post: instance.FRS.post( forumId, postId ),
             target: instance.$( '.frsModerate' )
         });
-        // last user action
-        const today = new Date();
-        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
     // unmoderate the message
     'click .frs-unmoderate-btn'( event, instance ){
+        const forumId = instance.$( event.currentTarget ).data( 'frs-forum' );
         const postId = instance.$( event.currentTarget ).data( 'frs-post' );
         //console.log( 'postId', postId );
-        Meteor.call( 'frsPosts.unmoderate', postId, ( err, res ) => {
+        Meteor.call( 'frsPosts.unmoderate', instance.FRS.post( forumId, postId ), ( err, res ) => {
             if( err ){
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.unmoderated' ));
             }
+            // work-around to todo #54: stop and relaunch the subscription
+            instance.FRS.postsSubscribe();
+            // last user action
+            const today = new Date();
+            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
-        // work-around to todo #54: stop and relaunch the subscription
-        instance.FRS.postsSubscribe();
-        // last user action
-        const today = new Date();
-        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
     // unvalidate the message
@@ -660,12 +658,12 @@ Template.frsModerate.events({
             } else {
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.unvalidated' ));
             }
+            // work-around to todo #54: stop and relaunch the subscription
+            instance.FRS.postsSubscribe();
+            // last user action
+            const today = new Date();
+            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
-        // work-around to todo #54: stop and relaunch the subscription
-        instance.FRS.postsSubscribe();
-        // last user action
-        const today = new Date();
-        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
     // validate the post
@@ -678,14 +676,17 @@ Template.frsModerate.events({
             } else {
                 tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
             }
+            // last user action
+            const today = new Date();
+            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
-        // last user action
-        const today = new Date();
-        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     },
 
     // a post has been moderated
-    'frs-post-moderate-moderated .frsModerated'( event, instance, data ){
+    'frs-post-moderate-moderated .frsModerate'( event, instance, data ){
         console.log( event, data );
+        // last user action
+        const today = new Date();
+        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     }
 });

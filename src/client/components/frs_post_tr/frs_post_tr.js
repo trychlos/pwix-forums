@@ -252,6 +252,7 @@ Template.frs_post_tr.events({
     // moderate (delete) the post
     'click .frs-moderate-btn'( event, instance ){
         const post = Template.currentData().post;
+        const forum = Template.currentData().forum;
         pwixModal.run({
             mdBody: 'frs_post_moderate',
             mdClasses: 'modal-lg',

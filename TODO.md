@@ -13,21 +13,13 @@
 |    1 | 2022-10- 2 | forums: have an icon for the categories (hardcoded default) (was app #7) |
 |    3 | 2022-10- 2 | forums: have an icon for the forums (hardcoded default) (was app #9) |
 |    4 | 2022-10- 2 | forums: have an icon per forum (was app #10) |
-|    5 | 2022-10-30 | pwix:forums let a moderator delete a post + inform the user (was app #97) |
-|      |            | have some predefined reasons ? |
-|      | 2022-10-31 | a) moderation is operational + b) have predefined reasons -> TODO: inform the user |
-|      |            | cf. /src/collections/posts/server/methods.js 'frsPosts.postModerate'() method |
 |    6 | 2022-10-30 | pwix:forums keep a count of deleted posts per user + inform the moderator above a given configurable limit (was app #98) |
 |      | 2022-11- 2 | the count of moderated is automatically computed in frsPosts publications |
 |      | 2022-11- 3 | the limit should it be a count or a percent ? |
+|      | 2023- 2-27 | rather have a stat page per user, displaying his moderation score |
 |    8 | 2022-10-30 | pwix:forums a thread creator may want to be notified of replies in his thread (was app #102) |
 |      | 2022-11- 9 | like anyone may want to be notified of any reply to one of his post |
 |      |            | like anyone may want subscribe to any new post in a thread or a forum |
-|    9 | 2022-10-31 | pwix:forums what to do when 'moderating' the first post of a thread ? (was app #105) |
-|      |            | -> other posts do not have a title (at the moment) |
-|      |            | -> thread starter is identified by a null threadId -> what when deleted ? |
-|      | 2022-10-31 | take the first reply and make it the new thread leader (set treadId=null, set title) todo in postModerate |
-|      | 2022-11- 3 | obsoleted by #113 for user deletion - but still relevant for moderation |
 |   10 | 2022-10-31 | pwix:forums have 'wantModerationConfirmation' configuration option (when false, moderation is applied without confirmation) (was app #106) |
 |      |            | if no confirmation is done, an automatic reason must be set |
 |   11 | 2022-10-31 | pwix:forums have a page for general terms of use => new frs_contents collection (was app #108) |
@@ -51,10 +43,13 @@
 |   48 | 2023- 2-22 | frsForums: ellipsize the forum description like in frsModerate |
 |   49 | 2023- 2-22 | frsPosts: have a single Reply button for the thread |
 |   53 | 2023- 2-23 | use ellipsizer in frs_post_moderate |
-|   54 | 2023- 2-27 | BUG it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actaully see changes |
+|   54 | 2023- 2-27 | BUG it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actually see the changes |
 |      |            | current work-around is to stop and relaunch the subscription |
 |   55 | 2023- 2-27 | handle pagination in all relevant pages |
-|   56 | | |
+|   56 | 2023- 2-27 | when oderator chooses to not inform the user, then disable the reason select box |
+|      | 2023- 2-28 | no: the moderation reason is always mandatory - the only option is to inform or not the author |
+|   58 |  |  |
+|   59 |  |  |
 
 ---
 ## Done
@@ -63,9 +58,20 @@
 | ---: | :---       | :---                       |
 |    2 | 2022-10- 2 | forums: have an icon per category (was app #8) |
 |      | 2023- 2-2à | replaced with a color per category - done |
+|    5 | 2022-10-30 | pwix:forums let a moderator delete a post + inform the user (was app #97) |
+|      |            | have some predefined reasons ? |
+|      | 2022-10-31 | a) moderation is operational + b) have predefined reasons -> TODO: inform the user |
+|      |            | cf. /src/collections/posts/server/methods.js 'frsPosts.postModerate'() method |
+|      | 2023- 2-27 | done |
 |    7 | 2022-10-30 | pwix:forums have a page for the moderator with the published posts since a date (to be moderated) (was app #99) |
 |      |            | this is the not same page than frsPosts as the to-be-moderated posts may come from several forums |
 |      | 2023- 2-27 | done with frsModerate template |
+|    9 | 2022-10-31 | pwix:forums what to do when 'moderating' the first post of a thread ? (was app #105) |
+|      |            | -> other posts do not have a title (at the moment) |
+|      |            | -> thread starter is identified by a null threadId -> what when deleted ? |
+|      | 2022-10-31 | take the first reply and make it the new thread leader (set threadId=null, set title) todo in postModerate |
+|      | 2022-11- 3 | obsoleted by #113 for user deletion - but still relevant for moderation |
+|      | 2023- 2-28 | done (at last) - so promote/unpromote thread leaders |
 |   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
 |      | 2023- 2-27 | done with FRS_MODERATE_APRIORI option |
 |   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |
@@ -119,6 +125,8 @@
 |      | 2023- 2-23 | done |
 |   52 | 2023- 2-22 | frsModerate: the publication should take into account the above option (with ou without moderated posts) |
 |      | 2023- 2-23 | done |
+|   57 | 2023- 2-27 | when no reason is given for a moderation, set a REASON_NONE |
+|      | 2023- 2-28 | obsoleted by #56 (reason is always mandatory) |
 
 ---
 P. Wieser

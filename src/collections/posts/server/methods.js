@@ -31,19 +31,50 @@ Meteor.methods({
     //  - reason: the reason
     // this is always called, even if the moderator chooses to not inform the user
     'frsPosts.postModerate'( parms ){
+        // if the just-moderated post was a thread leader, then find another one if possible:
+        if( !parms.post.threadId && parms.post.title && !parms.post.replyTo ){
+            const fetched = pwiForums.server.collections.Posts.find({ threadId: parms.post._id, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+            if( fetched.length ){
+                const newLeader = fetched[0]
+                newLeader.threadId = null;
+                newLeader.replyTo = null;
+                newLeader.title = parms.post.title;
+                const res = pwiForums.server.fn.Posts.upsert( newLeader );
+                console.log( 'promoting new thread leader', newLeader, res );
+            }
+        } else if( !( parms.post.threadId && parms.post.replyTo && !parms.post.title )){
+            console.error( 'post threadId vs. replyTo vs. title error', parms.post );
+        }
         console.log( 'postModerate', parms );
     },
 
     // called when a moderator cancels a moderation
-    'frsPosts.unmoderate'( id ){
+    //  if the unmoderated post was a thread leader older than the current one, then restore it (and unpromote the current thread leader..)
+    'frsPosts.unmoderate'( post ){
         const unset = {
             deletedAt: 1,
             deletedBy: 1,
             deletedBecause: 1,
             deletedText: 1
         };
-        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
+        const res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
         console.log( 'frsPosts.unmoderate', unset, res );
+        // was a thread leader ?
+        //  search the current thread leader, and test against the creation date
+        if( !post.threadId && post.title && !post.replyTo ){
+            const fetched = pwiForums.server.collections.Posts.find({ title: post.title, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+            if( fetched.length ){
+                const currentLeader = fetched[0];
+                if( post.createdAt.getTime() < currentLeader.createdAt.getTime()){
+                    // unpromote current leader
+                    currentLeader.threadId = post._id;
+                    currentLeader.replyTo = post._id;
+                    currentLeader.title = null;
+                    const res = pwiForums.server.fn.Posts.upsert( currentLeader );
+                    console.log( 'unpromoting current thread leader', currentLeader, res );
+                }
+            }
+        }
         return res;
     },
 
@@ -63,46 +94,8 @@ Meteor.methods({
     // create a new post
     //  the passed-in object may or may not contains an _id
     'frsPosts.upsert'( o ){
-        //console.log( 'frsPosts.upsert: o', o );
-        const selector = { _id: o._id };
-        let modifier = {
-            content: o.content.trim(),
-            forum: o.forum,
-            owner: o.owner
-        };
-        function f_add( field ){
-            if( o[field] ){
-                modifier[field] = o[field];
-            }
-        }
-        if( o.title ){
-            modifier.title = o.title.trim();
-        }
-        if( o.deletedText ){
-            modifier.deletedText = o.deletedText.trim();
-        }
-        f_add( 'replyTo' );
-        f_add( 'threadId' );
-        f_add( 'pinned' );
-        f_add( 'replyable' );
-        f_add( 'deletedAt' );
-        f_add( 'deletedBy' );
-        f_add( 'deletedBecause' );
-        f_add( 'deletedText' );
-        f_add( 'validatedAt' );
-        f_add( 'validatedBy' );
-        if( o && o._id ){
-            modifier.updatedAt = new Date();
-            modifier.updatedBy = Meteor.userId();
-        } else {
-            modifier.createdAt = new Date();
-            modifier.createdBy = Meteor.userId();
-        }
-        // https://docs.meteor.com/api/collections.html
-        // the returned 'res' is an object with keys 'numberAffected' (the number of documents modified) and 'insertedId' (the unique _id of the document that was inserted, if any).
-        //console.log( 'frsCategories.upsert: selector', selector );
-        //console.log( 'frsCategories.upsert: modifier', modifier );
-        const res = pwiForums.server.collections.Posts.upsert( selector, { $set: modifier });
+        let modifier = {};
+        const res = pwiForums.server.fn.Posts.upsert( o, modifier );
         if( !res ){
             throw new Meteor.Error(
                 'frsPosts.upsert',

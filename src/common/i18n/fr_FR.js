@@ -108,6 +108,7 @@ pwiForums.i18n = {
                 author: 'By %s (aka « %s »)',
                 moderate: 'Moderate',
                 unmoderate: 'Unmoderate',
+                unmoderated: 'The post has been successfully unmoderated',
                 validate: 'Validate',
                 unvalidate: 'Unvalidate',
                 validated: 'The post has been successfully validated',

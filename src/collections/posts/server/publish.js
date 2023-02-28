@@ -102,9 +102,9 @@ Meteor.publish( 'frsPosts.threads', function( forumId, limit ){
 
 Meteor.publish( 'frsPosts.moderablesByOpts', function( opts ){
     const query = pwiForums.Posts.queryModerables( opts );
-    return pwiForums.server.Posts.findModerablesByQuery( this, query );
+    return pwiForums.server.fn.Posts.findModerablesByQuery( this, query );
 });
 
 Meteor.publish( 'frsPosts.moderablesByQuery', function( query ){
-    return pwiForums.server.Posts.findModerablesByQuery( this, query );
+    return pwiForums.server.fn.Posts.findModerablesByQuery( this, query );
 });

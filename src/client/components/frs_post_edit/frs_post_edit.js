@@ -73,11 +73,11 @@ Template.frs_post_edit.onCreated( function(){
 
     self.FRS = {
 
-        // why the 'closed' message is it sent
+        // why the 'closed' message is it sent ?
         //  either because our caller as asked that
         //  or because we have ourselves decide it
         cr: {
-            REQCALLER: 'REQCALLER',                 // a request from our caller
+            REQCALLER: 'REQCALLER',             // a request from our caller
             CANCEL: 'CANCEL',                   // the user asks us to close the component
             SUCCESS: 'SUCCESS'                  // successful post
         },
