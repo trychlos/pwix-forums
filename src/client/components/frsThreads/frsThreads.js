@@ -26,14 +26,14 @@ Template.frsThreads.onCreated( function(){
         // frsForums collection (one element here)
         forum: {
             id: new ReactiveVar( null ),
-            handle: new ReactiveVar( null ),
+            handle: null,
             object: new ReactiveVar( null )
         },
 
         // frsThreads collection
         threads: {
-            handle: new ReactiveVar( null ),
-            cursor: new ReactiveVar( null ),
+            query: new ReactiveVar( null ),
+            handle: null,
             hash: {}
         },
 
@@ -66,43 +66,30 @@ Template.frsThreads.onCreated( function(){
         }
     };
 
-    // get the forum identifier
+    // get the forum identifier and subscribe to the publication
     self.autorun(() => {
-        self.FRS.forum.id.set( FlowRouter.getParam( 'forumId' ));
-    });
-
-    // subscribe to the Forums publication
-    self.autorun(() => {
-        const forumId = self.FRS.forum.id.get();
+        const forumId = FlowRouter.getParam( 'forumId' );
         if( forumId ){
-            self.FRS.forum.handle.set( self.subscribe( 'frsForums.byId', forumId ));
+            self.FRS.forum.id.set( forumId );
+            self.FRS.forum.handle = self.subscribe( 'frsForums.byId', forumId );
         }
     });
 
     // get the forum when ready
     self.autorun(() => {
-        if( self.FRS.forum.handle.get() && self.FRS.forum.handle.get().ready()){
+        const forumId = self.FRS.forum.id.get();
+        if( forumId && self.FRS.forum.handle.ready()){
             const forumId = self.FRS.forum.id.get();
             self.FRS.forum.object.set( pwiForums.client.collections.Forums.findOne({ _id: forumId }));
-            //console.log( 'got forum' );
         }
     });
 
     // subscribe to Posts when we have got the forum id in order to get the threads opened on this forum
     self.autorun(() => {
-        const id = self.FRS.forum.id.get();
-        if( id ){
-            self.FRS.threads.handle.set( self.subscribe( 'frsPosts.threads', id, pwiForums.conf.posts.limit ));
-        }
-    });
-
-    // get the last (most recent) 100 threads
-    self.autorun(() => {
-        const handle = self.FRS.threads.handle.get();
-        if( handle && handle.ready()){
-            const forumId = self.FRS.forum.id.get();
-            const query = pwiForums.Posts.queryThreads( forumId, pwiForums.conf.posts.limit );
-            self.FRS.threads.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
+        const forumId = self.FRS.forum.id.get();
+        if( forumId ){
+            self.FRS.threads.query.set( pwiForums.Posts.queryThreads( forumId ));
+            self.FRS.threads.handle = self.subscribe( 'frsPosts.threadLeaders', self.FRS.threads.query.get());
         }
     });
 
@@ -163,8 +150,10 @@ Template.frsThreads.helpers({
 
     // whether there is at least one thread ?
     hasThreads(){
-        const cursor = Template.instance().FRS.threads.cursor.get();
-        return cursor ? cursor.count() > 0 : false;
+        const self = Template.instance();
+        const forum = self.FRS.forum.object.get();
+        //console.log( forum );
+        return forum ? forum.pub.threadsCount > 0 : false;
     },
 
     // i18n
@@ -188,12 +177,14 @@ Template.frsThreads.helpers({
         };
     },
 
-    // store the current post
-    push( it ){
+    // store the current post (aka a thread leader)
+    threadCatch( it ){
         Template.instance().FRS.threads.hash[it._id] = it;
-        const post = it.lastPost ? it.lastPost : it;
-        it.dynLastPost = pwiForums.fn.labelById( post.owner, AC_USERNAME );
-        it.dynOwner = pwiForums.fn.labelById( it.owner, AC_USERNAME );
+        const post = it.pub.lastPost ? it.pub.lastPost : it;
+        it.dyn = {
+            rvLastPostOwner: pwiForums.fn.labelById( post.owner, AC_USERNAME ),
+            rvOwner: pwiForums.fn.labelById( it.owner, AC_USERNAME )
+        }
     },
 
     threadContent( it ){
@@ -201,12 +192,12 @@ Template.frsThreads.helpers({
     },
 
     threadLast( it ){
-        let post = it.lastPost ? it.lastPost : it;
-        return pwiForums.fn.i18n( 'threads.last_post', i18n.dateTime( post.createdAt ), it.dynLastPost.get().label );
+        let post = it.pub.lastPost ? it.pub.lastPost : it;
+        return pwiForums.fn.i18n( 'threads.last_post', i18n.dateTime( post.createdAt ), it.dyn.rvLastPostOwner.get().label );
     },
 
     threadOwner( it ){
-        return it.dynOwner.get().label;
+        return it.dyn.rvOwner.get().label;
     },
 
     threadStarted( it ){
@@ -218,7 +209,8 @@ Template.frsThreads.helpers({
     },
 
     threadsList(){
-        return Template.instance().FRS.threads.cursor.get();
+        const query = Template.instance().FRS.threads.query.get();
+        return pwiForums.client.collections.Posts.find( query.selector, query.options );
     },
 
     // display the reason for why the user is not allowed

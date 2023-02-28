@@ -396,7 +396,7 @@ Template.frsModerate.helpers({
 
     // whether this is a new thread (created after the date)
     badgeNew( p ){
-        const threadDate = new Date( p.threadDate );
+        const threadDate = new Date( p.pub.orig.createdAt );
         return threadDate > Template.instance().FRS.opts.since.get() ? pwiForums.client.htmlNewThreadBadge() : '';
     },
 
@@ -583,7 +583,7 @@ Template.frsModerate.helpers({
 
     // thread title
     threadTitle( p ){
-        return pwiForums.fn.i18n( 'moderate.thread_title', p.threadTitle );
+        return pwiForums.fn.i18n( 'moderate.thread_title', p.pub.orig.title );
     },
 
     // the posts has been validated by who and when ?

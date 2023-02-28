@@ -40,6 +40,7 @@ pwiForums.Posts = {
         },
         // the initial post id of this thread
         //  always set and never changes, even when the corresponding post is deleted/moderated or a new threadLeader(s) is designated
+        //  as a consequence, is always the id of the original post
         threadId: {
             type: String
         },
@@ -132,45 +133,6 @@ pwiForums.Posts = {
         });
     },
 
-    // returns an object { selector, options } suitable to list the posts inside a thread
-    //  opts may contain:
-    //  - withModerated: true|false
-    //  - withDeleted: true|false
-    //  - userId: mandatory if withDeleted is true
-    //  - limit
-    queryPosts( threadId, opts ){
-        // honor 'showDeletedForAdmin' and 'showDeletedForUser' forum properties
-        let deletedClause = [{ deletedAt: null }];
-        if( Object.keys( opts ).includes( 'withModerated' ) && opts.withModerated ){
-            deletedClause.push({ deletedBecause: { $ne: null }});
-        }
-        if( Object.keys( opts ).includes( 'withDeleted' ) && opts.withDeleted && opts.userId ){
-            deletedClause.push({ $and: [
-                { deletedBecause: null },
-                { deletedBy: opts.userId },
-                { owner: opts.userId }
-            ]});
-        }
-        let result = {
-            selector: {
-                $and: [
-                    { $or: [
-                        { _id: threadId },
-                        { threadId: threadId }
-                    ]},
-                    { $or: deletedClause }
-                ],
-            },
-            options: {
-                sort: { createdAt: 1 }
-            }
-        };
-        if( opts.limit ){
-            result.options.limit = opts.limit;
-        }
-        return result;
-    },
-
     // returns an object { selector, options } suitable to list the posts to be moderated
     // opts is
     //  - forums: an array of all forums moderable by the user
@@ -226,21 +188,57 @@ pwiForums.Posts = {
         return result;
     },
 
+    // returns an object { selector, options } suitable to list the posts inside a thread
+    //  opts may contain:
+    //  - withModerated: true|false
+    //  - withDeleted: true|false
+    //  - userId: mandatory if withDeleted is true
+    //  - limit
+    queryPosts( threadId, opts ){
+        // honor 'showDeletedForAdmin' and 'showDeletedForUser' forum properties
+        let deletedClause = [{ deletedAt: null }];
+        if( Object.keys( opts ).includes( 'withModerated' ) && opts.withModerated ){
+            deletedClause.push({ deletedBecause: { $ne: null }});
+        }
+        if( Object.keys( opts ).includes( 'withDeleted' ) && opts.withDeleted && opts.userId ){
+            deletedClause.push({ $and: [
+                { deletedBecause: null },
+                { deletedBy: opts.userId },
+                { owner: opts.userId }
+            ]});
+        }
+        let result = {
+            selector: {
+                $and: [
+                    { $or: [
+                        { _id: threadId },
+                        { threadId: threadId }
+                    ]},
+                    { $or: deletedClause }
+                ],
+            },
+            options: {
+                sort: { createdAt: 1 }
+            }
+        };
+        if( opts.limit ){
+            result.options.limit = opts.limit;
+        }
+        return result;
+    },
+
     // returns an object { selector, options } suitable to list the threads opened on a forum
-    queryThreads( forumId, limit ){
+    queryThreads( forumId ){
         let result = {
             selector: {
                 forum: forumId,
-                threadId: null,
+                threadLeader: true,
                 deletedAt: null
             },
             options: {
                 sort: { createdAt: -1 }
             }
         };
-        if( limit ){
-            result.options.limit = limit;
-        }
         return result;
     }
 };

@@ -46,9 +46,9 @@
 |   54 | 2023- 2-27 | BUG it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actually see the changes |
 |      |            | current work-around is to stop and relaunch the subscription |
 |   55 | 2023- 2-27 | handle pagination in all relevant pages |
-|   56 | 2023- 2-27 | when oderator chooses to not inform the user, then disable the reason select box |
+|   56 | 2023- 2-27 | when moderator chooses to not inform the user, then disable the reason select box |
 |      | 2023- 2-28 | no: the moderation reason is always mandatory - the only option is to inform or not the author |
-|   58 |  |  |
+|   58 | 2023- 2-28 | obsolete conf.posts.limit |
 |   59 |  |  |
 
 ---

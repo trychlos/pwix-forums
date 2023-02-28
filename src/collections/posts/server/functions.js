@@ -6,38 +6,39 @@ pwiForums.server.fn = {
     ...pwiForums.server.fn,
 
     Posts: {
-        // publish a cursor of moderable posts, adding some interesting fields about the thread (title and creation date)
-        findModerablesByQuery( publication, query ){
+        // publish a cursor of moderable posts, attaching the original creator (may be deleted or moderated) post to each one
+        // 'this' here is the same than inside of a publication
+        moderablesByQuery( query ){
+            const self = this;
             const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
         
             // add thread title
             function f_addFields( doc ){
-                const originalPost = pwiForums.server.collections.Posts.findOne({ _id: doc.threadId });
-                doc.threadTitle = originalPost.title;
-                doc.threadDate = originalPost.createdAt;
+                doc.pub = {};
+                doc.pub.orig = pwiForums.server.collections.Posts.find({ _id: doc.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 return doc;
             }
         
             const observer = pwiForums.server.collections.Posts.find( query.selector, query.options ).observe({
                 added: function( doc){
                     //console.log( 'adding', doc );
-                    publication.added( collectionName, doc._id, f_addFields( doc ));
+                    self.added( collectionName, doc._id, f_addFields( doc ));
                 },
                 changed: function( newDoc, oldDoc ){
                     //console.log( 'changing', newDoc );
-                    publication.changed( collectionName, newDoc._id, f_addFields( newDoc ));
+                    self.changed( collectionName, newDoc._id, f_addFields( newDoc ));
                 },
                 removed: function( oldDoc ){
                     //console.log( 'removing', oldDoc );
-                    publication.removed( collectionName, oldDoc._id );
+                    self.removed( collectionName, oldDoc._id );
                 }
             });
         
-            publication.onStop( function(){
+            self.onStop( function(){
                 observer.stop();
             });
         
-            publication.ready();
+            self.ready();
         },
     
         // upsert a document in the Posts collection

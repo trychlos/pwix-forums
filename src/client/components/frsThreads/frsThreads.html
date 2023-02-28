@@ -49,7 +49,7 @@
                         </thead>
                         <tbody>
                             {{#each it in threadsList }}
-                                {{ push it }}
+                                {{ threadCatch it }}
                                 <tr data-row-id="{{ it._id }}" class="frs-thread-tr" data-bs-toggle="tooltip" data-bs-title="{{ threadTooltip it }}">
                                     <td class="frs-td">
                                         <div class="frs-thread-title">{{ it.title }}</div>
@@ -57,7 +57,7 @@
                                     </td>
                                     <td class="frs-td frs-center">{{ threadStarted it }}</td>
                                     <td class="frs-td frs-center">{{ threadOwner it }}</td>
-                                    <td class="frs-td frs-center">{{ it.postsCount }}</td>
+                                    <td class="frs-td frs-center">{{ it.pub.postsCount }}</td>
                                     <td class="frs-td frs-center frs-lastpost">{{{ threadLast it }}}</td>
                                 </tr>
                             {{/each}}
