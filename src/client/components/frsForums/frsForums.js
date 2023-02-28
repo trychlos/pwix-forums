@@ -25,9 +25,6 @@ Template.frsForums.onCreated( function(){
     const self = this;
 
     self.FRS = {
-        handles: {
-            forums: self.subscribe( 'frsForums.listVisible' )
-        },
         orderedTree: new frsOrders()
     };
 });
@@ -98,53 +95,35 @@ Template.frsForums.helpers({
     // forum last post date badge
     //  take care of not publishing the email address
     forLastPost( f ){
-        let label = '';
-        if( f.lastPost ){
-            const o = f.lastPost.dynOwner.get();
-            label = o ? o.label : '';
-        }
-        return f.lastPost ? pwiForums.fn.i18n( 'forums_home.last_post', i18n.dateTime( f.lastPost.createdAt ), label ): '';
+        return f.dyn.rvLastPostOwner ? pwiForums.fn.i18n( 'forums_home.last_post', i18n.dateTime( f.pub.lastPost.createdAt ), f.dyn.rvLastPostOwner.get().label ) : '';
     },
 
     // send the list of forums for the current category
-    forumList( c ){
+    //  catList has already filtered empty categories, we so are sure there is at least one forum
+    //  add 'dynamic' fields
+    //  - rvOwner, the owner of the lastPost if any
+    //  - first, true for the first forum
+    forumList( cat ){
         //console.log( 'entering forumList' );
-        const self = Template.instance();
-        let forums = [];
-        if( self.FRS.handles.forums.ready()){
-            const query = pwiForums.Forums.queryReadables();
-            const fors = pwiForums.client.collections.Forums.find( query.selector );
-            if( fors ){
-                const fetched = fors.fetch();
-                const tree = self.FRS.orderedTree.tree.get();
-                for( let i=0 ; i<tree.length ; ++i ){
-                    if( tree[i].id === c._id ){
-                        tree[i].forums.every(( f ) => {
-                            for( let j=0 ; j<fetched.length ; ++j ){
-                                if( fetched[j]._id === f.id ){
-                                    forums.push( fetched[j] );
-                                    //console.log( fetched[j] );
-                                    if( fetched[j].lastPost ){
-                                        fetched[j].lastPost.dynOwner = pwiForums.fn.labelById( fetched[j].lastPost.owner, AC_USERNAME )
-                                    }
-                                    // set a topForum flag on all but the first forum of the category
-                                    fetched[j].topForum = true;
-                                    break;
-                                }
-                            }
-                            return true;
-                        });
-                        break;                        
-                    }
-                }
+        let forumsList = [];
+        Template.instance().FRS.orderedTree.tree.get().every(( c ) => {
+            if( c.id === cat._id ){
+                let first = true;
+                c.forums.every(( f ) => {
+                    let forum = f.object;
+                    forumsList.push( forum );
+                    forum.dyn = {
+                        first: first,
+                        rvLastPostOwner: forum.pub.lastPost ? pwiForums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ) : null
+                    };
+                    first = false;
+                    return true;
+                });
+                return false;
             }
-        }
-        // remove the topForum flag from the first forum
-        let f = forums[0];
-        if( f ){
-            f.topForum = false;
-        }
-        return forums;
+            return true;
+        });
+        return forumsList;
     },
 
     // i18n
@@ -153,8 +132,8 @@ Template.frsForums.helpers({
     },
 
     // add a .frs-top class if not the first forum of the category
-    topForum( forum ){
-        return forum.topForum ? 'frs-top' : '';
+    topForum( f ){
+        return f.dyn.first ? '' : 'frs-top';
     },
 
     // route to the threads of a forum

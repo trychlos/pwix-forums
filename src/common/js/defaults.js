@@ -20,7 +20,8 @@ defaults = {
             threads: '/forums/t/:forumId',
             posts: '/forums/p/:threadId',
             manager: '/forums/admin',
-            moderate: '/forums/moderate'
+            moderate: '/forums/moderate',
+            allposts: '/forums/allposts'
         },
         forums: {
             access: FRS_FORUM_PUBLIC,

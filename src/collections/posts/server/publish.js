@@ -1,9 +1,9 @@
 
-Meteor.publish( 'frsPosts.listOne', function( threadId ){
-    return pwiForums.server.collections.Posts.find({ _id: threadId, deletedAt: null });
+Meteor.publish( 'frsPosts.byId', function( id ){
+    return pwiForums.server.collections.Posts.find({ _id: id });
 });
 
-// list the posts inside a threads
+// list the posts inside a thread
 //  add to each post a repliesCount
 // + if the current user is a moderator of this forum, then honor the 'showDeletedForAdmin'
 Meteor.publish( 'frsPosts.listForThread', function( threadId, limit ){

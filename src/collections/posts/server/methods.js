@@ -1,9 +1,13 @@
 
 Meteor.methods({
-    // delete a post
+    // self-delete a post
     //  actually just set the corresponding attributes
     //  deletedBecause is left null (no reason) when the owner deletes his own post
+    //  throw an exception if the post is not owned by the current user
     'frsPosts.delete'( post ){
+        if( post.owner !== this.userId ){
+            throw new Meteor.Error( 'now-owner', 'Currently logged-in user is not the owner of to-be-deleted post' );
+        }
         const selector = { _id: post._id };
         const modifier = { ...post, ...{
             deletedAt: new Date(),
@@ -23,33 +27,33 @@ Meteor.methods({
         return res;
     },
 
-    // called after a moderator has confirmed the moderation
-    //  parms are an object with:
-    //  - post: the just-moderated post
+    // called after a moderator has confirmed the moderation and the post has been moderated (aka deleted)
+    //  manage here threadleader and user information
+    //  parms is an object with:
+    //  - post: the just-moderated post (inclusing reason and additional argument)
     //  - inform: whether the moderator has asked the user to be informed
     //  - stats: the user count stats
-    //  - reason: the reason
     // this is always called, even if the moderator chooses to not inform the user
     'frsPosts.postModerate'( parms ){
-        // if the just-moderated post was a thread leader, then find another one if possible:
-        if( !parms.post.threadId && parms.post.title && !parms.post.replyTo ){
+        console.log( 'postModerate', parms );
+        // if the just-moderated post was a thread leader, then find another one if possible
+        if( parms.post.threadLeader ){
             const fetched = pwiForums.server.collections.Posts.find({ threadId: parms.post._id, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
             if( fetched.length ){
                 const newLeader = fetched[0]
-                newLeader.threadId = null;
-                newLeader.replyTo = null;
+                newLeader.threadLeader = true;
                 newLeader.title = parms.post.title;
-                const res = pwiForums.server.fn.Posts.upsert( newLeader );
+                const res = pwiForums.server.collections.Posts.update({ _id: newLeader._id }, { $set: { threadLeader: true, title: newLeader.title }});
                 console.log( 'promoting new thread leader', newLeader, res );
             }
-        } else if( !( parms.post.threadId && parms.post.replyTo && !parms.post.title )){
-            console.error( 'post threadId vs. replyTo vs. title error', parms.post );
+            parms.post.threadLeader = false;
+            const res = pwiForums.server.collections.Posts.update({ _id: parms.post._id }, { $set: { threadLeader: false }});
+            console.log( 'unpromoting previoous thread leader', parms.post, res );
         }
-        console.log( 'postModerate', parms );
     },
 
     // called when a moderator cancels a moderation
-    //  if the unmoderated post was a thread leader older than the current one, then restore it (and unpromote the current thread leader..)
+    //  if the unmoderated post is older than the current threadLeader, then promote it (and unpromote the current one..)
     'frsPosts.unmoderate'( post ){
         const unset = {
             deletedAt: 1,
@@ -57,22 +61,27 @@ Meteor.methods({
             deletedBecause: 1,
             deletedText: 1
         };
+        delete post.deletedAt;
+        delete post.deletedBy;
+        delete post.deletedBecause;
+        delete post.deletedText;
         const res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
-        console.log( 'frsPosts.unmoderate', unset, res );
-        // was a thread leader ?
+        console.log( 'frsPosts.unmoderate', post, unset, res );
+        // may be it a new thread leader (because it was before being moderated) ?
         //  search the current thread leader, and test against the creation date
-        if( !post.threadId && post.title && !post.replyTo ){
-            const fetched = pwiForums.server.collections.Posts.find({ title: post.title, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
-            if( fetched.length ){
-                const currentLeader = fetched[0];
-                if( post.createdAt.getTime() < currentLeader.createdAt.getTime()){
-                    // unpromote current leader
-                    currentLeader.threadId = post._id;
-                    currentLeader.replyTo = post._id;
-                    currentLeader.title = null;
-                    const res = pwiForums.server.fn.Posts.upsert( currentLeader );
-                    console.log( 'unpromoting current thread leader', currentLeader, res );
-                }
+        const fetched = pwiForums.server.collections.Posts.find({ threadLeader: true, threadId: post.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+        if( fetched.length ){
+            const currentLeader = fetched[0];
+            if( post.createdAt.getTime() < currentLeader.createdAt.getTime()){
+                // unpromote current leader
+                currentLeader.threadLeader = false;
+                let res = pwiForums.server.collections.Posts.update({ _id: currentLeader._id }, { $set: { threadLeader: false }});
+                console.log( 'unpromoting current thread leader', currentLeader, res );
+                // promoting the new one
+                post.threadLeader = true;
+                post.title = post.title || currentLeader.title;
+                res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $set: { threadLeader: true, title: post.title }});
+                console.log( 'promoting new thread leader', post, res );
             }
         }
         return res;
@@ -104,6 +113,10 @@ Meteor.methods({
             res.upserted = {
                 _id: o._id || res.insertedId,
                 ...modifier
+            }
+            if( o.threadLeader ){
+                const updRes = pwiForums.server.collections.Posts.update({ _id: res.upserted._id }, { $set: { threadId: res.upserted._id }});
+                console.log( 'update threadId for this new threadLeader', updRes, res.upserted._id );
             }
         }
         console.log( 'frsPosts.upsert returns', res );

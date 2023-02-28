@@ -77,14 +77,14 @@ Template.frs_post_moderate.helpers({
         return post ? post.rvAuthorEmail.get().label : '';
     },
 
-    // whether we have to provide a reason to the author ?
-    haveReason(){
-        return this.forum.inform !== FRS_INFORM_NONE;
-    },
-
     // label translation
     i18n( opts ){
         return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
+    },
+
+    // whether we can or must inform the author ?
+    informAuthor(){
+        return this.forum.inform !== FRS_INFORM_NONE;
     },
 
     // whether the moderator can choose to inform the author or not ?
@@ -130,7 +130,7 @@ Template.frs_post_moderate.events({
             if( post ){
                 post.deletedAt = new Date();
                 post.deletedBy = Meteor.userId();
-                post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val();
+                post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val() || 'FRS_REASON_NONE';
                 post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim();
                 Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
                     if( err ){
@@ -142,7 +142,6 @@ Template.frs_post_moderate.events({
                         pwixModal.close();
                         let result = {
                             inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
-                            reason: instance.$( '.frs-reason' ).find( ':selected' ).val(),
                             stats: post.rvStats.get(),
                             post: post
                         };

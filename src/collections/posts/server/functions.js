@@ -6,15 +6,15 @@ pwiForums.server.fn = {
     ...pwiForums.server.fn,
 
     Posts: {
+        // publish a cursor of moderable posts, adding some interesting fields about the thread (title and creation date)
         findModerablesByQuery( publication, query ){
             const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
         
             // add thread title
             function f_addFields( doc ){
-                const originalPost = doc.threadId ? pwiForums.server.collections.Posts.findOne({ _id: doc.threadId }) : doc;
+                const originalPost = pwiForums.server.collections.Posts.findOne({ _id: doc.threadId });
                 doc.threadTitle = originalPost.title;
                 doc.threadDate = originalPost.createdAt;
-                doc.threadIdentifier = originalPost._id;
                 return doc;
             }
         
@@ -41,7 +41,8 @@ pwiForums.server.fn = {
         },
     
         // upsert a document in the Posts collection
-        //  'modifier' is an optional object which may gather the updates, returning them to the caller
+        // - 'modifier' is an optional object which may gather the updates, returning them to the caller
+        //   it is provided by the 'frsPosts.upsert' method to be able to log the result
         upsert( doc, modifier={} ){
             const selector = { _id: doc._id };
             modifier = {
@@ -64,6 +65,7 @@ pwiForums.server.fn = {
             f_add( 'threadId' );
             f_add( 'pinned' );
             f_add( 'replyable' );
+            f_add( 'threadLeader' );
             f_add( 'deletedAt' );
             f_add( 'deletedBy' );
             f_add( 'deletedBecause' );

@@ -91,13 +91,15 @@ pwiForums.client.fn = {
             let html = '';
             if( userId ){
                 html += '<p>' + pwiForums.fn.i18n( 'roles_view.public_label' ) + '</p>';
-                const privHandle = Meteor.subscribe( 'frsForums.listVisiblePrivate', userId );
-                const modHandle = Meteor.subscribe( 'frsForums.listModerables', userId );
+                const privQuery = pwiForums.Forums.queryPrivates( userId );
+                const privHandle = Meteor.subscribe( 'frsForums.byQuery', privQuery );
+                const moderQuery = pwiForums.Forums.queryModerables( userId );
+                const moderHandle = Meteor.subscribe( 'frsForums.byQuery', moderQuery );
                 const rv = new ReactiveVar( 0 );
                 let done = 0;
                 Tracker.autorun(() => {
                     if( privHandle.ready()){
-                        const privates = pwiForums.client.collections.Forums.find({ listVisiblePrivate: true }, { sort: { title: 1 }}).fetch();
+                        const privates = pwiForums.client.collections.Forums.find( privQuery.selector, privQuery.options ).fetch();
                         if( privates.length ){
                             html += '<p>' + pwiForums.fn.i18n( 'roles_view.private_label' );
                             html += '<ul>'
@@ -113,12 +115,12 @@ pwiForums.client.fn = {
                     }
                 });
                 Tracker.autorun(() => {
-                    if( modHandle.ready()){
-                        const mods = pwiForums.client.collections.Forums.find({ listVisibleModerators: true }, { sort: { title: 1 }}).fetch();
-                        if( mods.length ){
+                    if( moderHandle.ready()){
+                        const moderables = pwiForums.client.collections.Forums.find( moderQuery.selector, moderQuery.options ).fetch();
+                        if( moderables.length ){
                             html += '<p>' + pwiForums.fn.i18n( 'roles_view.moderators_label' );
                             html += '<ul>'
-                            mods.every(( f ) => {
+                            moderables.every(( f ) => {
                                 html += '<li>'+f.title+'</li>';
                                 return true;
                             });

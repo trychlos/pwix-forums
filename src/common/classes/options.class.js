@@ -111,6 +111,15 @@ export class frsOptions extends pwixOptions.Options {
 
     /**
      * Getter/Setter
+     * @param {String|Function} value the route to the page which displays all the posts
+     * @returns {String}
+     */
+    'routes.allposts'( value ){
+        return this.getset_String_Fn( 'routes.allposts', value, { default: defaults.common.routes.allposts });
+    }
+
+    /**
+     * Getter/Setter
      * @param {String|Function} value the route to the forums
      * @returns {String}
      */

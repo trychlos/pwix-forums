@@ -66,7 +66,7 @@ Template.frsPosts.onCreated( function(){
     self.autorun(() => {
         const threadId = FlowRouter.getParam( 'threadId' );
         self.FRS.thread.id.set( threadId );
-        self.FRS.thread.handle.set( self.subscribe( 'frsPosts.listOne', threadId ));
+        self.FRS.thread.handle.set( self.subscribe( 'frsPosts.byId', threadId ));
         self.FRS.posts.handle.set( self.subscribe( 'frsPosts.listForThread', threadId ));
     });
 

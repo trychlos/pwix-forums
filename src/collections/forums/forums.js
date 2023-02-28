@@ -157,70 +157,6 @@ pwiForums.Forums = {
         return moderate ? true : false;
     },
 
-    // returns an object { selector, options } suitable to list all forums moderable by the current user
-    //  to be used both on the server-side publication and on the client fetch
-    //  sorted in ascending title alpha order
-    queryModerables( userId ){
-        // default is to select all public+private and moderable forums
-        //  we do not consider here archived forums to get messages published between since date and archive date
-        let result = {
-            selector: { $and: [{ moderation: { $ne: FRS_MODERATE_NONE }}] },
-            options: { sort: { title: 1 }}
-        };
-
-        // to be able to moderate a forum, identified user must have
-        //  - FRS_PRIVATE_MODERATOR role for a private forum
-        //  - or FRS_PUBLIC_MODERATOR role for a public forum
-        //  - or be identified in moderators array
-        if( userId ){
-            let conditions = [];
-            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
-                conditions.push({ private: { $ne: true }});
-            }
-            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
-                conditions.push({ private: { $eq: true }});
-            }
-            conditions.push({ 'moderators.id': userId });
-            let orCond = { $or: [] };
-            conditions.every(( cond ) => {
-                orCond.$or.push( cond );
-                return true;
-            });
-            result.selector.$and.push( orCond );
-
-        // if not identified, unable to moderate
-        //  set a fake selector to not return anything
-        } else {
-            result.selector = { xxxxxx: 'EMPTY_SELECTION' };
-        }
-        result.parms = {
-            userId: userId
-        };
-        return result;
-    },
-
-    // returns an object { selector, options } suitable to list all forums visible by the current user
-    //  to be used both on the server-side publication and on the client fetch
-    queryReadables(){
-        const userId = Meteor.userId();
-        // default is to select all public+private forums
-        let result = { selector: {}, options: {}};
-
-        // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
-        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
-            ; // nothing to add to the default (ful) result
-
-        // user is identified but doesn't have required role => is he registered as a privateReader ?
-        } else if( userId ){
-            result.selector = { $or: [{ private: { $ne: true } }, { 'privateReaders.id': userId }]};
-
-        //  - anonymous : only public forums are visible
-        } else {
-            result.selector = { private: { $ne: true }};
-        }
-        return result;
-    },
-
     // whether the specified forum is editable (postable) by the specified user (which may be null at the moment) ?
     // - forum: the Forum object
     // - user: the user record
@@ -310,6 +246,101 @@ pwiForums.Forums = {
                 }
         }
         //console.log( 'forum', forum, 'user', user, 'result', result );
+        return result;
+    },
+
+    // returns an object { selector, options } suitable to list all forums moderable by the current user
+    //  to be used both on the server-side publication and on the client fetch
+    //  sorted in ascending title alpha order
+    queryModerables( userId ){
+        // default is to select all public+private and moderable forums
+        //  we do not consider here archived forums to get messages published between since date and archive date
+        let result = {
+            selector: { $and: [{ moderation: { $ne: FRS_MODERATE_NONE }}] },
+            options: { sort: { title: 1 }}
+        };
+
+        // to be able to moderate a forum, identified user must have
+        //  - FRS_PRIVATE_MODERATOR role for a private forum
+        //  - or FRS_PUBLIC_MODERATOR role for a public forum
+        //  - or be identified in moderators array
+        if( userId ){
+            let conditions = [];
+            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
+                conditions.push({ private: { $ne: true }});
+            }
+            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
+                conditions.push({ private: { $eq: true }});
+            }
+            conditions.push({ 'moderators.id': userId });
+            let orCond = { $or: [] };
+            conditions.every(( cond ) => {
+                orCond.$or.push( cond );
+                return true;
+            });
+            result.selector.$and.push( orCond );
+
+        // if not identified, unable to moderate
+        //  set a fake selector to not return anything
+        } else {
+            result.selector = { xxxxxx: 'EMPTY_SELECTION' };
+        }
+        result.parms = {
+            userId: userId
+        };
+        return result;
+    },
+
+    // returns an object { selector, options } suitable to list private forums visible by the specified user
+    //  to be used both on the server-side publication and on the client fetch
+    // rules are:
+    //  - private forums are visible to:
+    //    > a connected user who
+    //      - either is explicitely listed as a reader of this private forum
+    //      - or has the FRS_PRIVATE_VIEW role
+    queryPrivates( userId ){
+        // default is to select all public+private forums
+        let result = { selector: {}, options: { sort: { title: 1 }}};
+
+        // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
+        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+            result.selector = { private: true };
+
+        // user is identified but doesn't have required role => is he registered as a privateReader ?
+        } else if( userId ){
+            result.selector = { 'privateReaders.id': userId };
+
+        //  - anonymous : only public forums are visible
+        } else {
+            result.selector = { xxxxxx: 'EMPTY_SELECTION' };
+        }
+        return result;
+    },
+
+    // returns an object { selector, options } suitable to list all forums visible by the specified user
+    //  to be used both on the server-side publication and on the client fetch
+    // rules are:
+    //  - public forums are always visible to all
+    //  - private forums are visible to:
+    //    > a connected user who
+    //      - either is explicitely listed as a reader of this private forum
+    //      - or has the FRS_PRIVATE_VIEW role
+    queryReadables( userId ){
+        // default is to select all public+private forums
+        let result = { selector: {}, options: { sort: { title: 1 }}};
+
+        // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
+        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+            ; // nothing to add to the default (full) result
+
+        // user is identified but doesn't have required role => is he registered as a privateReader ?
+        } else if( userId ){
+            result.selector = { $or: [{ private: { $ne: true } }, { 'privateReaders.id': userId }]};
+
+        //  - anonymous : only public forums are visible
+        } else {
+            result.selector = { private: { $ne: true }};
+        }
         return result;
     }
 };

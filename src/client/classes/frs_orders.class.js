@@ -39,22 +39,26 @@ import { pwiForums } from '../js/index.js';
 
 export class frsOrders {
 
-    // private data
-    static _singleton = null;
+    // static data
+    //
+    static Singleton = null;
 
-    _vars = {
+    // private data
+    //
+    _priv = {
         categories: {
-            handle: Meteor.subscribe( 'frsCategories.listAll' ),
+            handle: null,
             collection: new ReactiveVar( [] ),
             set: new ReactiveVar( false ),
         },
         forums: {
-            handle: Meteor.subscribe( 'frsForums.listVisible' ),
+            handle: null,
+            query: new ReactiveVar( null ),
             collection: new ReactiveVar( [] ),
             set: new ReactiveVar( false )
         },
         orders: {
-            handle: Meteor.subscribe( 'frsOrders.listAll' ),
+            handle: null,
             collection: new ReactiveVar( [] ),
             set: new ReactiveVar( false )
         },
@@ -62,6 +66,7 @@ export class frsOrders {
     };
 
     // private functions
+    //
 
     /*
      * @returns {Object} a { _id, title } object for the default category
@@ -88,6 +93,7 @@ export class frsOrders {
     }
 
     // public data
+    //
     tree = new ReactiveVar( [], ( a, b ) => { return JSON.stringify( a ) === JSON.stringify( b ); });
 
     /**
@@ -95,33 +101,41 @@ export class frsOrders {
      * @returns {frsOrders}
      */
     constructor(){
-        if( frsOrders._singleton ){
-            return frsOrders._singleton;
+        if( frsOrders.Singleton ){
+            return frsOrders.Singleton;
         }
 
         const self = this;
 
+        // subscribe to our collections at instanciation time
+        Tracker.autorun(() => {
+            self._priv.categories.handle = Meteor.subscribe( 'frsCategories.listAll' );
+            self._priv.forums.query.set( pwiForums.Forums.queryReadables( Meteor.userId()));
+            self._priv.forums.handle = Meteor.subscribe( 'frsForums.byQuery', self._priv.forums.query.get());
+            self._priv.orders.handle = Meteor.subscribe( 'frsOrders.listAll' );
+        })
+
         // we keep as intern reactive vars the records read from our collections
         Tracker.autorun(() => {
-            if( self._vars.categories.handle.ready()){
-                self._vars.categories.collection.set( pwiForums.client.collections.Categories.find().fetch() || [] );
-                console.log( 'frsCategories', self._vars.categories.collection.get());
-                self._vars.categories.set.set( true );
+            if( self._priv.categories.handle.ready()){
+                self._priv.categories.collection.set( pwiForums.client.collections.Categories.find().fetch() || [] );
+                console.log( 'frsCategories', self._priv.categories.collection.get());
+                self._priv.categories.set.set( true );
             }
         });
         Tracker.autorun(() => {
-            if( self._vars.forums.handle.ready()){
-                const query = pwiForums.Forums.queryReadables();
-                self._vars.forums.collection.set( pwiForums.client.collections.Forums.find( query.selector ).fetch() || [] );
-                console.log( 'frsForums', self._vars.forums.collection.get());
-                self._vars.forums.set.set( true );
+            if( self._priv.forums.handle.ready()){
+                const query = pwiForums.Forums.queryReadables( Meteor.userId());
+                self._priv.forums.collection.set( pwiForums.client.collections.Forums.find( query.selector ).fetch() || [] );
+                console.log( 'frsForums', self._priv.forums.collection.get());
+                self._priv.forums.set.set( true );
             }
         });
         Tracker.autorun(() => {
-            if( self._vars.orders.handle.ready()){
-                self._vars.orders.collection.set( pwiForums.client.collections.Orders.find().fetch() || [] );
-                console.log( 'frsOrders', self._vars.orders.collection.get());
-                self._vars.orders.set.set( true );
+            if( self._priv.orders.handle.ready()){
+                self._priv.orders.collection.set( pwiForums.client.collections.Orders.find().fetch() || [] );
+                console.log( 'frsOrders', self._priv.orders.collection.get());
+                self._priv.orders.set.set( true );
             }
         });
 
@@ -133,7 +147,7 @@ export class frsOrders {
         //      + maybe a forum must be attached to another category (in this case, always to 'uncategorized')
         //      + maybe the 'Uncategorized' category must be added to the collection
         Tracker.autorun(() => {
-            if( self._vars.categories.set.get() && self._vars.forums.set.get() && self._vars.orders.set.get()){
+            if( self._priv.categories.set.get() && self._priv.forums.set.get() && self._priv.orders.set.get()){
                 let build = { tree:[], orders:[], forums:[], defaultFound:false };
                 
                 // build the ordered list of categories, including existing categories, plus the default category, plus the unordered categories at the end
@@ -410,10 +424,10 @@ export class frsOrders {
                 }
     
                 //console.log( 'frsOrders.tree full rebuild begin')
-                const ordersCollection = self._vars.orders.collection.get();           // read orders from collection
+                const ordersCollection = self._priv.orders.collection.get();           // read orders from collection
                 const catsOrder = f_findOrder( ordersCollection, 'CAT' );   // the categories order (from collection)
-                f_buildFromCategories( catsOrder, self._vars.categories.collection.get());
-                f_buildFromForums( ordersCollection, self._vars.forums.collection.get());
+                f_buildFromCategories( catsOrder, self._priv.categories.collection.get());
+                f_buildFromForums( ordersCollection, self._priv.forums.collection.get());
                 f_setForumsCount();
                 console.log( 'build', build );
                 self.tree.set( build.tree );
@@ -424,7 +438,7 @@ export class frsOrders {
             }
         });
 
-        frsOrders._singleton = this;
+        frsOrders.Singleton = this;
         return this;
     }
 
@@ -522,7 +536,7 @@ export class frsOrders {
      * @returns {Array} the list of registered categories
      */
     categories(){
-        return this._vars.categories.collection.get();
+        return this._priv.categories.collection.get();
     }
 
     /**

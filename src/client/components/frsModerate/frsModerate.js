@@ -256,7 +256,7 @@ Template.frsModerate.onCreated( function(){
     // subscribe to list of moderable forums
     self.autorun(() => {
         if( !self.FRS.forums.handle ){
-            self.FRS.forums.handle = self.subscribe( 'frsForums.listModerablesByQuery', self.FRS.forums.query.get());
+            self.FRS.forums.handle = self.subscribe( 'frsForums.byQuery', self.FRS.forums.query.get());
             self.FRS.state.set( ST_FORUMS_SUBSCRIBED );
         }
     });
@@ -297,7 +297,7 @@ Template.frsModerate.onCreated( function(){
             const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
             //console.log( allPosts );
             allPosts.every(( p ) => {
-                p.threadDifferent = ( p.threadIdentifier !== previousThread );
+                p.threadDifferent = ( p.threadId !== previousThread );
                 p.firstPost = p.threadDifferent;
                 p.firstThread = ( previousForum !== p.forum );
                 if( p.firstThread && previousForum ){
@@ -305,7 +305,7 @@ Template.frsModerate.onCreated( function(){
                     posts = [];
                 }
                 previousForum = p.forum;
-                previousThread = p.threadIdentifier;
+                previousThread = p.threadId;
                 //console.log( p );
                 posts.push( p );
                 return true;
