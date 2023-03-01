@@ -20,13 +20,7 @@
 |    8 | 2022-10-30 | pwix:forums a thread creator may want to be notified of replies in his thread (was app #102) |
 |      | 2022-11- 9 | like anyone may want to be notified of any reply to one of his post |
 |      |            | like anyone may want subscribe to any new post in a thread or a forum |
-|   10 | 2022-10-31 | pwix:forums have 'wantModerationConfirmation' configuration option (when false, moderation is applied without confirmation) (was app #106) |
-|      |            | if no confirmation is done, an automatic reason must be set |
 |   11 | 2022-10-31 | pwix:forums have a page for general terms of use => new frs_contents collection (was app #108) |
-|   12 | 2022-11- 1 | pwix:forums review the <a> tag in frsPosts (should have same display than frsThreads) (was app #114) |
-|      | 2022-11- 2 | note that, while frsThreads have right bg color while mouse is hover, the mouse pointer is not ok in all columns |
-|      | 2022-11- 3 | was actually 'review frsThreads to be the same than frsForums' -> that's done but had to remove <a> tags |
-|      |            | -> have set tooltips, but they do not show |
 |   14 | 2022-11- 3 | pwix:forums let a moderator choose his own setting for showDeletedForAdmin which would override the forum property (was app #116) |
 |   18 | 2023- 2-18 | frsForums frs-right column; items are not aligned |
 |   19 | 2023- 2-19 | tree_tab.cat_edit, cat_delete, for_edit, for_delete should have double quotes, but doesn't work |
@@ -49,7 +43,11 @@
 |   58 | 2023- 2-28 | obsolete conf.posts.limit |
 |   59 | 2023- 3- 1 | inform the author of a moderated post |
 |   60 | 2023- 3- 1 | frsForums: threads and posts counters are not reactive |
-|   61 |  |  |
+|   61 | 2023- 3- 1 | when counting threads and posts, should only include those who are validated when this is relevant |
+|      | 2023- 3- 1 | plus the posts of the owner waiting for validation |
+|   62 | 2023- 3- 1 | owner may see and delete his own post, with the mention 'waiting for validation' |
+|   63 |  |  |
+|   64 |  |  |
 
 ---
 ## Done
@@ -72,6 +70,14 @@
 |      | 2022-10-31 | take the first reply and make it the new thread leader (set threadId=null, set title) todo in postModerate |
 |      | 2022-11- 3 | obsoleted by #113 for user deletion - but still relevant for moderation |
 |      | 2023- 2-28 | done (at last) - so promote/unpromote thread leaders |
+|   10 | 2022-10-31 | pwix:forums have 'wantModerationConfirmation' configuration option (when false, moderation is applied without confirmation) (was app #106) |
+|      |            | if no confirmation is done, an automatic reason must be set |
+|      | 2023- 3- 1 | cancelled as no more understand that |
+|   12 | 2022-11- 1 | pwix:forums review the <a> tag in frsPosts (should have same display than frsThreads) (was app #114) |
+|      | 2022-11- 2 | note that, while frsThreads have right bg color while mouse is hover, the mouse pointer is not ok in all columns |
+|      | 2022-11- 3 | was actually 'review frsThreads to be the same than frsForums' -> that's done but had to remove <a> tags |
+|      |            | -> have set tooltips, but they do not show |
+|      | 2023- 3- 1 | display has been heavily reviewed - seems correct at the moment |
 |   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
 |      | 2023- 2-27 | done with FRS_MODERATE_APRIORI option |
 |   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |

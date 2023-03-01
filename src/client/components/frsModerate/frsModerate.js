@@ -299,9 +299,9 @@ Template.frsModerate.onCreated( function(){
             allPosts.every(( p ) => {
                 p.dyn = {
                     threadDifferent: ( p.threadId !== previousThread ),
-                    firstPost: p.dyn.threadDifferent,
                     firstThread: ( previousForum !== p.forum )
                 };
+                p.dyn.firstPost = p.dyn.threadDifferent;
                 if( p.dyn.firstThread && previousForum ){
                     self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
                     posts = [];

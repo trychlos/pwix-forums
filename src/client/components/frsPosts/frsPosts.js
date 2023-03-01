@@ -62,12 +62,11 @@ Template.frsPosts.onCreated( function(){
 
     // get the threadId as a FlowRouter param
     //  subscribe to the Posts publication to get this particular post and all others
-    //  the two subscriptions overlap, but kept as first is most probably must faster than the second
+    //  the two subscriptions overlap, but kept as first is most probably much faster than the second
     self.autorun(() => {
         const threadId = FlowRouter.getParam( 'threadId' );
         self.FRS.thread.id.set( threadId );
         self.FRS.thread.handle.set( self.subscribe( 'frsPosts.byId', threadId ));
-        self.FRS.posts.handle.set( self.subscribe( 'frsPosts.threadPosts', threadId ));
     });
 
     // get the thread when ready
@@ -100,6 +99,14 @@ Template.frsPosts.onCreated( function(){
         }
     });
 
+    // subscribe to the Posts publication to get the available posts in this thread
+    self.autorun(() => {
+        const forum = self.FRS.forum.obj.get();
+        if( forum ){
+            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.threadPosts', forum, self.FRS.thread.id.get()));
+        }
+    });
+
     // get the last (most recent) 100 posts
     // has to wait for the forum to be able to honor the 'showDeletedForAdmin' property
     // get the count of non deleted posts in this thread
@@ -111,11 +118,10 @@ Template.frsPosts.onCreated( function(){
             const isModerator = userId ? pwiForums.Forums.canModerate( forum, userId ) : false;
             const withModerated = isModerator ? forum.showDeletedForAdmin : false;
             const withDeleted = userId ? forum.showDeletedForUser : false;
-            const query = pwiForums.Posts.queryPosts( threadId, {
+            const query = pwiForums.Posts.queryPosts( forum, threadId, {
                 withModerated: withModerated,
                 withDeleted: withDeleted,
-                userId: userId,
-                limit: pwiForums.conf.posts.limit
+                userId: userId
             });
             self.FRS.posts.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
             self.FRS.posts.nonDeletedCount.set( pwiForums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());

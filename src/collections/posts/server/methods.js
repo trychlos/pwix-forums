@@ -11,7 +11,8 @@ Meteor.methods({
         const selector = { _id: post._id };
         const modifier = { ...post, ...{
             deletedAt: new Date(),
-            deletedBy: this.userId
+            deletedBy: this.userId,
+            threadLeader: false
         }};
         const res = pwiForums.server.collections.Posts.upsert( selector, { $set: modifier });
         if( !res ){
