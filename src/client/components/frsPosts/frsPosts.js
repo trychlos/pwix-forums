@@ -109,7 +109,7 @@ Template.frsPosts.onCreated( function(){
             const isModerator = userId ? pwiForums.Forums.canModerate( forum, userId ) : false;
             const withModerated = isModerator ? forum.showDeletedForAdmin : false;
             const withDeleted = userId ? forum.showDeletedForUser : false;
-            self.FRS.posts.query.set( pwiForums.Posts.queryPosts( forum, threadId, {
+            self.FRS.posts.query.set( pwiForums.Posts.queryReadables( forum, threadId, {
                 withModerated: withModerated,
                 withDeleted: withDeleted,
                 userId: userId

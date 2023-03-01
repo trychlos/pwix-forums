@@ -193,8 +193,8 @@ pwiForums.Posts = {
     //  - withModerated: true|false
     //  - withDeleted: true|false
     //  - userId: mandatory if withDeleted is true
-    queryPosts( forum, threadId, opts ){
-        //console.log( 'queryPosts', forum, threadId );
+    queryReadables( forum, threadId, opts ){
+        //console.log( 'queryReadables', forum, threadId );
         // honor 'showDeletedForAdmin' and 'showDeletedForUser' forum properties
         let deletedClause = [{ deletedAt: null }];
         if( Object.keys( opts ).includes( 'withModerated' ) && opts.withModerated ){
