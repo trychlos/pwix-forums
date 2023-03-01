@@ -46,10 +46,10 @@
 |   54 | 2023- 2-27 | BUG it happens that validate and moderate are rightly reactive, but unvalidate and unmoderate are not, even though cursor observer actually see the changes |
 |      |            | current work-around is to stop and relaunch the subscription |
 |   55 | 2023- 2-27 | handle pagination in all relevant pages |
-|   56 | 2023- 2-27 | when moderator chooses to not inform the user, then disable the reason select box |
-|      | 2023- 2-28 | no: the moderation reason is always mandatory - the only option is to inform or not the author |
 |   58 | 2023- 2-28 | obsolete conf.posts.limit |
-|   59 |  |  |
+|   59 | 2023- 3- 1 | inform the author of a moderated post |
+|   60 | 2023- 3- 1 | frsForums: threads and posts counters are not reactive |
+|   61 |  |  |
 
 ---
 ## Done
@@ -125,6 +125,9 @@
 |      | 2023- 2-23 | done |
 |   52 | 2023- 2-22 | frsModerate: the publication should take into account the above option (with ou without moderated posts) |
 |      | 2023- 2-23 | done |
+|   56 | 2023- 2-27 | when moderator chooses to not inform the user, then disable the reason select box |
+|      | 2023- 2-28 | no: the moderation reason is always mandatory - the only option is to inform or not the author |
+|      | 2023- 3- 1 | yes, we alsways have a reason. Fine |
 |   57 | 2023- 2-27 | when no reason is given for a moderation, set a REASON_NONE |
 |      | 2023- 2-28 | obsoleted by #56 (reason is always mandatory) |
 

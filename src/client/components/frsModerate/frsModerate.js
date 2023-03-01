@@ -297,10 +297,12 @@ Template.frsModerate.onCreated( function(){
             const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
             //console.log( allPosts );
             allPosts.every(( p ) => {
-                p.threadDifferent = ( p.threadId !== previousThread );
-                p.firstPost = p.threadDifferent;
-                p.firstThread = ( previousForum !== p.forum );
-                if( p.firstThread && previousForum ){
+                p.dyn = {
+                    threadDifferent: ( p.threadId !== previousThread ),
+                    firstPost: p.dyn.threadDifferent,
+                    firstThread: ( previousForum !== p.forum )
+                };
+                if( p.dyn.firstThread && previousForum ){
                     self.FRS.postsPerForum.set( previousForum, [ ...posts ]);
                     posts = [];
                 }
@@ -479,33 +481,9 @@ Template.frsModerate.helpers({
         });
     },
 
-    // informations about the moderation
-    /*
-    popoverInfo( f, p ){
-        let content = '';
-        if( p.deletedBecause ){
-            pwixI18n.group( FRSI18N, 'moderate.options' ).every(( it ) => {
-                if( it.id === p.deletedBecause ){
-                    label = it.label;
-                    return false;
-                }
-                return true;
-            });
-            content = pwixI18n.label( FRSI18N, 'moderate_info.reason', label );
-        }
-        content += '<br />';
-        if( p.deletedText ){
-            content += pwixI18n.label( FRSI18N, 'moderate.supplement_text', p.deletedText );
-        } else {
-            content += pwixI18n.label( FRSI18N, 'moderate.no_supplement', label );
-        }
-        return content;
-    },
-    */
-
     // the posts has been moderated by who and when ?
     moderatedBy( p ){
-        return pwiForums.fn.i18n( 'moderate.moderated_by', p.rvModerator ? p.rvModerator.get().label : '', pwixI18n.dateTime( p.deletedAt ));
+        return pwiForums.fn.i18n( 'moderate.moderated_by', p.dyn.rvModerator ? p.dyn.rvModerator.get().label : '', pwixI18n.dateTime( p.deletedAt ));
     },
 
     // no moderable forum
@@ -520,19 +498,19 @@ Template.frsModerate.helpers({
 
     // the author of the post
     postAuthor( p ){
-        return pwiForums.fn.i18n( 'moderate.author', p.rvAuthorEmail.get().label, p.rvAuthorUsername.get().label );
+        return pwiForums.fn.i18n( 'moderate.author', p.dyn.rvAuthorEmail.get().label, p.dyn.rvAuthorUsername.get().label );
     },
 
     // catch each rendered post
     //  install a ReactiveVar which will hold the needed labels
     postCatch( f, p ){
         //console.log( 'postCatch' );
-        p.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
-        p.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
-        p.rvValidator = p.validatedBy ? pwiForums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
-        p.rvModerator = p.deletedBy && p.deletedBecause ? pwiForums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
-        p.rvStats = new ReactiveVar( null );
-        Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.rvStats.set( res ); });
+        p.dyn.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
+        p.dyn.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
+        p.dyn.rvValidator = p.validatedBy ? pwiForums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
+        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? pwiForums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
+        p.dyn.rvStats = new ReactiveVar( null );
+        Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.dyn.rvStats.set( res ); });
     },
 
     // when the post has it been created ?
@@ -549,12 +527,12 @@ Template.frsModerate.helpers({
     //  first post of each thread set the title in the object
     postFirstClass( f, p ){
         //console.log( 'postFirst', p.firstPost );
-        return p.firstPost ? 'frs-first' : '';
+        return p.dyn.firstPost ? 'frs-first' : '';
     },
 
     // the moderation score of the author
     postScore( p ){
-        const stats = p.rvStats.get();
+        const stats = p.dyn.rvStats.get();
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
         return pwiForums.fn.i18n( 'moderate.owner_score', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
@@ -573,12 +551,12 @@ Template.frsModerate.helpers({
     // if this post belongs to another thread (relatively to this forum) ?
     threadDifferent( f, p ){
         //console.log( 'threadDifferent', p.threadDifferent );
-        return p.threadDifferent;
+        return p.dyn.threadDifferent;
     },
 
     // if this thread the first in the forum ?
     threadFirstClass( f, p ){
-        return p.firstThread ? 'frs-first' : '';
+        return p.dyn.firstThread ? 'frs-first' : '';
     },
 
     // thread title
@@ -588,7 +566,7 @@ Template.frsModerate.helpers({
 
     // the posts has been validated by who and when ?
     validatedBy( p ){
-        return pwiForums.fn.i18n( 'moderate.validated_by', p.rvValidator ? p.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
+        return pwiForums.fn.i18n( 'moderate.validated_by', p.dyn.rvValidator ? p.dyn.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
     }
 });
 

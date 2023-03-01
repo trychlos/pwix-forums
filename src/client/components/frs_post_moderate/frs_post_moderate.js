@@ -35,16 +35,18 @@ Template.frs_post_moderate.onCreated( function(){
     //  attaching them to 'post'
     self.autorun(() => {
         const post = Template.currentData().post;
-        post.rvStats = new ReactiveVar( null );
-        post.rvAuthorEmail = pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS );
-        post.rvAuthorUsername = pwiForums.fn.labelById( post.owner, AC_USERNAME );
+        post.dyn = {
+            rvStats: new ReactiveVar( null ),
+            rvAuthorEmail: pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS ),
+            rvAuthorUsername: pwiForums.fn.labelById( post.owner, AC_USERNAME )
+        };
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {
                 if( err ){
                     console.error( err );
                 } else {
                     //console.log( res );
-                    post.rvStats.set( res )
+                    post.dyn.rvStats.set( res )
                 }
             });
         }
@@ -65,7 +67,7 @@ Template.frs_post_moderate.helpers({
     // the count of owner's message which have already been deleted
     deletedCount(){
         const post = this.post;
-        const stats = post ? post.rvStats.get() : null;
+        const stats = post ? post.dyn.rvStats.get() : null;
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
         return pwiForums.fn.i18n( 'moderate.owner_posted', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
@@ -74,7 +76,7 @@ Template.frs_post_moderate.helpers({
     email(){
         const post = this.post;
         //return post ? post.dynOwnerEmail.get().label : '';
-        return post ? post.rvAuthorEmail.get().label : '';
+        return post ? post.dyn.rvAuthorEmail.get().label : '';
     },
 
     // label translation
@@ -134,7 +136,7 @@ Template.frs_post_moderate.events({
                 post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim() || '';
                 let options = {
                     inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
-                    stats: post.rvStats.get()
+                    stats: post.dyn.rvStats.get()
                 };
                 Meteor.call( 'frsPosts.moderate', post, options, ( err, res ) => {
                     if( err ){
