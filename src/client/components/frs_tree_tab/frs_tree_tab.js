@@ -18,7 +18,7 @@ import { jstree } from 'jstree';
 import { tlTolert } from 'meteor/pwix:tolert';
 
 import { pwiForums } from '../../js/index.js';
-import { frsOrders } from '../../classes/frs_orders.class.js';
+import { frsOrders } from '../../../common/classes/frs_orders.class.js';
 
 import '../../stylesheets/jstree-style.css';
 

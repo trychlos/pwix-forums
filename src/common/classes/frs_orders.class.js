@@ -1,5 +1,5 @@
 /*
- * /src/client/classes/frs_orders.class.js
+ * /src/common/classes/frs_orders.class.js
  *
  * This class manages the orders or categories and forums.
  * 

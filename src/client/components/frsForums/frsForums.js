@@ -12,7 +12,7 @@
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
-import { frsOrders } from '../../classes/frs_orders.class.js';
+import { frsOrders } from '../../../common/classes/frs_orders.class.js';
 
 import '../../stylesheets/frs_forums.less';
 
