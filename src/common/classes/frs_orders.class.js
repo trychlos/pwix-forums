@@ -149,7 +149,7 @@ export class frsOrders {
         Tracker.autorun(() => {
             if( self._priv.categories.set.get() && self._priv.forums.set.get() && self._priv.orders.set.get()){
                 let build = { tree:[], orders:[], forums:[], defaultFound:false };
-                
+
                 // build the ordered list of categories, including existing categories, plus the default category, plus the unordered categories at the end
                 // the recorded order of categories is the master of the order, though it may be uncomplete or super-complete
                 // (for example not contain some new categories, or contain no more existing categories)
@@ -315,7 +315,7 @@ export class frsOrders {
                     });
                     return found;
                 }
-    
+
                 // return the order field of the found Order record
                 function f_findOrder( orders, type, cat ){
                     let found = null;
@@ -328,7 +328,7 @@ export class frsOrders {
                     });
                     return found ? found.order : [];
                 }
-    
+
                 // return the built forums order for the 'id' category
                 //  > as a list of { id:id } suitable to go to Orders collection
                 function f_forumsOrder( id ){

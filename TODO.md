@@ -46,7 +46,7 @@
 |   61 | 2023- 3- 1 | when counting threads and posts, should only include those who are validated when this is relevant |
 |      | 2023- 3- 1 | plus the posts of the owner waiting for validation |
 |   62 | 2023- 3- 1 | owner may see and delete his own post, with the mention 'waiting for validation' |
-|   63 |  |  |
+|   63 | 2023- 3- 1 | add publish-composite to package.js if kept |
 |   64 |  |  |
 
 ---

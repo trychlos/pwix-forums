@@ -19,10 +19,10 @@ pwiForums.Orders = {
         // the type we are recording here
         //  either a 'CAT': a single record which registers the orders of the categories
         //  or a 'FOR': a record per category which registers the orders of the forums in this category
+        //  or a 'ROOT' virtual root document (just to be able to publish some composite datas)
         // mandatory
         type: {
-            type: String,
-            optional: false
+            type: String
         },
         // category identifier if type is 'FOR'
         category: {
