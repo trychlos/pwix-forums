@@ -36,6 +36,7 @@ Template.frsPosts.onCreated( function(){
             obj: new ReactiveVar( null )
         },
         posts: {
+            query: new ReactiveVar( null ),
             handle: new ReactiveVar( null ),
             cursor: new ReactiveVar( null ),
             nonDeletedCount: new ReactiveVar( 0 ),
@@ -99,11 +100,28 @@ Template.frsPosts.onCreated( function(){
         }
     });
 
-    // subscribe to the Posts publication to get the available posts in this thread
+    // build the query to get the posts of the thread in this forum
     self.autorun(() => {
         const forum = self.FRS.forum.obj.get();
         if( forum ){
-            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.threadPosts', forum, self.FRS.thread.id.get()));
+            const threadId = self.FRS.thread.id.get();
+            const userId = Meteor.userId();
+            const isModerator = userId ? pwiForums.Forums.canModerate( forum, userId ) : false;
+            const withModerated = isModerator ? forum.showDeletedForAdmin : false;
+            const withDeleted = userId ? forum.showDeletedForUser : false;
+            self.FRS.posts.query.set( pwiForums.Posts.queryPosts( forum, threadId, {
+                withModerated: withModerated,
+                withDeleted: withDeleted,
+                userId: userId
+            }));
+        }
+    });
+
+    // subscribe to the Posts publication to get the available posts in this thread
+    self.autorun(() => {
+        const query = self.FRS.posts.query.get();
+        if( query ){
+            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.threadPosts', query ));
         }
     });
 
@@ -111,18 +129,8 @@ Template.frsPosts.onCreated( function(){
     // has to wait for the forum to be able to honor the 'showDeletedForAdmin' property
     // get the count of non deleted posts in this thread
     self.autorun(() => {
-        const forum = self.FRS.forum.obj.get();
-        if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready() && forum ){
-            const threadId = self.FRS.thread.id.get();
-            const userId = Meteor.userId();
-            const isModerator = userId ? pwiForums.Forums.canModerate( forum, userId ) : false;
-            const withModerated = isModerator ? forum.showDeletedForAdmin : false;
-            const withDeleted = userId ? forum.showDeletedForUser : false;
-            const query = pwiForums.Posts.queryPosts( forum, threadId, {
-                withModerated: withModerated,
-                withDeleted: withDeleted,
-                userId: userId
-            });
+        if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
+            const query = self.FRS.posts.query.get();
             self.FRS.posts.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
             self.FRS.posts.nonDeletedCount.set( pwiForums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());
             self.FRS.posts.nonDeletedCountSet = true;

@@ -4,12 +4,10 @@
  * The whole build of the tree is make the easyest possible with the frsOrders class which provides a reactive var which holds
  * all the data for the tree.
  * Unfortunately, the DOM updates are not instantaneous, and so we have to wait for each level be actually built into the DOM
- * before asking for the creation of sublevels nodes of the tree.$
- * This is athe reason for why we need a status management.
- * 
+ * before asking for the creation of sublevels nodes of the tree.
+ * This is the reason for why we need a status management.
+ *
  * Params:
- * - language: 'en-US'
- *      If specified and exists, overrides the configuration value
  */
 import clone from 'just-clone';
 import deepEqual from 'deep-equal';
@@ -34,7 +32,7 @@ Template.frs_tree_tab.onCreated( function(){
 
     self.FRS = {
         // ordered tree as an instance of the class
-        orderedTree: new frsOrders( self.data.language ),
+        orderedTree: new frsOrders(),
 
         // the dynamic of the tree load, which is status-driven
         status: {
@@ -353,7 +351,7 @@ Template.frs_tree_tab.onRendered( function(){
     // manage the status
     self.autorun(() => {
         const status = self.FRS.workStatus.get();
-        //console.log( 'workStatus '+status );
+        console.log( 'workStatus '+status );
         if( !status ){
             self.FRS.workStatus.set( self.FRS.status.WFTR );
         } else {

@@ -424,8 +424,8 @@ export class frsOrders {
                 }
     
                 //console.log( 'frsOrders.tree full rebuild begin')
-                const ordersCollection = self._priv.orders.collection.get();           // read orders from collection
-                const catsOrder = f_findOrder( ordersCollection, 'CAT' );   // the categories order (from collection)
+                const ordersCollection = self._priv.orders.collection.get();            // read orders from collection
+                const catsOrder = f_findOrder( ordersCollection, 'CAT' );               // the categories order (from collection)
                 f_buildFromCategories( catsOrder, self._priv.categories.collection.get());
                 f_buildFromForums( ordersCollection, self._priv.forums.collection.get());
                 f_setForumsCount();

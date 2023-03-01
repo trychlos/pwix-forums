@@ -48,17 +48,9 @@ Meteor.publish( 'frsPosts.threadLeaders', function( query ){
 // list the posts inside a thread
 //  add to each post a repliesCount
 // + if the current user is a moderator of this forum, then honor the 'showDeletedForAdmin'
-Meteor.publish( 'frsPosts.threadPosts', function( forum, threadId ){
+Meteor.publish( 'frsPosts.threadPosts', function( query ){
     const self = this;
     const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
-    const userId = this.userId;
-    const isModerator = pwiForums.Forums.canModerate( forum, userId );
-    const withModerated = isModerator ? forum.showDeletedForAdmin : false;
-    const query = pwiForums.Posts.queryPosts( forum, threadId, {
-        withModerated: withModerated,
-        withDeleted: forum.showDeletedForUser,
-        userId: userId
-    });
 
     //  add to the Post the count of (not deleted) replies
     function f_addFields( doc ){

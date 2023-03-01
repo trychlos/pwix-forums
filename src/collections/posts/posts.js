@@ -193,8 +193,8 @@ pwiForums.Posts = {
     //  - withModerated: true|false
     //  - withDeleted: true|false
     //  - userId: mandatory if withDeleted is true
-    //  - limit
     queryPosts( forum, threadId, opts ){
+        //console.log( 'queryPosts', forum, threadId );
         // honor 'showDeletedForAdmin' and 'showDeletedForUser' forum properties
         let deletedClause = [{ deletedAt: null }];
         if( Object.keys( opts ).includes( 'withModerated' ) && opts.withModerated ){
@@ -207,13 +207,18 @@ pwiForums.Posts = {
                 { owner: opts.userId }
             ]});
         }
+        // display only validated posts in a forum moderated a priori, or posts of the user waiting for validation
+        let validatedClause = null;
+        if( forum.moderation === FRS_MODERATE_APRIORI ){
+            validatedClause = [{ validatedAt: { $ne: null }}];
+            if( opts.userId ){
+                validatedClause.push({ owner: opts.userId });
+            }
+        }
         let result = {
             selector: {
                 $and: [
-                    { $or: [
-                        { _id: threadId },
-                        { threadId: threadId }
-                    ]},
+                    { threadId: threadId },
                     { $or: deletedClause }
                 ],
             },
@@ -221,9 +226,10 @@ pwiForums.Posts = {
                 sort: { createdAt: 1 }
             }
         };
-        if( opts.limit ){
-            result.options.limit = opts.limit;
+        if( validatedClause ){
+            result.selector.$and.push({ $or: validatedClause });
         }
+        //console.log( result.selector.$and );
         return result;
     },
 
