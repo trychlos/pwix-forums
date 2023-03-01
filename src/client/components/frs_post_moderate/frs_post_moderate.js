@@ -131,8 +131,12 @@ Template.frs_post_moderate.events({
                 post.deletedAt = new Date();
                 post.deletedBy = Meteor.userId();
                 post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val() || 'FRS_REASON_NONE';
-                post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim();
-                Meteor.call( 'frsPosts.upsert', post, ( err, res ) => {
+                post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim() || '';
+                let options = {
+                    inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
+                    stats: post.rvStats.get()
+                };
+                Meteor.call( 'frsPosts.moderate', post, options, ( err, res ) => {
                     if( err ){
                         console.error( err );
                         tlTolert.error( 'message_error' );
@@ -140,19 +144,9 @@ Template.frs_post_moderate.events({
                         //console.log( res );
                         tlTolert.success( pwiForums.fn.i18n( 'moderate.message_success' ));
                         pwixModal.close();
-                        let result = {
-                            inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),
-                            stats: post.rvStats.get(),
-                            post: post
-                        };
                         if( target ){
-                            target.trigger( 'frs-post-moderate-moderated', result );
+                            target.trigger( 'frs-post-moderate-moderated', { post, ...options });
                         }
-                        Meteor.call( 'frsPosts.postModerate', result, ( err, res ) => {
-                            if( err ){
-                                console.error( err );
-                            }
-                        });
                     }
                 });
             }

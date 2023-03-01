@@ -27,28 +27,33 @@ Meteor.methods({
         return res;
     },
 
-    // called after a moderator has confirmed the moderation and the post has been moderated (aka deleted)
+    // called when a moderator has confirmed the moderation
+    //  moderate (aka delete the post)
     //  manage here threadleader and user information
-    //  parms is an object with:
-    //  - post: the just-moderated post (inclusing reason and additional argument)
+    //  options is an object with:
     //  - inform: whether the moderator has asked the user to be informed
     //  - stats: the user count stats
-    // this is always called, even if the moderator chooses to not inform the user
-    'frsPosts.postModerate'( parms ){
-        console.log( 'postModerate', parms );
+    'frsPosts.moderate'( post, options ){
+        const wasLeader = post.threadLeader;
+        const modifier = {
+            deletedAt: post.deletedAt,
+            deletedBy: post.deletedBy,
+            deletedBecause: post.deletedBecause,
+            deletedText: post.deletedText,
+            threadLeader: false
+        };
+        let res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $set: modifier });
+        console.log( 'moderating post', post, res );
         // if the just-moderated post was a thread leader, then find another one if possible
-        if( parms.post.threadLeader ){
-            const fetched = pwiForums.server.collections.Posts.find({ threadId: parms.post._id, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+        if( wasLeader ){
+            const fetched = pwiForums.server.collections.Posts.find({ threadId: post.threadId, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
             if( fetched.length ){
-                const newLeader = fetched[0]
+                const newLeader = fetched[0];
                 newLeader.threadLeader = true;
-                newLeader.title = parms.post.title;
-                const res = pwiForums.server.collections.Posts.update({ _id: newLeader._id }, { $set: { threadLeader: true, title: newLeader.title }});
+                newLeader.title = post.title;
+                res = pwiForums.server.collections.Posts.update({ _id: newLeader._id }, { $set: { threadLeader: true, title: newLeader.title }});
                 console.log( 'promoting new thread leader', newLeader, res );
             }
-            parms.post.threadLeader = false;
-            const res = pwiForums.server.collections.Posts.update({ _id: parms.post._id }, { $set: { threadLeader: false }});
-            console.log( 'unpromoting previoous thread leader', parms.post, res );
         }
     },
 
@@ -65,7 +70,7 @@ Meteor.methods({
         delete post.deletedBy;
         delete post.deletedBecause;
         delete post.deletedText;
-        const res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
+        let res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
         console.log( 'frsPosts.unmoderate', post, unset, res );
         // may be it a new thread leader (because it was before being moderated) ?
         //  search the current thread leader, and test against the creation date
@@ -75,7 +80,7 @@ Meteor.methods({
             if( post.createdAt.getTime() < currentLeader.createdAt.getTime()){
                 // unpromote current leader
                 currentLeader.threadLeader = false;
-                let res = pwiForums.server.collections.Posts.update({ _id: currentLeader._id }, { $set: { threadLeader: false }});
+                res = pwiForums.server.collections.Posts.update({ _id: currentLeader._id }, { $set: { threadLeader: false }});
                 console.log( 'unpromoting current thread leader', currentLeader, res );
                 // promoting the new one
                 post.threadLeader = true;
