@@ -35,7 +35,7 @@ import { Tracker } from 'meteor/tracker';
 import { pwiRoles } from 'meteor/pwix:roles';
 import { tlTolert } from 'meteor/pwix:tolert';
 
-import { pwiForums } from '../js/index.js';
+import '../js/index.js';
 
 export class frsOrders {
 
