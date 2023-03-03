@@ -1,53 +1,46 @@
 
 Meteor.methods({
-    // add a list of forums ids to the list attached to a category id
-    'frsOrders.addByIds'( cat_id, forums_ids ){
-        const selector = { type:'FOR', category:cat_id };
-        let doc = pwiForums.server.collections.Orders.findOne( selector );
-        if( doc ){
-            doc.updatedAt = new Date();
-            doc.updatedBy = Meteor.userId();
-        } else {
-            doc = {
-                createdAt: new Date(),
-                createdBy: Meteor.userId(),
-                order: []
-            };
-        }
-        const array = doc.order.concat( forums_ids );
-        doc.order = array.slice();
-        const ret = pwiForums.server.collections.Orders.update( selector, { $set: doc });
-        if( !ret ){
-            throw new Meteor.Error(
-                'frsOrders.addByIds',
-                'Unable to add to \''+cat_id+'\' forums ids ', forums_ids );
-        } else {
-            console.log( 'frsOrders.addByIds', 'cat_id', cat_id, 'forums_ids', forums_ids, 'ret', ret );
-        }
-        return ret;
-    },
 
-    // delete an item from an ordered list
-    'frsOrders.removeById'( selector, id ){
-        let doc = pwiForums.server.collections.Orders.findOne( selector );
-        let ret = true;
-        if( doc ){
-            const idx = doc.order.indexOf( id );
-            if( idx !== -1 ){
-                doc.order.splice( idx, 1 );
-                doc.updatedAt = new Date();
-                doc.updatedBy = Meteor.userId();
-                ret = pwiForums.server.collections.Orders.update( selector, { $set: doc });
-                if( !ret ){
-                    throw new Meteor.Error(
-                        'frsOrders.removeById',
-                        'Unable to remove \''+id+'\' from ', selector );
-                } else {
-                    console.log( 'frsOrders.removeById', 'id', id, 'selector', selector, 'ret', ret );
-                }
-            }
+    // a single method to manage the consequence of a move of a forum in the ordered tree (from frs_tree_tab)
+    // 'parms' is:
+    //  forum: the forum identifier,
+    //  newcat: the new category identifier,
+    //  newcatorder: the new forums order for this category
+    //  prevcat: the previous category (may be the same than the current one)
+    //  prevcatorder: the new order in this previous category
+    'frsOrders.postMove'( parms ){
+        // first, and always, set the new order in the new category
+        let selector = { type:'FOR', category: parms.newcat };
+        let modifier = { order: parms.newcatorder, updatedAt: new Date(), updatedBy: Meteor.userId() };
+        let res = pwiForums.server.collections.Orders.update( selector, { $set: modifier });
+        if( !res ){
+            throw new Meteor.Error(
+                'frsOrders.update',
+                'Unable to update forums order', { ...selector, ...modifier });
+        } else {
+            console.log( 'frsOrders.update', selector, modifier, res );
         }
-        return ret;
+        // if  category has changed, then also set the new order in the previous category
+        if( parms.prevcat !== parms.newcat ){
+            selector = { type:'FOR', category: parms.prevcat };
+            modifier = { order: parms.prevcatorder, updatedAt: new Date(), updatedBy: Meteor.userId() };
+            res = pwiForums.server.collections.Orders.update( selector, { $set: modifier });
+            if( !res ){
+                throw new Meteor.Error(
+                    'frsOrders.update',
+                    'Unable to update forums order', { ...selector, ...modifier });
+            } else {
+                console.log( 'frsOrders.update', selector, modifier, res );
+            }
+            Meteor.call( 'frsForums.setCategory', parms.forum, parms.newcat, ( err, res ) => {
+                if( err ){
+                    console.error( err );
+                } else {
+                    console.log( 'frsOrders frsForums.setCategory', res );
+                }
+            });
+        }
+        return res;
     },
 
     // upsert an order

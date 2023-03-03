@@ -3,23 +3,20 @@ import { frsColor } from '../../../common/classes/frs_color.class.js';
 
 Meteor.methods({
     // delete a category
-    //  + Orders collection: remove the category from the categories order
-    //  + Forums collection: all forums attached to this deleted category are reaffected to 'Uncategorized'
-    //  + Orders collection: add these forums at the end of the Uncategorized ordered list
-    // should be a transation :( but not supported by MongoDB on single deployment (and not supported by Meteor even on cluster on shared deployments)
+    //  frs_tree_tab takes care of only allow a category to be deleted if it is empty (doesn't contain any forum)
     'frsCategories.delete'( id ){
-        const ret = pwiForums.server.collections.Categories.remove( id );
+        let ret = pwiForums.server.collections.Categories.remove( id );
         if( !ret ){
             throw new Meteor.Error(
                 'frsCategories.delete',
                 'Unable to delete the \''+id+'\' category' );
         }
-        Meteor.call( 'frsOrders.removeById', { type:'CAT' }, id );  // no need to wait for the result
-        Meteor.call( 'frsForums.categoryDeleted', id, ( err, res ) => {
-            if( !err ){
-                Meteor.call( 'frsOrders.addByIds', res );
-            }
-        });
+        ret = pwiForums.server.collections.Orders.remove({ type: 'FOR', category: id });
+        if( !ret ){
+            throw new Meteor.Error(
+                'frsOrders.delete',
+                'Unable to delete the FOR order for \''+id+'\' category' );
+        }
         return ret;
     },
 

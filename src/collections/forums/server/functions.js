@@ -47,7 +47,7 @@ pwiForums.server.fn = {
                 },
                 changed: function( newDoc, oldDoc ){
                     //self.changed( collectionName, newDoc._id, f_addFields( newDoc ));
-                    f_addFields( newDoc ).then(() => { self.changed( collectionName, newDoc._id, doc )});
+                    f_addFields( newDoc ).then(() => { self.changed( collectionName, newDoc._id, newDoc )});
                 },
                 removed: function( oldDoc ){
                     self.removed( collectionName, oldDoc._id );

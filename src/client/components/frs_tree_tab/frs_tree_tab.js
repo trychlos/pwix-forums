@@ -1,14 +1,11 @@
 /*
  * /src/client/components/frs_tree_tab/frs_tree_tab.js
  *
- * The whole build of the tree is make the easyest possible with the frsOrders class which provides a reactive var which holds
- * all the data for the tree.
- * Unfortunately, the DOM updates are not instantaneous, and so we have to wait for each level be actually built into the DOM
- * before asking for the creation of sublevels nodes of the tree.
- * This is the reason for why we need a status management.
+ * The whole build of the tree relies on the frsOrderedTree singleton.
  *
- * Params:
+ * Parms:
  */
+
 import clone from 'just-clone';
 import deepEqual from 'deep-equal';
 import { jstree } from 'jstree';
@@ -18,7 +15,7 @@ import { jstree } from 'jstree';
 import { tlTolert } from 'meteor/pwix:tolert';
 
 import { pwiForums } from '../../js/index.js';
-import { frsOrders } from '../../../common/classes/frs_orders.class.js';
+import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
 import '../../stylesheets/jstree-style.css';
 
@@ -27,113 +24,90 @@ import '../frs_forum_panel/frs_forum_panel.js';
 
 import './frs_tree_tab.html';
 
+const ST_NONE = 'jstree: waiting for the DOM be ready';
+const ST_TREE_READY = 'jstree: DOM is ready';
+const ST_TREE_TOBEREBUILT = 'jstree: to be rebuilt';
+const ST_CATEGORIES_INSERTED = 'jstree: categories inserted, waiting for the DOM be ready';
+const ST_INSERT_FORUMS = 'jstree: inserting forums';
+const ST_FORUMS_INSERTED = 'jstree: forums inserted, waiting for the DOM be ready';
+const ST_TREE_DONE = 'jstree: done';
+
 Template.frs_tree_tab.onCreated( function(){
     const self = this;
 
     self.FRS = {
-        // ordered tree as an instance of the class
-        orderedTree: new frsOrders(),
-
-        // the dynamic of the tree load, which is status-driven
-        status: {
-            // 1. the status is defined as initially null as the javascript definition inside of an object cannot auto-reference itself
-            // 2. the status is managed via a dedicated autorun whose first action is moving 'null' to 'WFTR' waiting for the tree be ready from the DOM point of view
-            // 3. the 'ready.jstree' event reception triggers the 'WFTR'-to-'TR' transition
-            //      when the tree is DOM-ready, we are able to load the first level of the tree, here the ordered categories
-            //      thanks to the frsOrders reactive class, we always have something available
-            // 4. as soon as we start with creating categories, the status becomes 'CLG'
-            // 5. the status becomes 'CLW' when we have finished with categories creation, waiting for the DOM says it is ready
-            // 6. and so the status may become 'CR': categories are ready
-            // 7-8-9. the same scenario is reproduced for the forums: CR -> FLG -> FLW -> FR
-            //      actually the 'FR' status (forums are ready) is just defined for the sake of consistence with categories
-            //      as it is immediately transitionned to 'DONE'
-            // 10. DONE
-            WFTR: 'waiting_for_tree_ready',     // waiting for the tree to be ready
-            TR: 'tree_ready',
-            CLG: 'categories_being_loaded',     // categories are being loaded
-            CLW: 'categories_loaded',           // categories have been loaded, waiting for nodes be created
-            CR: 'categories_are_ready',         // categories are loaded, all nodes created
-            FLG: 'forums_being_loaded',
-            FLW: 'forums_loaded',
-            FR: 'forums_are_ready',             // forums are loaded, all nodes created
-            DONE: 'done'
-        },
-        workStatus: new ReactiveVar( null ),    // will be initialized in first autorun
-
-        // keep a trace of last orderedCategories received
-        lastOrderedTree: null,
-
-        // an array of created node id's to be able to remove all
-        nodesIds: [],
-
-        // when creating the nodes, be sure we finished all the nodes we have asked for are actually created
-        nodesAsked: 0,
-        nodesCreated: new ReactiveVar( 0 ),
+        orderedTree: new frsOrderedTree(),                  // ordered tree
+        previousTree: null,
+        status: new ReactiveVar( null ),                    // the current build status
+        createdNodesArray: [],                              // a flat list of all created nodes ids, used when emptying the tree
+        createdNodesCount: new ReactiveVar( 0 ),
+        createdNodesAsked: 0,
 
         // create a category node in the tree
         // self.$( '#frsTreeTabTree' ).jstree( true ).create_node( null, { "id":"frstree_"+c.id, "text":c.text, "children":[], "orig":"CAT" });
-        // c is the category object from frsOrderedTree
+        // c is the category document read from frsOrderedTree
         /*
          * doesn't work
          * the dropdown menu is rightly shown, but unable to get the focus
         <div class="dropdown-menu frs-form show" data-popper-placement="bottom-end" style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate3d(-38.5px, 36.5px, 0px);">            <form>            <table>                <tbody><tr>                    <td class="frs-right"><label for="" class="form-label form-label-sm">Title</label></td>                    <td><input type="text" class="form-control form-control-sm" id="" placeholder="Object title" value="Another one"></td>                </tr>                <tr>                    <td class="frs-right frs-top"><label for="" class="form-label form-label-sm">Description</label></td>                    <td><textarea class="form-control form-control-sm" placeholder="Object description" rows="2">Which acts as a second by the matter</textarea></td>                </tr>                <tr>                    <td colspan="2" class="frs-right"><button class="btn btn-primary btn-sm frs-edit-cat" data-frs-id="C-G2wWkDc6YcJ2MXT7p">Save</button></td>                </tr>            </tbody></table>            </form>        </div>
         */
        // actually all the 'text' of a node will goes inside of <a>..</a> tags. May perfectly be full HTML
-        createCategoryNode( c ){
+       createCategoryNode( c ){
             //console.log( c );
             const labelCount = pwiForums.fn.i18n( 'tree_tab.for_count' );
             const titleInfo = pwiForums.fn.i18n( 'tree_tab.cat_info' );
-            const titleEdit = pwiForums.fn.i18n( 'tree_tab.cat_edit', c.text );
-            const titleDelete = pwiForums.fn.i18n( 'tree_tab.cat_delete', c.text );
+            const titleEdit = pwiForums.fn.i18n( 'tree_tab.cat_edit', c.title );
+            const titleDelete = pwiForums.fn.i18n( 'tree_tab.cat_delete', c.title );
             //console.log( titleEdit );
             const div = ''
                 +'<div class="d-flex align-items-center flex-grow-1">'
-                +'    <span>'+c.text+'</span>'
+                +'    <span>'+c.title+'</span>'
                 +'    <span class="frs-ml1"></span>'
-                +'    <span class="badge frs-badge-btn frs-ml025" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.object.color+';">&nbsp;</span>'
+                +'    <span class="badge frs-badge-btn frs-ml025" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.color+';">&nbsp;</span>'
                 +'</div>'
                 +'<div class="frs-badges d-flex align-items-center frs-ml1">'
                 +'    <span class="badge frs-badge-btn frs-bg-cat frs-ml025" title="'+labelCount+'">'+c.forums.length+'</span>'
                 +'</div>'
                 +'<div class="frs-buttons d-flex align-items-center frs-ml1">'
-                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-info" data-frs-id="C-'+c.id+'" title="'+titleInfo+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-edit-cat" data-frs-id="C-'+c.id+'" title="'+titleEdit+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-delete-cat" data-frs-id="C-'+c.id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+titleDelete+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-info" data-frs-id="C-'+c._id+'" title="'+titleInfo+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-edit-cat" data-frs-id="C-'+c._id+'" title="'+titleEdit+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-secondary frs-bg-cat frs-ml025 frs-delete-cat" data-frs-id="C-'+c._id+'"'+( self.FRS.deletableCategory( c ) ? '' : 'disabled' )+' title="'+titleDelete+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>'
                 ;
-            self.$( '#frsTreeTabTree' ).jstree( true ).create_node( null, { "id":"frstree_"+c.id, "text":div, "children":[], "orig":"CAT" });
+            self.$( '#frsTreeTabTree' ).jstree( true ).create_node( null, { "id": "frstree_"+c._id, "text": div, "children": [], "orig": "CAT", "doc": c });
         },
 
         // create a forum node in the tree
         // self.$( '#frsTreeTabTree' ).jstree( true ).create_node( parent_node, { "id":"frstree_"+f.id, "text":f.text, "orig":"FOR" });
         // f here is the forum object from frsOrderedTree
         createForumNode( parent, f ){
+            //console.log( f );
             const div = ''
-                +'<span class="flex-grow-1">'+f.text+'</span>'
+                +'<span class="flex-grow-1">'+f.title+'</span>'
                 +'<div class="frs-badges d-flex align-items-center frs-ml1">'
-                +   pwiForums.client.htmlModerationStrategyBadge( f.object )
+                +   pwiForums.client.htmlModerationStrategyBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlThreadsCountBadge( f.object )
+                +   pwiForums.client.htmlThreadsCountBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlPostsCountBadge( f.object )
+                +   pwiForums.client.htmlPostsCountBadge( f )
                 +   '<span class="frs-ml1"></span>'
-                +   pwiForums.client.htmlPrivateBadge( f.object )
+                +   pwiForums.client.htmlPrivateBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlArchivedBadge( f.object )
+                +   pwiForums.client.htmlArchivedBadge( f )
                 +'</div>'
                 +'<div class="frs-buttons d-flex align-items-center frs-ml1">'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-info" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-edit-for" data-frs-id="F-'+f.id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_edit', f.text )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-delete-for" data-frs-id="F-'+f.id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.for_delete', f.text )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-info" data-frs-id="F-'+f._id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-edit-for" data-frs-id="F-'+f._id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_edit', f.title )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-delete-for" data-frs-id="F-'+f._id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.for_delete', f.title )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>';
-            self.$( '#frsTreeTabTree' ).jstree( true ).create_node( parent, { "id":"frstree_"+f.id, "text":div, "orig":"FOR" });
+            self.$( '#frsTreeTabTree' ).jstree( true ).create_node( parent, { "id": "frstree_"+f._id, "text": div, "orig":"FOR", "doc": f });
         },
 
         // whether the category can be deleted
         //  - do not delete the default category
         //  - do not delete a non-empty category
         deletableCategory( c ){
-            if( c.id === pwiForums.Categories.default ){
+            if( c._id === pwiForums.Categories.default ){
                 return false;
             }
             if( c.forums && c.forums.length ){
@@ -147,67 +121,13 @@ Template.frs_tree_tab.onCreated( function(){
             return true;
         },
 
-        // returns the list of children nodes of given (by its node id) parent
-        treeChildren( $tree, id ){
-            let children = [];
-            //console.log( 'id', id );
-            //console.log( 'node', $tree.get_node( id ));
-            //console.log( 'children_dom', $tree.get_children_dom( id ));
-            $tree.get_children_dom( id ).each( function( index ){
-                children.push( $tree.get_node( $( this ).prop( 'id' )));
-                return true;
-            });
-            return children;
-        },
-
-        // enumerate the nodes of the jsTree
-        //  $tree: the target tree JQuery DOM element: self.$( '#frsTreeTabTree' ).jstree( true )
-        //  data: {
-        //      display: an optional display function
-        // }
-        treeEnumerate( $tree, data ){
-            function f_display( level, index, node ){
-                if( data && data.display && typeof data.display === 'function' ){
-                    data.display( level, index, node );
-                } else {
-                    let prefix = '';
-                    for( let i=0 ; i<level ; ++i ){
-                        prefix += '  ';
-                    }
-                    console.log( level, index, prefix+node.text+' ('+node.id+')' );
-                }
-            }
-            function f_rec( index, li, level=0 ){
-                const $li = $( li );
-                const node = $tree.get_node( $li.prop( 'id' ));
-                f_display( level, index, node );
-                $tree.get_children_dom( $li.prop( 'id' )).each( function( index ){
-                    f_rec( index, this, 1+level );
-                    return true;
-                });
-            }
-            // li#frstree_NfYCYFqfR23M6Nuh4.jstree-node.jstree-leaf
-            // li#frstree_NfYCYFqfR23M6Nuh4.jstree-node.jstree-open
-            // li#frstree_NfYCYFqfR23M6Nuh4.jstree-node.jstree-closed
-            //console.log( $tree.get_children_dom( '#' ));
-            // have to use 'function' keyword (not an anonymous one) in order to have a local 'this'
-            $tree.get_children_dom( '#' ).each( function( index ){
-                f_rec( index, this );
-                return true;
-            });
-        },
-
         // 'data' is the object provided by the 'move_node.jstree' event
         //  it contains { node, parent, position, old parent, old position, is_foreign, is_multi, instance, new_instance, old_instance }
         saveNewCategoriesOrder( data ){
             //self.FRS.treeEnumerate( self.$( '#frsTreeTabTree' ).jstree( true ));
             //console.log( parent );
-            const selector = { type:'CAT' };
-            let order = [];
-            self.FRS.treeChildren( self.$( '#frsTreeTabTree' ).jstree( true ), '#' ).every(( node ) => {
-                order.push({ id:node.id.replace( 'frstree_', '' ) });
-                return true;
-            });
+            const selector = { type: 'CAT' };
+            const order = self.FRS.treeChildren( self.$( '#frsTreeTabTree' ).jstree( true ), '#' );
             //console.log( order );
             Meteor.call( 'frsOrders.upsert', selector, order, ( e, res ) => {
                 if( e ){
@@ -227,65 +147,55 @@ Template.frs_tree_tab.onCreated( function(){
         //  + if the category is not changed (parents are same)
         //      - set the category forum's order
         saveNewForumsOrder( data ){
-            //self.FRS.treeEnumerate( self.$( '#frsTreeTabTree' ).jstree( true ));
             //console.log( data );
-            // if old_parent and new_parent are different, we have to update the two orders
-            const nodeid = data.node.id.replace( 'frstree_', '' );
-            const parentid = data.parent.replace( 'frstree_', '' );
-            let order = [];
-            if( data.old_parent !== data.parent ){
-                const found = self.FRS.orderedTree.find( nodeid, self.FRS.lastOrderedTree );
-                const oldparentid = data.old_parent.replace( 'frstree_', '' );
-                self.FRS.lastOrderedTree.every(( c ) => {
-                    if( c.id === oldparentid ){
-                        c.forums.every(( f ) => {
-                            if( f.id !== nodeid ){
-                                order.push({ id:f.id });
-                            }
-                            return true;
-                        });
-                        return false;
-                    }
-                    return true;
-                });
-                const selector = { type:'FOR', category:oldparentid };
-                Meteor.call( 'frsOrders.upsert', selector, order, ( e, res ) => {
-                    if( e ){
-                        tlTolert.error({ type:e.error, message:e.reason });
-                    } else {
-                        console.log( '\''+selector.type+':'+selector.category+'\' new order array successfully saved' );
-                        //tlTolert.success( 'New order array successfully saved' );
-                    }
-                });
-                // change the forum's category
-                Meteor.call( 'frsForums.setCategory', nodeid, parentid, ( e, res ) => {
-                    if( e ){
-                        tlTolert.error({ type:e.error, message:e.reason });
-                    } else {
-                        console.log( ' forums\'s category successfully changed' );
-                    }
-                });
-                //console.log( self.FRS.lastOrderedTree );
-                //console.log( found );
-            }
-            // now update new (or same)  parent order
-            order = [];
-            const parent_node = self.$( '#frsTreeTabTree' ).jstree( true ).get_node( data.parent );
-            parent_node.children.every(( id ) => {
-                order.push({ id:id.replace( 'frstree_', '' ) });
-                return true;
-            });
-            const selector = { type:'FOR', category:parentid };
-            Meteor.call( 'frsOrders.upsert', selector, order, ( e, res ) => {
+            const parms = {
+                forum: data.node.id.replace( 'frstree_', '' ),
+                newcat: data.parent.replace( 'frstree_', '' ),
+                newcatorder: self.FRS.treeChildren( self.$( '#frsTreeTabTree' ).jstree( true ), data.parent ),
+                prevcat: data.old_parent.replace( 'frstree_', '' ),
+                prevcatorder: self.FRS.treeChildren( self.$( '#frsTreeTabTree' ).jstree( true ), data.old_parent )
+            };
+            console.log( data, parms );
+            console.log( self.$( '#frsTreeTabTree' ).jstree( true ).get_node( data.parent ));
+            console.log( self.$( '#frsTreeTabTree' ).jstree( true ).get_children_dom( data.parent ));
+            // have to set the new order of the current category
+            // if old_parent and new_parent are different, we have to:
+            //  - set the new order of the previous category
+            //  - update the forum category
+            Meteor.call( 'frsOrders.postMove', parms, ( e, res ) => {
                 if( e ){
                     tlTolert.error({ type:e.error, message:e.reason });
                 } else {
-                    console.log( '\''+selector.type+':'+selector.category+'\' new order array successfully saved' );
-                    //tlTolert.success( 'New order array successfully saved' );
+                    console.log( 'new order array successfully saved', res );
                 }
             });
+        },
+
+        // returns the list of children nodes of given (by its node id) parent
+        //  list is returned as an array of { id: <id> } objects
+        treeChildren( $tree, parentId ){
+            let children = [];
+            //console.log( 'children_dom', $tree.get_children_dom( parentId ));
+            /*
+            $tree.get_children_dom( parentId ).each( function( index ){
+                children.push({ id: $( this ).prop( 'id' ).replace( 'frstree_', '' )});
+                return true;
+            });
+            */
+            $tree.get_node( parentId ).children.every(( id ) => {
+                children.push({ id: id.replace( 'frstree_', '' )});
+                return true;
+            });
+            return children;
         }
     };
+
+    self.FRS.status.set( ST_NONE );
+
+    // trace the successive status
+    self.autorun(() => {
+        console.log( self.FRS.status.get());
+    });
 });
 
 Template.frs_tree_tab.onRendered( function(){
@@ -299,7 +209,7 @@ Template.frs_tree_tab.onRendered( function(){
                     case 'delete_node':
                         return true;
                     // a category can only be moved while its parent is 'root'
-                    // while a forum cannot only be moved while it keeps a 'CAT' parent
+                    // while a forum can only be moved while it keeps a 'CAT' parent
                     case 'move_node':
                         //console.log( 'check_callback', arguments );
                         switch( node.original.orig ){
@@ -326,16 +236,15 @@ Template.frs_tree_tab.onRendered( function(){
     // 'ready.jstree' data = jsTree instance
     .on( 'ready.jstree', ( event, data ) => {
         //console.log( 'jstree ready', event, data );
-        if( self.FRS.workStatus.get() === self.FRS.status.WFTR ){
-            self.FRS.workStatus.set( self.FRS.status.TR );
+        if( self.FRS.status.get() === ST_NONE ){
+            self.FRS.status.set( ST_TREE_READY );
         }
     })
     // 'create_node.jstree' data = { node, parent, position, jsTree instance }
     .on( 'create_node.jstree', ( event, data ) => {
-        //console.log( 'create_node', event, data );
-        //console.log( 'create_node', data.node );
-        self.FRS.nodesIds.push( data.node.id );
-        self.FRS.nodesCreated.set( 1+self.FRS.nodesCreated.get());
+        self.FRS.createdNodesArray.push( data.node.id );
+        self.FRS.createdNodesCount.set( 1+self.FRS.createdNodesCount.get());
+        //console.log( 'asked', self.FRS.createdNodesAsked, 'count', self.FRS.createdNodesCount.get());
     })
     // 'move_node.jstree' data = { node, parent, position, old parent, old position, is_foreign, is_multi, instance, new_instance, old_instance }
     .on( 'move_node.jstree', ( event, data ) => {
@@ -348,127 +257,61 @@ Template.frs_tree_tab.onRendered( function(){
         }
     });
 
-    // manage the status
+    // rebuild the whole tree each time the ordered tree is changed
     self.autorun(() => {
-        const status = self.FRS.workStatus.get();
-        console.log( 'workStatus '+status );
-        if( !status ){
-            self.FRS.workStatus.set( self.FRS.status.WFTR );
-        } else {
-            switch( status ){
-                // 2. wait for the tree be DOM-ready (transitionned by 'ready.jstree' event)
-                case self.FRS.status.WFTR:
-                // 3. tree is ready: the autorun will reset it and load the categories
-                case self.FRS.status.TR:
-                // 4. categories are being loaded, work in progress...
-                case self.FRS.status.CLG:
-                    break;
-                // 5. categories are loaded, wait for all nodes be created in the DOM
-                case self.FRS.status.CLW:
-                    if( self.FRS.nodesCreated.get() === self.FRS.nodesAsked ){
-                        self.FRS.workStatus.set( self.FRS.status.CR );
-                    }
-                    break;
-                // 6. categories are ready, start with forums
-                case self.FRS.status.CR:
-                // 7. forums are being loaded, work in progress...
-                case self.FRS.status.FLG:
-                    break;
-                // 8. forums are loaded, wait for all nodes be created in the DOM
-                case self.FRS.status.FLW:
-                    if( self.FRS.nodesCreated.get() === self.FRS.nodesAsked ){
-                        self.FRS.workStatus.set( self.FRS.status.FR );
-                    }
-                    break;
-                // 9. forums are ready, will be opened
-                case self.FRS.status.FR:
-                    break;
-                // 10. work is all done
-                // but may restart if categories are another time modified
-                case self.FRS.status.DONE:
-                    console.log( 'treeTab status '+status );
-                    break;
+        if( self.FRS.status.get() === ST_TREE_READY || self.FRS.status.get() === ST_TREE_DONE ){
+            const tree = self.FRS.orderedTree.tree();
+            if( !deepEqual( tree, self.FRS.previousTree )){
+                self.FRS.previousTree = clone( tree );
+                self.FRS.status.set( ST_TREE_TOBEREBUILT );
             }
         }
     });
 
-    // detect a new set of categories to reset the tree
+    // rebuild the whole tree each time the ordered tree is changed
     self.autorun(() => {
-        if( self.FRS.workStatus.get() === self.FRS.status.DONE ){
-            const tree = self.FRS.orderedTree.tree.get();
-            if( !deepEqual( self.FRS.lastOrderedTree, tree )){
-                self.FRS.workStatus.set( self.FRS.status.TR );
-            }
-        }
-    });
-
-    // load the ordered categories
-    //  note that we must wait for the nodes be actually created to continue with the forums
-    //  note also that creating the categories in the tree actually means a full reset of this same tree
-    self.autorun(() => {
-        if( self.FRS.workStatus.get() === self.FRS.status.TR ){
-            // categories are being loaded
-            self.FRS.workStatus.set( self.FRS.status.CLG );
-            // reset the counters
-            self.FRS.nodesAsked = 0;
-            self.FRS.nodesCreated.set( 0 );
+        if( self.FRS.status.get() === ST_TREE_TOBEREBUILT ){
             // reset the tree
-            self.$( '#frsTreeTabTree' ).jstree( true ).delete_node( self.FRS.nodesIds );
-            self.FRS.nodesIds = [];
-            // one parent node per category
-            self.FRS.lastOrderedTree = clone( self.FRS.orderedTree.tree.get());
-            self.FRS.lastOrderedTree.every(( c ) => {
-                //console.log( 'loading category', cat );
-                //console.log( 'category '+cat.title );
-                self.FRS.nodesAsked += 1;
-                // data defined at the node creation is available as node.original object
+            self.$( '#frsTreeTabTree' ).jstree( true ).delete_node( self.FRS.createdNodesArray );
+            self.FRS.createdNodesArray = [];
+            // rebuild the tree
+            self.FRS.createdNodesAsked = self.FRS.previousTree.length;
+            self.FRS.createdNodesCount.set( 0 );
+            self.FRS.previousTree.every(( c ) => {
                 self.FRS.createCategoryNode( c );
                 return true;
             });
-            // categories are loaded, waiting for nodes creation
-            self.FRS.workStatus.set( self.FRS.status.CLW );
+            self.FRS.status.set( ST_CATEGORIES_INSERTED );
         }
     });
 
-    // when forums are ready, attach them to the categories
-    //  if we do not find the category of the forum, then attach it to the uncategorized one
-    //  but this has already been taken care by the frsOrders class
+    // after categories have been inserted at the first level, time to insert the forums
     self.autorun(() => {
-        if( self.FRS.workStatus.get() === self.FRS.status.CR ){
-            // forums are being loaded
-            self.FRS.workStatus.set( self.FRS.status.FLG );
-            // reset the counters
-            self.FRS.nodesAsked = 0;
-            self.FRS.nodesCreated.set( 0 );
-            // one child node per forum
-            self.FRS.lastOrderedTree.every(( c ) => {
-                //console.log( 'c', c );
-                //console.log( 'c.text', c.text );
-                const parent_node = self.$( '#frsTreeTabTree' ).jstree( true ).get_node( 'frstree_'+c.id );
-                //console.log( 'parent_node', parent_node );
+        if( self.FRS.status.get() === ST_CATEGORIES_INSERTED && self.FRS.createdNodesCount.get() === self.FRS.createdNodesAsked ){
+            self.FRS.status.set( ST_INSERT_FORUMS );
+            self.FRS.createdNodesAsked = 0;
+            self.FRS.createdNodesCount.set( 0 );
+            self.FRS.previousTree.every(( c ) => {
+                self.FRS.createdNodesAsked += c.forums.length;
+                const parent_node = self.$( '#frsTreeTabTree' ).jstree( true ).get_node( 'frstree_'+c._id );
+                //console.log( parent_node );
                 c.forums.every(( f ) => {
-                    //console.log( 'f', f );
-                    //console.log( 'f.text', f.text );
-                    self.FRS.nodesAsked += 1;
-                    // data defined at the node creation is available as node.original object
                     self.FRS.createForumNode( parent_node, f );
                     return true;
                 });
                 return true;
             });
-            // forums are loaded, waiting for nodes creation
-            self.FRS.workStatus.set( self.FRS.status.FLW );
+            self.FRS.status.set( ST_FORUMS_INSERTED );
         }
     });
 
-    // at the end of the initial creation of the nodes, then open all parents
+    // when forums have been successfully inserted
     self.autorun(() => {
-        if( self.FRS.workStatus.get() === self.FRS.status.FR ){
-            //console.log( 'open all' );
+        if( self.FRS.status.get() === ST_FORUMS_INSERTED && self.FRS.createdNodesCount.get() === self.FRS.createdNodesAsked ){
             self.$( '#frsTreeTabTree' ).jstree( true ).open_all();
-            self.FRS.workStatus.set( self.FRS.status.DONE );
+            self.FRS.status.set( ST_TREE_DONE );
         }
-    })
+    });
 });
 
 Template.frs_tree_tab.helpers({
@@ -479,10 +322,10 @@ Template.frs_tree_tab.helpers({
         return pwiForums.fn.i18n( count > 1 ? 'tree_tab.catcount_plural' : ( count ? 'tree_tab.catcount_singular' : 'tree_tab.catcount_none' ), count );
     },
 
-    // a label with the count of forums
+    // a label with the total count of forums
     forumsCount(){
         const self = Template.instance();
-        const count = self.FRS.orderedTree.forumsCount();
+        const count = self.FRS.orderedTree.forumsCountAll();
         return pwiForums.fn.i18n( count > 1 ? 'tree_tab.forcount_plural' : ( count ? 'tree_tab.forcount_singular' : 'tree_tab.forcount_none' ), count );
     },
 
@@ -515,7 +358,7 @@ Template.frs_tree_tab.events({
 
     'click .frs-delete-for'( event, instance ){
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
-        const o = instance.FRS.orderedTree.category( ids[1] );
+        const o = instance.FRS.orderedTree.forum( ids[1] );
         //console.log( 'frs-delete', ids );
         pwixBootbox.confirm(
             pwiForums.fn.i18n( 'tree_tab.for_confirm_delete', o.title ), function( ret ){
@@ -536,6 +379,7 @@ Template.frs_tree_tab.events({
     // edit a category
     'click .frs-edit-cat'( event, instance ){
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
+        console.log( ids, instance.FRS.orderedTree.category( ids[1] ));
         //let o = instance.FRS.orderedTree.category( ids[1] );
         //Blaze.renderWithData( Template.frs_category_panel, { cat: o }, $( 'body' )[0] );
         pwixModal.run({
