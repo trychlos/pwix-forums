@@ -152,7 +152,7 @@ pwiForums.i18n = {
                 // moderation informations
                 info_title: 'Moderation informations',
                 reason: 'Reason was: "%s".',
-                no_supplement: 'No additionnal argument was given',
+                no_supplement: 'No additionnal argument was given.',
                 supplement_text: 'Additional argument was: "%s".'
             },
             post_edit: {
