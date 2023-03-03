@@ -155,9 +155,6 @@ Template.frs_tree_tab.onCreated( function(){
                 prevcat: data.old_parent.replace( 'frstree_', '' ),
                 prevcatorder: self.FRS.treeChildren( self.$( '#frsTreeTabTree' ).jstree( true ), data.old_parent )
             };
-            console.log( data, parms );
-            console.log( self.$( '#frsTreeTabTree' ).jstree( true ).get_node( data.parent ));
-            console.log( self.$( '#frsTreeTabTree' ).jstree( true ).get_children_dom( data.parent ));
             // have to set the new order of the current category
             // if old_parent and new_parent are different, we have to:
             //  - set the new order of the previous category
@@ -175,13 +172,6 @@ Template.frs_tree_tab.onCreated( function(){
         //  list is returned as an array of { id: <id> } objects
         treeChildren( $tree, parentId ){
             let children = [];
-            //console.log( 'children_dom', $tree.get_children_dom( parentId ));
-            /*
-            $tree.get_children_dom( parentId ).each( function( index ){
-                children.push({ id: $( this ).prop( 'id' ).replace( 'frstree_', '' )});
-                return true;
-            });
-            */
             $tree.get_node( parentId ).children.every(( id ) => {
                 children.push({ id: id.replace( 'frstree_', '' )});
                 return true;
