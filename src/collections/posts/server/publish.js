@@ -76,6 +76,48 @@ Meteor.publish( 'frsPosts.threadPosts', function( query ){
     self.ready();
 });
 
+// return the count of threads available to the current user in this forum
+//
+Meteor.publish( 'frsPosts.threadsCount', function( forum, userId, opts={} ){
+    const self = this;
+    const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
+    const query = pwiForums.Posts.queryReadables( forum, userId, opts );
+    const rawCollection = pwiForums.server.collections.Posts.rawCollection();
+
+    //  add to the provided forum the threadsCount as a result of the Promise
+    function f_addFields(){
+        return rawCollection.distinct( 'threadId', query.selector );
+    }
+
+    const observer = pwiForums.server.collections.Posts.find( query.selector, query.options ).observe({
+        added: function( doc){
+            f_addFields().then(( res ) => {
+                forum.pub = forum.pub || {};
+                console.log( 'setting threadsCount to', res.length );
+                forum.pub.threadsCount = res.length;
+                self.added( collectionName, doc._id, doc );
+            });
+        },
+        changed: function( newDoc, oldDoc ){
+            f_addFields().then(() => {
+                forum.pub = forum.pub || {};
+                console.log( 'setting threadsCount to', res.length );
+                forum.pub.threadsCount = res.length;
+                self.changed( collectionName, newDoc._id, newDoc );
+            });
+        },
+        removed: function( oldDoc ){
+            f_addFields().then(() => {
+                self.removed( collectionName, oldDoc._id );
+            });
+        }
+    });
+    self.onStop( function(){
+        observer.stop();
+    });
+    self.ready();
+});
+
 // returns the list of to-be-moderated posts depending of user display options
 // opts is
 //  - forums: an array of all forums moderable by the user
