@@ -4,7 +4,7 @@ Meteor.publish( 'frsPosts.byId', function( id ){
 });
 
 // returns the list of thread leaders in the specified forum, ordered by decreasing creation date (most recent first)
-//  a thread can be characterized by its thread leader, which should be active (not deleted nor moderated)
+//  a thread is characterized by its thread leader, which should be active (not deleted nor moderated)
 //  with added:
 //  - the total count of non-deleted, non-moderated posts which are in the thread
 //  - the most recent post in the thread
@@ -14,7 +14,6 @@ Meteor.publish( 'frsPosts.threadLeaders', function( query ){
     const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
 
     // add lastPosted and posts count for this tread
-    //  add 1 as the post which opens the thread doesn't have the threadId set
     function f_addFields( doc ){
         doc.pub = {};
         let promises = [];
