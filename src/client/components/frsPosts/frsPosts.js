@@ -26,18 +26,18 @@ Template.frsPosts.onCreated( function(){
         // the initial post which has initiated the thread
         thread: {
             id: new ReactiveVar( null ),
-            handle: new ReactiveVar( null ),
+            handle: null,
             obj: new ReactiveVar( null )
         },
         // the forum in which we post adressed from the initial post
         forum: {
             id: new ReactiveVar( null ),
-            handle: new ReactiveVar( null ),
+            handle: null,
             obj: new ReactiveVar( null )
         },
         posts: {
             query: new ReactiveVar( null ),
-            handle: new ReactiveVar( null ),
+            handle: null,
             cursor: new ReactiveVar( null ),
             nonDeletedCount: new ReactiveVar( 0 ),
             nonDeletedCountSet: false
@@ -66,19 +66,21 @@ Template.frsPosts.onCreated( function(){
     //  the two subscriptions overlap, but kept as first is most probably much faster than the second
     self.autorun(() => {
         const threadId = FlowRouter.getParam( 'threadId' );
-        self.FRS.thread.id.set( threadId );
-        self.FRS.thread.handle.set( self.subscribe( 'frsPosts.byId', threadId ));
+        if( threadId ){
+            self.FRS.thread.id.set( threadId );
+            self.FRS.thread.handle = self.subscribe( 'frsPosts.byId', threadId );
+        }
     });
 
-    // get the thread when ready
+    // get the original thread leader when ready (may have been deleted)
     self.autorun(() => {
-        if( self.FRS.thread.handle.get() && self.FRS.thread.handle.get().ready()){
-            const post = pwiForums.client.collections.Posts.findOne({ _id: self.FRS.thread.id.get() });
+        if( self.FRS.thread.handle && self.FRS.thread.handle.ready()){
+            const post = pwiForums.client.collections.Posts.find({ _id: self.FRS.thread.id.get() }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
             if( post ){
                 self.FRS.thread.obj.set( post );
                 self.FRS.forum.id.set( post.forum );
             }
-            //console.log( 'got thread', post );
+            //console.log( 'got initial thread leader', post );
         }
     });
 
@@ -86,17 +88,17 @@ Template.frsPosts.onCreated( function(){
     self.autorun(() => {
         const forumId = self.FRS.forum.id.get();
         if( forumId ){
-            self.FRS.forum.handle.set( self.subscribe( 'frsForums.byId', forumId ));
+            self.FRS.forum.handle = self.subscribe( 'frsForums.byId', forumId );
             //console.log( 'forum subscription' );
         }
     });
 
     // get the forum when ready
     self.autorun(() => {
-        if( self.FRS.forum.handle.get() && self.FRS.forum.handle.get().ready()){
+        if( self.FRS.forum.id.get() && self.FRS.forum.handle && self.FRS.forum.handle.ready()){
             const forum = pwiForums.client.collections.Forums.findOne({ _id: self.FRS.forum.id.get() });
             self.FRS.forum.obj.set( forum );
-            //console.log( 'got forum' );
+            //console.log( 'got forum', forum );
         }
     });
 
@@ -121,7 +123,8 @@ Template.frsPosts.onCreated( function(){
     self.autorun(() => {
         const query = self.FRS.posts.query.get();
         if( query ){
-            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.threadPosts', query ));
+            console.log( query );
+            self.FRS.posts.handle = self.subscribe( 'frsPosts.threadPosts', query );
         }
     });
 
@@ -129,13 +132,13 @@ Template.frsPosts.onCreated( function(){
     // has to wait for the forum to be able to honor the 'showDeletedForAdmin' property
     // get the count of non deleted posts in this thread
     self.autorun(() => {
-        if( self.FRS.posts.handle.get() && self.FRS.posts.handle.get().ready()){
-            const query = self.FRS.posts.query.get();
+        const query = self.FRS.posts.query.get();
+        if( query && self.FRS.posts.handle && self.FRS.posts.handle.ready()){
             self.FRS.posts.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
             self.FRS.posts.nonDeletedCount.set( pwiForums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());
             self.FRS.posts.nonDeletedCountSet = true;
-            //console.log( 'got posts cursor' );
-            //console.log(pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch());
+            console.log( 'got posts cursor' );
+            console.log(pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch());
         }
     });
 
