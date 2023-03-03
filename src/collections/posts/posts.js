@@ -183,37 +183,38 @@ pwiForums.Posts = {
         return result;
     },
 
-    // returns an object { selector, options } suitable to list the posts inside a thread
-    //  opts may contain:
-    //  - withModerated: true|false
-    //  - withDeleted: true|false
-    //  - userId: mandatory if withDeleted is true
-    queryReadables( forum, threadId, opts ){
-        //console.log( 'queryReadables', forum, threadId );
+    // returns an object { selector, options } suitable to list the readble posts inside of a forum
+    //  - forum: the forum document
+    //  - userId: the currently logged-in user identifier, may be null
+    //  - opts may contain:
+    //      > threadId: the thread identifier if we only want the posts for this thread
+    //      > withModerated: true|false, only relevant if the user is a moderator of this forum
+    //      > withDeleted: true|false, only relevant if the user is a forum admin or the owner of the post
+    queryReadables( forum, userId, opts={} ){
         // honor 'showDeletedForAdmin' and 'showDeletedForUser' forum properties
         let deletedClause = [{ deletedAt: null }];
         if( Object.keys( opts ).includes( 'withModerated' ) && opts.withModerated ){
             deletedClause.push({ deletedBecause: { $ne: null }});
         }
-        if( Object.keys( opts ).includes( 'withDeleted' ) && opts.withDeleted && opts.userId ){
+        if( Object.keys( opts ).includes( 'withDeleted' ) && opts.withDeleted && userId ){
             deletedClause.push({ $and: [
                 { deletedBecause: null },
-                { deletedBy: opts.userId },
-                { owner: opts.userId }
+                { deletedBy: userId },
+                { owner: userId }
             ]});
         }
         // display only validated posts in a forum moderated a priori, or posts of the user waiting for validation
         let validatedClause = null;
         if( forum.moderation === FRS_MODERATE_APRIORI ){
             validatedClause = [{ validatedAt: { $ne: null }}];
-            if( opts.userId ){
-                validatedClause.push({ owner: opts.userId });
+            if( userId ){
+                validatedClause.push({ owner: userId });
             }
         }
         let result = {
             selector: {
                 $and: [
-                    { threadId: threadId },
+                    { forum: forum._id },
                     { $or: deletedClause }
                 ],
             },
@@ -221,6 +222,9 @@ pwiForums.Posts = {
                 sort: { createdAt: 1 }
             }
         };
+        if( opts.threadId ){
+            result.selector.$and.push({ threadId: threadId });
+        }
         if( validatedClause ){
             result.selector.$and.push({ $or: validatedClause });
         }
