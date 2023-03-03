@@ -40,7 +40,7 @@ pwiForums.server.fn = {
         
             self.ready();
         },
-    
+
         // upsert a document in the Posts collection
         // - 'modifier' is an optional object which may gather the updates, returning them to the caller
         //   it is provided by the 'frsPosts.upsert' method to be able to log the result
