@@ -236,8 +236,8 @@ Template.frsThreads.events({
 
     // click on a row to open the thread
     'click .frs-thread-tr'( event, instance ){
-        const postId = $( event.currentTarget ).data( 'row-id' );
-        FlowRouter.go( pwiForums.client.fn.routePosts( postId ));
+        const threadId = $( event.currentTarget ).data( 'row-id' );
+        FlowRouter.go( pwiForums.client.fn.routePosts( threadId ));
         return false;
     },
 
