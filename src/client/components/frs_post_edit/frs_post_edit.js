@@ -405,7 +405,6 @@ Template.frs_post_edit.events({
                 o.title = instance.FRS.edited.title.get();
                 o.forum = object._id;
                 o.owner = Meteor.userId();
-                o.threadLeader = true;
                 break;
             // reply to a post
             //  - object parm is the Post we want reply to
@@ -414,7 +413,6 @@ Template.frs_post_edit.events({
                 o.replyTo = object._id;
                 o.threadId = object.threadId;
                 o.owner = Meteor.userId();
-                o.threadLeader = false;
                 break;
         }
         o.content = instance.FRS.edited.content.get();

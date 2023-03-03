@@ -66,7 +66,6 @@ pwiForums.server.fn = {
             f_add( 'threadId' );
             f_add( 'pinned' );
             f_add( 'replyable' );
-            f_add( 'threadLeader' );
             f_add( 'deletedAt' );
             f_add( 'deletedBy' );
             f_add( 'deletedBecause' );

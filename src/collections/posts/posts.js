@@ -14,8 +14,8 @@ pwiForums.Posts = {
 
     schema: new SimpleSchema({
         // the post title (a single line)
-        //  cannot be empty for the initial post of the thread (the original threadLeader)
-        //  is set for each new threadLeader which may occur depending of deletions/moderations/unmoderations
+        //  cannot be empty for the initial post of the thread (the original thread leader)
+        //  is set for each new thread leader which may occur depending of deletions/moderations/unmoderations
         //  never unset
         title: {
             type: String,
@@ -33,13 +33,13 @@ pwiForums.Posts = {
         },
         // the post id this one replies to
         //  empty for the initial post of a thread, always set for others posts in the thread
-        //  for all others, will be most probably set to the current threadLeader at the time the post is created
+        //  for all others, will be most probably set to the current thread leader at the time the post is created
         replyTo: {
             type: String,
             optional: true
         },
         // the initial post id of this thread
-        //  always set and never changes, even when the corresponding post is deleted/moderated or a new threadLeader(s) is designated
+        //  always set and never changes, even when the corresponding post is deleted/moderated or a new thread leader is designated
         //  as a consequence, is always the id of the original post
         //  as a consequence, is always an invariant identifier of the thread
         threadId: {
@@ -105,12 +105,6 @@ pwiForums.Posts = {
         validatedBy: {
             type: String,
             optional: true
-        },
-        // an indicator of whether this post is the current thread leader
-        //  the current thread leader is the oldest non-deleted post in this thread
-        threadLeader: {
-            type: Boolean,
-            defaultValue: false
         },
         // Mongo identifier
         // mandatory (auto by Meteor+Mongo)
