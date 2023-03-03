@@ -41,6 +41,7 @@ pwiForums.Posts = {
         // the initial post id of this thread
         //  always set and never changes, even when the corresponding post is deleted/moderated or a new threadLeader(s) is designated
         //  as a consequence, is always the id of the original post
+        //  as a consequence, is always an invariant identifier of the thread
         threadId: {
             type: String
         },
