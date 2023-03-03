@@ -5,7 +5,7 @@
  *  - all categories are visible
  *  - only readable forums are shown.
  * 
- * If the user has enough permissions, this class makes its best effort to update the Orders collection itself when needed.
+ * If the user has enough permissions, this class makes its best efforts to update the Orders collection itself when needed.
  * 
  * The class exposes one tree() reactive data source which provides the ordered tree of categories and forums.
  * Per definition, the first level (at index zero) is only categories, and the second level is only forums.
@@ -30,7 +30,6 @@ export class frsOrderedTree {
 
     // static data
     //
-    static Singleton = null;
 
     // private data
     //
@@ -279,10 +278,6 @@ export class frsOrderedTree {
      * @returns {frsOrderedTree}
      */
     constructor(){
-        if( frsOrderedTree.Singleton ){
-            return frsOrderedTree.Singleton;
-        }
-
         const self = this;
 
         // subscribe to our collections at instanciation time
@@ -421,7 +416,6 @@ export class frsOrderedTree {
             }
         });
 
-        frsOrderedTree.Singleton = this;
         return this;
     }
 

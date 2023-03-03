@@ -24,8 +24,8 @@ import '../frs_forum_panel/frs_forum_panel.js';
 
 import './frs_tree_tab.html';
 
-const ST_NONE = 'jstree: waiting for the DOM be ready';
-const ST_TREE_READY = 'jstree: DOM is ready';
+const ST_NONE = 'jstree: waiting for the initial DOM be ready';
+const ST_TREE_READY = 'jstree: initial DOM is ready';
 const ST_TREE_TOBEREBUILT = 'jstree: to be rebuilt';
 const ST_CATEGORIES_INSERTED = 'jstree: categories inserted, waiting for the DOM be ready';
 const ST_INSERT_FORUMS = 'jstree: inserting forums';
@@ -179,6 +179,10 @@ Template.frs_tree_tab.onCreated( function(){
             return children;
         }
     };
+});
+
+Template.frs_tree_tab.onRendered( function(){
+    const self = this;
 
     self.FRS.status.set( ST_NONE );
 
@@ -186,10 +190,6 @@ Template.frs_tree_tab.onCreated( function(){
     self.autorun(() => {
         console.log( self.FRS.status.get());
     });
-});
-
-Template.frs_tree_tab.onRendered( function(){
-    const self = this;
 
     self.$( '#frsTreeTabTree' ).jstree({
         core: {

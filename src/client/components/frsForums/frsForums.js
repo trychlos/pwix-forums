@@ -12,7 +12,7 @@
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
-import { frsOrders } from '../../../common/classes/frs_orders.class.js';
+import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -25,7 +25,7 @@ Template.frsForums.onCreated( function(){
     const self = this;
 
     self.FRS = {
-        orderedTree: new frsOrders()
+        orderedTree: new frsOrderedTree()
     };
 });
 
@@ -73,9 +73,9 @@ Template.frsForums.helpers({
     catList(){
         const self = Template.instance();
         let catList = [];
-        self.FRS.orderedTree.tree.get().every(( c ) => {
-            if( c.object.forumsCount > 0 ){
-                catList.push( c.object );
+        self.FRS.orderedTree.tree().every(( c ) => {
+            if( c.forums.length > 0 ){
+                catList.push( c );
             }
             return true;
         });
@@ -106,15 +106,14 @@ Template.frsForums.helpers({
     forumList( cat ){
         //console.log( 'entering forumList' );
         let forumsList = [];
-        Template.instance().FRS.orderedTree.tree.get().every(( c ) => {
-            if( c.id === cat._id ){
+        Template.instance().FRS.orderedTree.tree().every(( c ) => {
+            if( c._id === cat._id ){
                 let first = true;
                 c.forums.every(( f ) => {
-                    let forum = f.object;
-                    forumsList.push( forum );
-                    forum.dyn = {
+                    forumsList.push( f );
+                    f.dyn = {
                         first: first,
-                        rvLastPostOwner: forum.pub.lastPost ? pwiForums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ) : null
+                        rvLastPostOwner: f.pub.lastPost ? pwiForums.fn.labelById( f.pub.lastPost.owner, AC_USERNAME ) : null
                     };
                     first = false;
                     return true;

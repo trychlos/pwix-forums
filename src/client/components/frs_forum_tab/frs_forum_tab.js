@@ -14,7 +14,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { pwiForums } from '../../js/index.js';
-import { frsOrders } from '../../../common/classes/frs_orders.class.js';
+import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 import { frsModerate } from '../../../common/classes/frs_moderate.class.js';
 
 import '../../stylesheets/frs_forums.less';
@@ -26,7 +26,7 @@ Template.frs_forum_tab.onCreated( function(){
     //console.log( self );
 
     self.FRS = {
-        orderedTree: new ReactiveVar( new frsOrders() ),
+        orderedTree: new frsOrderedTree(),
 
         // a deep copy of the input forum
         //  to be used as a fixed object to make archive/unarchive *unreactive*
@@ -73,7 +73,7 @@ Template.frs_forum_tab.onCreated( function(){
 Template.frs_forum_tab.helpers({
     // the list of available categories
     categories(){
-        return Template.instance().FRS.orderedTree.get().categories();
+        return Template.instance().FRS.orderedTree.tree();
     },
 
     // whether the current category should be selected ?
