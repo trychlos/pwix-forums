@@ -242,7 +242,7 @@ Template.frsModerate.onCreated( function(){
     // initialize the start of the work
     self.FRS.state.set( ST_START );
 
-    // trace to state dynamic
+    // trace the dynamic status
     self.autorun(() => {
         console.log( self.FRS.state.get());
     });
