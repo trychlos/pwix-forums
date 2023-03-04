@@ -32,6 +32,12 @@ pwiForums.server.fn = {
                             forum.pub.threadsCount = res.length;
                             self.changed( collectionName, forum._id, forum )
                         });
+                    pwiForums.server.collections.Posts.countDocuments( postQuery.selector )
+                        .then(( count ) => {
+                            forum.pub.postsCount = count;
+                            forum.pub.lastPost = count ? pwiForums.server.collections.Posts.find({ forum: forumId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0] : null;
+                            self.changed( collectionName, forum._id, forum )
+                        });
                 }
             }
             
@@ -50,44 +56,30 @@ pwiForums.server.fn = {
             });
 
             // when a Forum document is added, changed or is removed:
-            //  query Posts for this forum, getting threadsCount, total postsCount and lastPost
-            // this returns a Promise
             function f_updateForum( doc ){
                 // make sure some fields have at least a default value
                 doc.moderation = doc.moderation || defaults.common.forums.moderation;
                 doc.inform = doc.inform || defaults.common.forums.inform;
                 // prepare for some published fields
                 doc.pub = {};
-                let promises = [];
-
-                //doc.postsCount = pwiForums.server.collections.Posts.find({ forum: doc._id, deletedAt: null }).count();
-                const postQuery = pwiForums.Posts.queryReadables( doc, self.userId );
-                promises.push( pwiForums.server.collections.Posts.countDocuments( postQuery.selector )
-                    .then(( count ) => {
-                        doc.pub.postsCount = count;
-                        doc.pub.lastPost = count ? pwiForums.server.collections.Posts.find({ forum: doc._id }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0] : null;
-                    }));
-                return Promise.all( promises );
             }
         
             const observer = pwiForums.server.collections.Forums.find( query.selector, query.options ).observe({
                 added: function( doc){
+                    f_updateForum( doc );
+                    self.added( collectionName, doc._id, doc );
                     forums[doc._id] = doc;
-                    f_updateForum( doc ).then(() => {
-                        self.added( collectionName, doc._id, doc );
-                        f_updatePost( doc._id );
-                    });
+                    f_updatePost( doc._id );
                 },
                 changed: function( newDoc, oldDoc ){
+                    f_updateForum( newDoc );
+                    self.changed( collectionName, newDoc._id, newDoc );
                     forums[newDoc._id] = newDoc;
-                    f_updateForum( newDoc ).then(() => {
-                        self.changed( collectionName, newDoc._id, newDoc );
-                        f_updatePost( doc._id );
-                    });
+                    f_updatePost( doc._id );
                 },
                 removed: function( oldDoc ){
-                    delete forums[doc._id];
                     self.removed( collectionName, oldDoc._id );
+                    delete forums[doc._id];
                     f_updatePost( doc._id );
                 }
             });

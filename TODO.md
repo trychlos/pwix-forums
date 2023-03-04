@@ -42,9 +42,6 @@
 |   55 | 2023- 2-27 | handle pagination in all relevant pages |
 |   58 | 2023- 2-28 | obsolete conf.posts.limit |
 |   59 | 2023- 3- 1 | inform the author of a moderated post |
-|   60 | 2023- 3- 1 | frsForums: threads and posts counters are not reactive |
-|   61 | 2023- 3- 1 | when counting threads and posts, should only include those who are validated when this is relevant |
-|      | 2023- 3- 1 | plus the posts of the owner waiting for validation |
 |   62 | 2023- 3- 1 | owner may see and delete his own post, with the mention 'waiting for validation' |
 |   64 | 2023- 3- 3 | Posts.queryReadables() should honor showDeletedForAdmin and showDeletedForUser |
 |   65 |  |  |
@@ -136,6 +133,11 @@
 |      | 2023- 3- 1 | yes, we alsways have a reason. Fine |
 |   57 | 2023- 2-27 | when no reason is given for a moderation, set a REASON_NONE |
 |      | 2023- 2-28 | obsoleted by #56 (reason is always mandatory) |
+|   60 | 2023- 3- 1 | frsForums: threads and posts counters are not reactive |
+|      | 2023- 3- 4 | fixed |
+|   61 | 2023- 3- 1 | when counting threads and posts, should only include those who are validated when this is relevant |
+|      | 2023- 3- 1 | plus the posts of the owner waiting for validation |
+|      | 2023- 3- 4 | done |
 |   63 | 2023- 3- 1 | add publish-composite to package.js if kept |
 |      | 2023- 3- 2 | still unable to use this package |
 
