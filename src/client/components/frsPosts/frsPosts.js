@@ -26,7 +26,7 @@ Template.frsPosts.onCreated( function(){
         // the initial post which has initiated the thread
         thread: {
             id: new ReactiveVar( null ),
-            handle: null,
+            handle: new ReactiveVar( null ),
             obj: new ReactiveVar( null )
         },
         // the forum in which we post adressed from the initial post
@@ -37,7 +37,7 @@ Template.frsPosts.onCreated( function(){
         },
         posts: {
             query: new ReactiveVar( null ),
-            handle: null,
+            handle: new ReactiveVar( null ),
             cursor: new ReactiveVar( null ),
             nonDeletedCount: new ReactiveVar( 0 ),
             nonDeletedCountSet: false
@@ -62,25 +62,27 @@ Template.frsPosts.onCreated( function(){
     };
 
     // get the threadId as a FlowRouter param
-    //  subscribe to the Posts publication to get this particular post and all others
+    //  subscribe to the Posts publication to get this particular post first, and all others being subscribed to later
     //  the two subscriptions overlap, but kept as first is most probably much faster than the second
+    //  also note that this first post is the original thread leader, which may or not be visible by the user
     self.autorun(() => {
         const threadId = FlowRouter.getParam( 'threadId' );
         if( threadId ){
             self.FRS.thread.id.set( threadId );
-            self.FRS.thread.handle = self.subscribe( 'frsPosts.byId', threadId );
+            self.FRS.thread.handle.set( self.subscribe( 'frsPosts.byId', threadId ));
         }
     });
 
     // get the original thread leader when ready (may have been deleted)
     self.autorun(() => {
-        if( self.FRS.thread.handle && self.FRS.thread.handle.ready()){
-            const post = pwiForums.client.collections.Posts.find({ _id: self.FRS.thread.id.get() }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
+        const handle = self.FRS.thread.handle.get();
+        if( handle && handle.ready()){
+            const post = pwiForums.client.collections.Posts.findOne({ _id: self.FRS.thread.id.get() });
             if( post ){
                 self.FRS.thread.obj.set( post );
                 self.FRS.forum.id.set( post.forum );
+                //console.log( 'got initial thread leader', post );
             }
-            //console.log( 'got initial thread leader', post );
         }
     });
 
@@ -124,7 +126,7 @@ Template.frsPosts.onCreated( function(){
         const query = self.FRS.posts.query.get();
         if( query ){
             console.log( query );
-            self.FRS.posts.handle = self.subscribe( 'frsPosts.threadPosts', query );
+            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.byQuery', query ));
         }
     });
 
@@ -132,8 +134,9 @@ Template.frsPosts.onCreated( function(){
     // has to wait for the forum to be able to honor the 'showDeletedForAdmin' property
     // get the count of non deleted posts in this thread
     self.autorun(() => {
-        const query = self.FRS.posts.query.get();
-        if( query && self.FRS.posts.handle && self.FRS.posts.handle.ready()){
+        const handle = self.FRS.posts.handle.get();
+        if( handle && handle.ready()){
+            const query = self.FRS.posts.query.get();
             self.FRS.posts.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
             self.FRS.posts.nonDeletedCount.set( pwiForums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());
             self.FRS.posts.nonDeletedCountSet = true;

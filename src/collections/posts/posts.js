@@ -223,7 +223,7 @@ pwiForums.Posts = {
             }
         };
         if( opts.threadId ){
-            result.selector.$and.push({ threadId: threadId });
+            result.selector.$and.push({ threadId: opts.threadId });
         }
         if( validatedClause ){
             result.selector.$and.push({ $or: validatedClause });

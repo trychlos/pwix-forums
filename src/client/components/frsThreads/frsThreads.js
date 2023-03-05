@@ -195,6 +195,10 @@ Template.frsThreads.helpers({
         return it.content;
     },
 
+    threadId( it ){
+        return it.threadId;
+    },
+
     threadLast( it ){
         const forum = Template.instance().FRS.forum.get();
         const lastPost = forum ? forum.pub.lastPost : null;
