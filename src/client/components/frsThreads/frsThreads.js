@@ -6,8 +6,9 @@
 
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
+import { ReactiveDict } from 'meteor/reactive-dict';
 
-import { pwiForums } from '../../js/index.js';
+import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -22,19 +23,14 @@ Template.frsThreads.onCreated( function(){
     //console.log( self );
 
     self.FRS = {
+        orderedTree: new frsOrderedTree(),
+        forum: new ReactiveVar( null ),
 
-        // frsForums collection (one element here)
-        forum: {
-            id: new ReactiveVar( null ),
-            handle: null,
-            object: new ReactiveVar( null )
-        },
-
-        // frsThreads collection
-        threads: {
+        // frsPosts collection
+        posts: {
             query: new ReactiveVar( null ),
-            handle: null,
-            hash: {}
+            handle: new ReactiveVar( null ),
+            leaders: new ReactiveVar( [] )
         },
 
         // opening a new thread
@@ -66,30 +62,45 @@ Template.frsThreads.onCreated( function(){
         }
     };
 
-    // get the forum identifier and subscribe to the publication
+    // get the forum identifier, so the forum document
     self.autorun(() => {
         const forumId = FlowRouter.getParam( 'forumId' );
         if( forumId ){
-            self.FRS.forum.id.set( forumId );
-            self.FRS.forum.handle = self.subscribe( 'frsForums.byId', forumId );
+            self.FRS.forum.set( self.FRS.orderedTree.forum( forumId ));
         }
     });
 
-    // get the forum when ready
+    // the forum gives us the list of threads readable by the user
+    //  subscribe to all the Posts...
     self.autorun(() => {
-        const forumId = self.FRS.forum.id.get();
-        if( forumId && self.FRS.forum.handle.ready()){
-            const forumId = self.FRS.forum.id.get();
-            self.FRS.forum.object.set( pwiForums.client.collections.Forums.findOne({ _id: forumId }));
+        const forum = self.FRS.forum.get();
+        if( forum ){
+            self.FRS.posts.query.set( pwiForums.Posts.queryReadables( forum, Meteor.userId()));
+            self.FRS.posts.handle.set( self.subscribe( 'frsPosts.byQuery', self.FRS.posts.query.get()));
         }
     });
 
-    // subscribe to Posts when we have got the forum id in order to get the threads opened on this forum
+    // get the thread leaders when subscription is ready
     self.autorun(() => {
-        const forumId = self.FRS.forum.id.get();
-        if( forumId ){
-            self.FRS.threads.query.set( pwiForums.Posts.queryThreads( forumId ));
-            self.FRS.threads.handle = self.subscribe( 'frsPosts.threadLeaders', self.FRS.threads.query.get());
+        const handle = self.FRS.posts.handle.get();
+        if( handle && handle.ready()){
+            const forum = self.FRS.forum.get();
+            let list = [];
+            forum.pub.threadsList.every(( id ) => {
+                const selector = self.FRS.posts.query.get().selector;
+                const post = pwiForums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
+                if( post ){
+                    post.dyn = {
+                        rvLastPostOwner: pwiForums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ),
+                        rvOwner: pwiForums.fn.labelById( post.owner, AC_USERNAME ),
+                        rvPostsCount: new ReactiveVar( 0 )
+                    };
+                    pwiForums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });
+                    list.push( post );
+                }
+                return true;
+            });
+            self.FRS.posts.leaders.set( list );
         }
     });
 
@@ -97,7 +108,7 @@ Template.frsThreads.onCreated( function(){
     //  must be identified
     //  must be member of private list for private forum
     self.autorun(() => {
-        const forum = self.FRS.forum.object.get();
+        const forum = self.FRS.forum.get();
         const o = forum ? pwiForums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
         self.FRS.writer.set( o.editable );
         self.FRS.reason.set( o.reason );
@@ -108,19 +119,19 @@ Template.frsThreads.onCreated( function(){
 Template.frsThreads.helpers({
     // archived forum badge
     badgeArchived(){
-        const forum = Template.instance().FRS.forum.object.get();
+        const forum = Template.instance().FRS.forum.get();
         return pwiForums.client.htmlArchivedBadge( forum );
     },
 
     // display a moderator badge
     badgeModerator(){
-        const forum = Template.instance().FRS.forum.object.get();
+        const forum = Template.instance().FRS.forum.get();
         return pwiForums.client.htmlModeratorBadge( forum );
     },
 
     // private forum badge
     badgePrivate(){
-        const forum = Template.instance().FRS.forum.object.get();
+        const forum = Template.instance().FRS.forum.get();
         return pwiForums.client.htmlPrivateBadge( forum, { publicIsTransparent: false });
     },
 
@@ -138,22 +149,21 @@ Template.frsThreads.helpers({
 
     forumDescription(){
         const self = Template.instance();
-        const forum = self.FRS.forum.object.get();
+        const forum = self.FRS.forum.get();
         return forum ? forum.displayableDescription : '';
     },
 
     forumTitle(){
         const self = Template.instance();
-        const forum = self.FRS.forum.object.get();
+        const forum = self.FRS.forum.get();
         return forum ? forum.title : '';
     },
 
     // whether there is at least one thread ?
     hasThreads(){
         const self = Template.instance();
-        const forum = self.FRS.forum.object.get();
-        //console.log( forum );
-        return forum ? forum.pub.threadsCount > 0 : false;
+        const forum = self.FRS.forum.get();
+        return forum ? forum.pub.threadsList.length > 0 : false;
     },
 
     // i18n
@@ -164,7 +174,7 @@ Template.frsThreads.helpers({
     // params for frs_post_edit when wanting create a new thread
     //  have to 'get()' our reactive vars to make this helper reactive itself
     parmsPostEdit(){
-        const forum = Template.instance().FRS.forum.object.get();
+        const forum = Template.instance().FRS.forum.get();
         const allowed = Template.instance().FRS.writer.get();
         if( false ){
             console.log( 'parmsPostEdit allowed', allowed, 'forum', forum );
@@ -177,14 +187,8 @@ Template.frsThreads.helpers({
         };
     },
 
-    // store the current post (aka a thread leader)
+    // get the current thread leader
     threadCatch( it ){
-        Template.instance().FRS.threads.hash[it._id] = it;
-        const post = it.pub.lastPost ? it.pub.lastPost : it;
-        it.dyn = {
-            rvLastPostOwner: pwiForums.fn.labelById( post.owner, AC_USERNAME ),
-            rvOwner: pwiForums.fn.labelById( it.owner, AC_USERNAME )
-        }
     },
 
     threadContent( it ){
@@ -192,16 +196,26 @@ Template.frsThreads.helpers({
     },
 
     threadLast( it ){
-        let post = it.pub.lastPost ? it.pub.lastPost : it;
-        return pwiForums.fn.i18n( 'threads.last_post', i18n.dateTime( post.createdAt ), it.dyn.rvLastPostOwner.get().label );
+        const forum = Template.instance().FRS.forum.get();
+        const lastPost = forum ? forum.pub.lastPost : null;
+        return lastPost ? pwiForums.fn.i18n( 'threads.last_post', i18n.dateTime( lastPost.createdAt ), it.dyn.rvLastPostOwner.get().label ) : '';
     },
 
     threadOwner( it ){
         return it.dyn.rvOwner.get().label;
     },
 
+    // count of readable posts in this thread
+    threadPostsCount( it ){
+        return it.dyn.rvPostsCount.get();
+    },
+
     threadStarted( it ){
         return i18n.date( it.createdAt );
+    },
+
+    threadTitle( it ){
+        return it.title;
     },
 
     threadTooltip( it ){
@@ -209,8 +223,7 @@ Template.frsThreads.helpers({
     },
 
     threadsList(){
-        const query = Template.instance().FRS.threads.query.get();
-        return pwiForums.client.collections.Posts.find( query.selector, query.options );
+        return Template.instance().FRS.posts.leaders.get();
     },
 
     // display the reason for why the user is not allowed

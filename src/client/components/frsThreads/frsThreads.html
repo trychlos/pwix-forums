@@ -50,14 +50,14 @@
                         <tbody>
                             {{#each it in threadsList }}
                                 {{ threadCatch it }}
-                                <tr data-row-id="{{ it.threadId }}" class="frs-thread-tr" data-bs-toggle="tooltip" data-bs-title="{{ threadTooltip it }}">
+                                <tr data-row-id="{{ it._id }}" class="frs-thread-tr" data-bs-toggle="tooltip" data-bs-title="{{ threadTooltip it }}">
                                     <td class="frs-td">
-                                        <div class="frs-thread-title">{{ it.title }}</div>
-                                        <div class="frs-ellipsize frs-ellipsize-2">{{{ it.content }}}</div>
+                                        <div class="frs-thread-title">{{ threadTitle it }}</div>
+                                        <div class="frs-ellipsize frs-ellipsize-2">{{{ threadContent it }}}</div>
                                     </td>
                                     <td class="frs-td frs-center">{{ threadStarted it }}</td>
                                     <td class="frs-td frs-center">{{ threadOwner it }}</td>
-                                    <td class="frs-td frs-center">{{ it.pub.postsCount }}</td>
+                                    <td class="frs-td frs-center">{{ threadPostsCount it }}</td>
                                     <td class="frs-td frs-center frs-lastpost">{{{ threadLast it }}}</td>
                                 </tr>
                             {{/each}}

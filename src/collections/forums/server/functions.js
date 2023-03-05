@@ -29,7 +29,7 @@ pwiForums.server.fn = {
                     rawCollection.distinct( 'threadId', postQuery.selector )
                         .then(( res ) => {
                             console.log( forum.title, res );
-                            forum.pub.threadsCount = res.length;
+                            forum.pub.threadsList = res;
                             self.changed( collectionName, forum._id, forum )
                         });
                     pwiForums.server.collections.Posts.countDocuments( postQuery.selector )

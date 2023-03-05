@@ -49,19 +49,6 @@ pwiForums.fn = {
     },
 
     /**
-     * @summary A proxy to pwixAccountsTools.preferredLabelById() method
-     * @locus Anywhere
-     * @param {String} id the user identifier
-     * @param {String} preferred whether we want a username or an email address
-     * @returns {ReactiveVar} a new ReactiveVar which will eventually contain:
-     *  - label: the label to preferentially use when referring to the user
-     *  - origin: whether it is a AC_USERNAME or a AC_EMAIL_ADDRESS
-     */
-    labelById( id, preferred ){
-        return pwixAccountsTools.preferredLabelById( id, preferred );
-    },
-
-    /**
      * @summary A proxy to pwixAccountsTools.preferredLabelByDoc() method
      * @locus Anywhere
      * @param {Object} user the user document
@@ -79,7 +66,7 @@ pwiForums.fn = {
      * @locus Anywhere
      * @param {String} id the user identifier
      * @param {String} preferred whether we want a username or an email address
-     * @returns {ReactiveVar} a new ReactiveVar which will eventually contain:
+     * @returns {ReactiveVar} a new ReactiveVar which will eventually contain an object:
      *  - label: the label to preferentially use when referring to the user
      *  - origin: whether it is a AC_USERNAME or a AC_EMAIL_ADDRESS
      */

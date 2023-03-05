@@ -113,7 +113,7 @@ pwiForums.client.htmlThreadsCountBadge = function( f ){
     if( f ){
         html += ''
             +'<span class="badge frs-badge-label frs-bg-forum">'
-            + pwiForums.fn.i18n( 'badges.threads_count', f.pub.threadsCount )
+            + pwiForums.fn.i18n( 'badges.threads_count', f.pub.threadsList.length )
             +'</span>';
     }
     return html;
