@@ -78,7 +78,7 @@ pwiForums.client.htmlPostsCountBadge = function( f ){
         //console.log( width );
         html += ''
             +'<span class="badge frs-badge-label frs-bg-forum">'
-            +( width === UI_VIEW_SM ? f.postsCount : pwiForums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
+            +( width === UI_VIEW_SM ? f.pub.postsCount : pwiForums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
             +'</span>';
     }
     return html;
