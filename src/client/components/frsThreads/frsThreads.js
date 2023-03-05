@@ -43,6 +43,21 @@ Template.frsThreads.onCreated( function(){
         writer: new ReactiveVar( false ),
         reason: new ReactiveVar( null ),
 
+        // enable the tooltip for a row
+        // https://getbootstrap.com/docs/5.2/components/tooltips/
+        enableTooltip( post ){
+            /*
+             the tooltip feature is removed as without any actual added value
+             
+            self.FRS.waitForElements( 'tr[data-row-id="'+post.threadId+'"]' )
+                .then(( nodes ) => {
+                    //const tooltipTriggerList = document.querySelectorAll( '.frsThreads [data-bs-toggle="tooltip"]' );
+                    //const tooltipList = [...tooltipTriggerList].map( tooltipTriggerEl => new bootstrap.Tooltip( tooltipTriggerEl ));
+                    $( nodes[0] ).tooltip();
+                });
+                */
+        },
+
         // whether the 'new discussion' toggle is active or not ?
         //  thanks to Bootstrap framework, the button already holds its state here and we shouldn't have to take care of that
         newThreadToggle(){
@@ -59,6 +74,28 @@ Template.frsThreads.onCreated( function(){
                 newThreadDiv.find( '.frs-post-edit' ).trigger( 'frs-post-edit-end' );
                 self.$( '.frs-empty' ).removeClass( 'frs-hidden' );
             }
+        },
+
+        // https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists
+        //  only initialize an element when the corresponding DOM is available
+        waitForElements( selector, count=1 ){
+            return new Promise(( resolve ) => {
+                const nodeList = document.querySelectorAll( selector );
+                if( nodeList.length === count ){
+                    return resolve( document.querySelectorAll( selector ));
+                }
+                const observer = new MutationObserver(( mutations ) => {
+                    const nodeList = document.querySelectorAll( selector );
+                    if( nodeList.length === count ){
+                        resolve( document.querySelectorAll( selector ));
+                        observer.disconnect();
+                    }
+                });
+                observer.observe( document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            });
         }
     };
 
@@ -140,11 +177,9 @@ Template.frsThreads.helpers({
         return Template.instance().FRS.writer.get() ? '' : 'disabled';
     },
 
-    // enable tooltips when all have been created
-    enableToolstips(){
-        // https://getbootstrap.com/docs/5.2/components/tooltips/
-        const tooltipTriggerList = document.querySelectorAll( '.frsThreads [data-bs-toggle="tooltip"]' );
-        const tooltipList = [...tooltipTriggerList].map( tooltipTriggerEl => new bootstrap.Tooltip( tooltipTriggerEl ));
+    // enable tooltip when DOM is ready
+    enableTooltip( it ){
+        Template.instance().FRS.enableTooltip( it );
     },
 
     forumDescription(){

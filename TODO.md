@@ -75,6 +75,7 @@
 |      | 2022-11- 3 | was actually 'review frsThreads to be the same than frsForums' -> that's done but had to remove <a> tags |
 |      |            | -> have set tooltips, but they do not show |
 |      | 2023- 3- 1 | display has been heavily reviewed - seems correct at the moment |
+|      | 2023- 3- 5 | tooltips work, but are removed as without added value - so closing the point |
 |   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
 |      | 2023- 2-27 | done with FRS_MODERATE_APRIORI option |
 |   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |

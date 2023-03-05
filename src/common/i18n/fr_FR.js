@@ -197,7 +197,7 @@ pwiForums.i18n = {
                 posted_by: 'Posted by %s',
                 posted_on: 'On %s',
                 last_post: 'Last post on %s<br/>by %s',
-                tooltip: 'Open the tread (and go to \'%s\')',
+                tooltip: 'Open the thread (and go to \'%s\')',
                 deleted_label: 'You have deleted one of your own posts on %s. This operation is not cancelable',
                 moderated_label: 'A post was moderated on %s by %s (reason: %s)',
                 delete: 'Delete',

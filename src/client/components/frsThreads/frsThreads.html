@@ -60,10 +60,10 @@
                                     <td class="frs-td frs-center">{{ threadPostsCount it }}</td>
                                     <td class="frs-td frs-center frs-lastpost">{{{ threadLast it }}}</td>
                                 </tr>
+                                {{ enableTooltip it }}
                             {{/each}}
                         </tbody>
                     </table>
-                    {{ enableTooltips }}
                 {{else}}
                     <div class="frs-empty">
                         {{#if writableTrue }}
