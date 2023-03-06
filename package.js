@@ -38,8 +38,9 @@ function configure( api ){
     api.use( 'pwix:tolert@1.0.0', 'client' );
     api.use( 'tmeasday:check-npm-versions@1.0.2', 'server' );
     api.use( 'webapp', 'server' );
-    api.addFiles( 'src/client/components/frsManager/frsManager.js', 'client' );
+    api.addFiles( 'src/client/components/frsAllPosts/frsAllPosts.js', 'client' );
     api.addFiles( 'src/client/components/frsForums/frsForums.js', 'client' );
+    api.addFiles( 'src/client/components/frsManager/frsManager.js', 'client' );
     api.addFiles( 'src/client/components/frsModerate/frsModerate.js', 'client' );
     api.addFiles( 'src/client/components/frsPosts/frsPosts.js', 'client' );
     api.addFiles( 'src/client/components/frsThreads/frsThreads.js', 'client' );

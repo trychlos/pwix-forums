@@ -6,6 +6,10 @@ pwiForums.i18n = {
     ...pwiForums.i18n,
     ...{
         fr_FR: {
+            allPosts: {
+                page_title: 'All the posts',
+                page_comment: 'You are seeing here all messages since the specified date, posted in the forums you are allowed to access.'
+            },
             badges: {
                 for_public: 'Forum is public',
                 for_private: 'Forum is private',
@@ -167,6 +171,13 @@ pwiForums.i18n = {
             },
             posts: {
                 not_writable: 'You cannot participate as %s.'
+            },
+            posts_options: {
+                date: 'Since :',
+                empty_checkbox: 'Display forums without visible posts',
+                validated_checkbox: 'Also show validated posts',
+                moderated_checkbox: 'Also show moderated posts',
+                deleted_checkbox: 'Also show self-deteled posts',
             },
             roles_view: {
                 perms_tab: 'Forums permissions',

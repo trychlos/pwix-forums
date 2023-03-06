@@ -1,0 +1,30 @@
+<template name="frsAllPosts">
+    <div class="frsAllPosts">
+
+        <div class="frs-top">
+            <div class="frs-left">
+                <div class="frs-title">
+                    {{ i18n label="page_title" }}
+                </div>
+                <div class="frs-header">
+                    <div class="frs-left flex-grow-1">
+                        <div class="frs-comment">
+                            {{ i18n label="page_comment" }}
+                        </div>
+                    </div>
+                    <div class="frs-right">
+                    </div>
+                </div>
+            </div>
+            <div class="frs-right">
+                {{> frs_posts_options options }}
+            </div>
+        </div>
+
+        {{> frs_posts_all }}
+
+        <div class="frs-bottom">
+        </div>
+
+    </div>
+</template>

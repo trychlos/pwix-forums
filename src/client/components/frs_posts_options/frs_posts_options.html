@@ -1,0 +1,37 @@
+<template name="frs_posts_options">
+    <div class="frs-posts-options">
+
+        <form class="frs-settings">
+            <div class="frs-colone">
+                <p class="frs-nowrap frs-mr05">{{ i18n label="date" }}</p>
+                <div class="input-date d-flex">
+                    <input type="text" class="form-control form-control-sm frs-date" minlength="10" maxlength="10" value="{{ since }}"/>
+                    <span class="fa-regular fa-sm fa-calendar-days calendar-icon"></span>
+                </div>
+                <div></div>
+                <div class="frs-two">
+                    <input type="checkbox" class="form-check-input form-check-input-sm" id="d56b7d7a-9276-4981-aaeb-58933b17a260" data-frs-field="moderationShowEmpty" />
+                    <label class="form-check-label form-check-label-sm" for="d56b7d7a-9276-4981-aaeb-58933b17a260">{{ i18n label="empty_checkbox" }}</label>
+                </div>
+            </div>
+            <div class="frs-coltwo">
+                <div></div>
+                <div class="frs-two">
+                    <input type="checkbox" class="form-check-input form-check-input-sm" id="6bd82922-4c81-407f-b69d-95623e29e8c8" data-frs-field="moderationShowValidated" />
+                    <label class="form-check-label form-check-label-sm" for="6bd82922-4c81-407f-b69d-95623e29e8c8">{{ i18n label="validated_checkbox" }}</label>
+                </div>
+                <div></div>
+                <div class="frs-two">
+                    <input type="checkbox" class="form-check-input form-check-input-sm" id="6823296e-0931-4824-822c-e62d2a515f91" data-frs-field="moderationShowModerated" />
+                    <label class="form-check-label form-check-label-sm" for="6823296e-0931-4824-822c-e62d2a515f91">{{ i18n label="moderated_checkbox" }}</label>
+                </div>
+                <div></div>
+                <div class="frs-two">
+                    <input type="checkbox" class="form-check-input form-check-input-sm" id="24b00f95-3000-4cf4-8f41-cc22d9b5f657" data-frs-field="moderationShowModerated" />
+                    <label class="form-check-label form-check-label-sm" for="24b00f95-3000-4cf4-8f41-cc22d9b5f657">{{ i18n label="deleted_checkbox" }}</label>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</template>

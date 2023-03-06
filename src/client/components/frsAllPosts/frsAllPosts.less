@@ -1,0 +1,99 @@
+// as of 2023- 2-23, Chrome doesn't support grid-template-columns: subgrid;
+//  see https://caniuse.com/?search=grid-template-columns
+//  so get stuck to good old tables
+//
+.frsAllPosts {
+
+    .frs-header {
+        display: flex;
+        align-items: center;
+    }
+
+    .frs-content {
+        // display forum informations
+        .frs-forum {
+            .frs-title {
+                font-weight: bold;
+                font-size: 110%;
+            }
+        }
+        .frs-forum:not( .frs-first ){
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid lightgray;
+        }
+        // gather all posts in this forum
+        //  with a thread informations row for each thread
+        .frs-thread:not( .frs-first ){
+            margin-top: 0.5em;
+            padding-top: 0.5em;
+            border-top: 1px solid blue;
+        }
+        .frs-post td {
+            padding-bottom: 0.5em;
+        }
+        .frs-post .frs-content {
+            background-color: #e0e0e0;
+        }
+        .frs-post:not( .frs-first ) td {
+            padding-top: 0.5em;
+            border-top: 1px solid lightblue;
+        }
+        .frs-actions {
+            text-align: center;
+            a {
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: none;
+            }
+        }
+        .frs-no-new-post,
+        .frs-no-forum {
+            font-style: italic;
+            color: gray;
+            font-size: 95%;
+        }
+        .frs-authoring {
+            font-size: 90%;
+        }
+        .frs-moderated,
+        .frs-validated {
+            font-size: 90%;
+            font-style: italic;
+            color: gray;
+        }
+    }
+}
+
+.frs-posts-options {
+    .frs-settings {
+        margin: 0.5em;
+        padding: 1em;
+        border: 1px solid lightgray;
+        border-radius: 0.25em;
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 1em;
+        align-items: center;
+        .frs-colone,
+        .frs-coltwo {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            column-gap: 0.5em;
+            align-items: center;
+        }
+        .frs-two {
+            text-align: left;
+        }
+        .input-date {
+            width: 8em;
+            .calendar-icon {
+                margin-left: -22px;
+                color: var( --bs-gray );
+                position: relative;
+                bottom: -0.5em;
+            }
+        }
+    }
+}
