@@ -4,6 +4,10 @@
 //
 .frsAllPosts {
 
+    .frs-top.frs-allposts {
+        align-items: start;
+    }
+
     .frs-header {
         display: flex;
         align-items: center;
@@ -75,7 +79,8 @@
         display: grid;
         grid-template-columns: auto auto;
         column-gap: 1em;
-        align-items: center;
+        align-items: start;
+
         .frs-colone,
         .frs-coltwo {
             display: grid;
@@ -83,9 +88,11 @@
             column-gap: 0.5em;
             align-items: center;
         }
+
         .frs-two {
             text-align: left;
         }
+
         .input-date {
             width: 8em;
             .calendar-icon {

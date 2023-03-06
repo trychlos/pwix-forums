@@ -1,8 +1,10 @@
 /*
  * pwix:forums/src/client/components/frsAllPosts/frsAllPosts.js
  *
- * Manage options through a ReactiveVar which contains the Options object.
+ * Manage options through a ReactiveDict which contains the key=values.
  */
+
+import { ReactiveDict } from 'meteor/reactive-dict';
 
 import '../frs_posts_all/frs_posts_all.js';
 import '../frs_posts_options/frs_posts_options.js';
@@ -14,7 +16,7 @@ Template.frsAllPosts.onCreated( function(){
     const self = this;
 
     self.FRS = {
-        options: new ReactiveVar( {} )
+        options: new ReactiveDict()
     }
 });
 

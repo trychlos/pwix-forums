@@ -173,11 +173,15 @@ pwiForums.i18n = {
                 not_writable: 'You cannot participate as %s.'
             },
             posts_options: {
-                date: 'Since :',
+                date_label: 'Since :',
                 empty_checkbox: 'Display forums without visible posts',
-                validated_checkbox: 'Also show validated posts',
-                moderated_checkbox: 'Also show moderated posts',
-                deleted_checkbox: 'Also show self-deteled posts',
+                validated_checkbox: 'Show validated posts',
+                nonvalidated_checkbox: 'Show non-validated posts',
+                moderated_checkbox: 'Show moderated posts',
+                nonmoderated_checkbox: 'Show non-moderated posts',
+                deleted_checkbox: 'Also show posts deleted by their author',
+                date_parse: 'dd/mm/yy',
+                date_format: 'dd/mm/yyyy'
             },
             roles_view: {
                 perms_tab: 'Forums permissions',

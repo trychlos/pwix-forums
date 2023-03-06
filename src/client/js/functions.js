@@ -140,5 +140,28 @@ pwiForums.client.fn = {
                 resolve( pwiForums.fn.i18n( 'roles_view.none' ))
             }
         });
+    },
+
+    // https://stackoverflow.com/questions/5525071/how-to-wait-until-an-element-exists
+    //  returns a Promise which eventually resolves to the expected nodes list
+    //  this nodes list may later be exploited with - for exmaple - $( nodes[0] )..
+    waitForElements( selector, count=1 ){
+        return new Promise(( resolve ) => {
+            const nodeList = document.querySelectorAll( selector );
+            if( nodeList.length === count ){
+                return resolve( document.querySelectorAll( selector ));
+            }
+            const observer = new MutationObserver(( mutations ) => {
+                const nodeList = document.querySelectorAll( selector );
+                if( nodeList.length === count ){
+                    resolve( document.querySelectorAll( selector ));
+                    observer.disconnect();
+                }
+            });
+            observer.observe( document.body, {
+                childList: true,
+                subtree: true
+            });
+        });
     }
 };
