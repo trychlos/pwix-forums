@@ -24,6 +24,7 @@ Package.onTest( function( api ){
 
 function configure( api ){
     api.versionsFrom( '1.8.1' );
+    api.use( 'aldeed:collection2@3.5.0' );
     api.use( 'blaze-html-templates@2.0.0', 'client' );
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );

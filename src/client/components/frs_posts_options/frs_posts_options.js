@@ -1,12 +1,14 @@
 /*
  * pwix:forums/src/client/components/frs_posts_options/frs_posts_options.js
  *
- * This component takes of reading/writing the user settings as 'name'+key option values.
+ * This component takes care of reading/writing the user settings as 'name'+key option values.
  *
  * Parms:
  * - name
  * - options: a ReactiveDict
  */
+
+import { ReactiveDict } from 'meteor/reactive-dict';
 
 import '../frs_posts_options/frs_posts_options.js';
 import '../frs_posts_options/frs_posts_options.js';
@@ -18,8 +20,8 @@ Template.frs_posts_options.onCreated( function(){
 
     self.FRS = {
         name: new ReactiveVar( null ),
-        options: null,
-        since: new ReactiveVar( null ),
+        options: null,                      // contains 'true'|'false' strings
+        since: new ReactiveVar( null ),     // Date object
         checkboxes: [
             'ShowEmpty',
             'ShowDeleted',
@@ -60,8 +62,12 @@ Template.frs_posts_options.onCreated( function(){
     // get the options parm
     self.autorun(() => {
         self.FRS.options = Template.currentData().options;
+        if( !( self.FRS.options instanceof ReactiveDict )){
+            throw new Error( 'Expected a ReactiveDict, found', self.FRS.options );
+        }
     });
 
+    // at creation time, initialize the ReactiveDict with data read from user settings
     // initialize date with yesterday unless a date is found in user profile
     const str = self.FRS.optRead( 'Since' );
     let initialDate = new Date();
@@ -73,9 +79,11 @@ Template.frs_posts_options.onCreated( function(){
     }
     self.FRS.setSinceDate( initialDate );
 
-    // creates and initialize ReactiveVar's from user data for checkboxes settings
     self.FRS.checkboxes.every(( data ) => {
-        self.FRS.options.set( self.FRS.optRead( data ) === 'true' );
+        const value = self.FRS.optRead( data );
+        if( value !== null ){
+            self.FRS.options.set( self.FRS.name.get()+data, value );
+        }
         return true;
     });
 });
@@ -108,7 +116,7 @@ Template.frs_posts_options.onRendered( function(){
     // setup the checkboxes settings depending of the corresponding ReactiveVar
     self.autorun(() => {
         self.FRS.checkboxes.every(( data ) => {
-            self.$( 'input[type="checkbox"][data-frs-field="'+data+'"]' ).prop( 'checked', self.FRS.options.get( data ));
+            self.$( 'input[type="checkbox"][data-frs-field="'+data+'"]' ).prop( 'checked', self.FRS.optRead( data ) === 'true' );
             return true;
         });
     });
@@ -145,7 +153,6 @@ Template.frs_posts_options.events({
     'change .frs-posts-options  input[type="checkbox"]'( event, instance ){
         const checked = instance.$( event.currentTarget ).prop( 'checked' );
         const field = $( event.currentTarget ).data( 'frs-field' );
-        instance.FRS.opts[field].set( checked );
-        pwiForums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
+        instance.FRS.optWrite( field, checked ? 'true' : 'false' );
     },
 });

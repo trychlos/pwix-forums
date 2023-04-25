@@ -132,14 +132,14 @@ Template.frs_post_edit.onCreated( function(){
         startedDone: false,
         focusedDone: false,
 
-        // the current edition mode as reported by underlying teEditor
+        // the current edition mode as reported by underlying teScriber
         editorMode: new ReactiveVar( null ),
 
         // activating the edition
         // open the editor and gain the focus
         activates(){
             if( self.FRS.allowed.get()){
-                self.$( '.teEditor' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
+                self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
 
             } else {
                 console.error( 'edition refused as user is not allowed' );
@@ -160,7 +160,7 @@ Template.frs_post_edit.onCreated( function(){
                     self.$( '.frs-post-edit' ).addClass( 'frs-hidden' );
                     self.FRS.edited.title.set( '' );
                     self.FRS.edited.content.set( '' );
-                    //self.$( '.teEditor' ).trigger( 'te-content-reset' );
+                    //self.$( '.teScriber' ).trigger( 'te-content-reset' );
                 }
                 // disactivate the preview button before setting the end mode
                 self.FRS.previewOff( mode.endMode );
@@ -168,7 +168,7 @@ Template.frs_post_edit.onCreated( function(){
                 if( reason === self.FRS.cr.CANCEL ){
                     const object = Template.currentData().object;
                     self.FRS.edited.content.set( mode.setContent( object ));
-                    //self.$( '.teEditor' ).trigger( 'te-content-reset' );
+                    //self.$( '.teScriber' ).trigger( 'te-content-reset' );
                 }
                 // and advertise others
                 self.$( '.frs-post-edit' ).trigger( 'frs-post-edit-closed', { reason: reason });
@@ -188,7 +188,7 @@ Template.frs_post_edit.onCreated( function(){
             self.FRS.startedDone = false;
             self.FRS.focusedDone = false;
             if( self.view.isRendered ){
-                self.$( '.teEditor' ).trigger( 'te-content-reset' );
+                self.$( '.teScriber' ).trigger( 'te-content-reset' );
             }
         },
 
@@ -208,7 +208,7 @@ Template.frs_post_edit.onCreated( function(){
 
         // Preview button activation
         previewOn(){
-            self.$( '.teEditor' ).trigger( 'te-mode-set', { mode: TE_MODE_PREVIEW });
+            self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_PREVIEW });
             self.$( '.frs-message' ).removeClass( 'frs-hidden' ).text( pwiForums.fn.i18n( 'post_edit.preview_mode' ));
         },
 
@@ -217,7 +217,7 @@ Template.frs_post_edit.onCreated( function(){
         previewOff( editorMode=TE_MODE_EDITION ){
             self.$( 'button.frs-preview-btn' ).removeClass( 'active' ).prop( 'aria-pressed', false );
             self.$( '.frs-message' ).addClass( 'frs-hidden' ).text( '' );
-            self.$( '.teEditor' ).trigger( 'te-mode-set', { mode: editorMode });
+            self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: editorMode });
         },
 
         // toggle a Preview button
@@ -275,7 +275,7 @@ Template.frs_post_edit.onRendered( function(){
             //console.log( 'mode', mode );
             //console.log( self );
             if( mode ){
-                self.$( '.teEditor' ).trigger( 'te-mode-set', { mode: mode.startMode });
+                self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: mode.startMode });
                 self.$( '.frs-post-edit' ).removeClass( 'frs-hidden' );
                 self.FRS.startedDone = true;
             }
@@ -441,7 +441,7 @@ Template.frs_post_edit.events({
     // the edition mode is requested
     'frs-post-edit-edition .frs-post-edit'( event, instance ){
         if( instance.FRS.startedUp.get()){
-            instance.$( '.teEditor' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
+            instance.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
         }
     },
 

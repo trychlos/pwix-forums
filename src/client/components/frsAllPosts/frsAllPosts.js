@@ -20,6 +20,14 @@ Template.frsAllPosts.onCreated( function(){
     }
 });
 
+Template.frsAllPosts.onRendered( function(){
+    const self = this;
+
+    self.autorun(() => {
+        console.log( self.FRS.options.all());
+    });
+});
+
 Template.frsAllPosts.helpers({
 
     // i18n
@@ -27,8 +35,17 @@ Template.frsAllPosts.helpers({
         return pwiForums.fn.i18n( 'allPosts.'+opts.hash.label );
     },
 
-    // manage options through a ReactiveVar
-    options(){
+    // manage options through a ReactiveDict
+    optionsParms(){
+        return {
+            name: 'allPosts',
+            options: Template.instance().FRS.options
+        };
+    },
+
+    // options to be passed to the frs_all_posts component
+    //  same thant optionsParms at the moment
+    postsParms(){
         return {
             name: 'allPosts',
             options: Template.instance().FRS.options
