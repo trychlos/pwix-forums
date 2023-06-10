@@ -151,8 +151,8 @@ pwiForums.Forums = {
     // Note: archived forums are not candidate to moderation
     canModerate( forum, userId ){
         const moderate = forum && userId && forum.archivedAt === null && forum.archivedBy === null &&
-            (( !forum.private && pwiRoles.userIsInRoles( userId, 'FRS_PUBLIC_MODERATOR' )) || 
-             ( forum.private && pwiRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
+            (( !forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PUBLIC_MODERATOR' )) || 
+             ( forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
              ( pwiForums.fn.ids( forum.moderators || [] ).includes( userId )));
         return moderate ? true : false;
     },
@@ -175,7 +175,7 @@ pwiForums.Forums = {
             if( user ){
                 if( pwiForums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
                     reason = FRS_REASON_PRIVATEWRITERS;
-                } else if( pwiRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
+                } else if( pwixRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
                     reason = FRS_REASON_PRIVATEEDIT;
                 } else {
                     result.editable = false;
@@ -266,10 +266,10 @@ pwiForums.Forums = {
         //  - or be identified in moderators array
         if( userId ){
             let conditions = [];
-            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
+            if( pwixRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
                 conditions.push({ private: { $ne: true }});
             }
-            if( pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
+            if( pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
                 conditions.push({ private: { $eq: true }});
             }
             conditions.push({ 'moderators.id': userId });
@@ -303,7 +303,7 @@ pwiForums.Forums = {
         let result = { selector: {}, options: { sort: { title: 1 }}};
 
         // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
-        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+        if( userId && pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
             result.selector = { private: true };
 
         // user is identified but doesn't have required role => is he registered as a privateReader ?
@@ -330,7 +330,7 @@ pwiForums.Forums = {
         let result = { selector: {}, options: { sort: { title: 1 }}};
 
         // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
-        if( userId && pwiRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+        if( userId && pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
             ; // nothing to add to the default (full) result
 
         // user is identified but doesn't have required role => is he registered as a privateReader ?
