@@ -4,7 +4,7 @@
 
 import { ReactiveVar } from 'meteor/reactive-var';
 
-import merge from 'merge';
+import _ from 'lodash';
 
 import { frsOptions } from '../classes/options.class.js';
 
@@ -45,7 +45,7 @@ pwiForums = {
      *  Should be called *in same terms* both by the client and the server.
      */
     configure: function( o ){
-        pwiForums._conf = merge.recursive( true, pwiForums._conf, o );
+        _.merge.recursive( pwiForums._conf, o );
         pwiForums._opts = new frsOptions( pwiForums._conf );
 
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){

@@ -15,6 +15,8 @@ checkNpmVersions({
     'bootstrap': '^5.2.1',
     'dotdotdot': '^1.1.0',
     'jquery-ui-dist': '^1.13.2',
-    'merge': '^2.1.1',
+    'lodash': '^4.17.0',
     'printf': '^0.6.1'
-    }, 'pwix:forums' );
+},
+    'pwix:forums'
+);

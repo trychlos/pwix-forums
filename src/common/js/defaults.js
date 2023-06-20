@@ -2,7 +2,7 @@
  * pwix:forums/src/common/js/defaults.js
  */
 
-import merge from 'merge';
+import _ from 'lodash';
 
 import { frsOptions } from '../classes/options.class.js';
 
@@ -34,5 +34,5 @@ defaults = {
     }
 };
 
-pwiForums._conf = merge.recursive( true, pwiForums._conf, defaults.common );
+_.merge( pwiForums._conf, defaults.common );
 pwiForums._opts = new frsOptions( pwiForums._conf );
