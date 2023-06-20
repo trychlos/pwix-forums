@@ -63,9 +63,10 @@ pwiForums = {
 
     /**
      * @summary Package configuration
+     *  Should be called *in same terms* both by the client and the server
      * @locus Anywhere
      * @param {Object} o the runtime configuration of the package
-     *  Should be called *in same terms* both by the client and the server.
+     * @returns {Object} the package configuration
      */
     configure: function( o ){
         _.merge.recursive( pwiForums._conf, pwiForums._defaults, o );
@@ -74,6 +75,8 @@ pwiForums = {
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){
             console.log( 'pwix:forums configure() with', o );
         }
+
+        return pwiForums._conf;
     },
 
     // internationalization
