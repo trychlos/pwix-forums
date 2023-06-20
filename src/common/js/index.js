@@ -2,9 +2,8 @@
  * pwix:forums/src/common/js/index.js
  */
 
-import './config.js';
 import './constants.js';
-import './defaults.js';
+import './config.js';
 //
 import './collections.js';
 import './functions.js';

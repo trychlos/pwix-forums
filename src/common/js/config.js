@@ -8,10 +8,33 @@ import _ from 'lodash';
 
 import { frsOptions } from '../classes/options.class.js';
 
-//console.log( 'pwix:forums/src/common/js/config.js defining globally exported pwiForums object' );
+const _false = function(){
+    return false;
+}
 
 pwiForums = {
     _conf: {},
+    _defaults: {
+        collections: {
+            prefix: 'frs_'
+        },
+        routes: {
+            forums: '/forums',
+            threads: '/forums/t/:forumId',
+            posts: '/forums/p/:threadId',
+            manager: '/forums/admin',
+            moderate: '/forums/moderate',
+            allposts: '/forums/allposts'
+        },
+        forums: {
+            access: FRS_FORUM_PUBLIC,
+            publicWriter: FRS_USER_EMAILVERIFIED,
+            publicWriterAppFn: _false,
+            moderation: FRS_MODERATE_APRIORI,
+            inform: FRS_INFORM_MUST
+        },
+        verbosity: FRS_VERBOSE_CONFIGURE|FRS_VERBOSE_READY
+    },
     _opts: null,
 
     // client-specific data and functions
@@ -45,7 +68,7 @@ pwiForums = {
      *  Should be called *in same terms* both by the client and the server.
      */
     configure: function( o ){
-        _.merge.recursive( pwiForums._conf, o );
+        _.merge.recursive( pwiForums._conf, pwiForums._defaults, o );
         pwiForums._opts = new frsOptions( pwiForums._conf );
 
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){
@@ -81,3 +104,6 @@ pwiForums = {
         collections: {}
     }
 };
+
+_.merge( pwiForums._conf, pwiForums._defaults );
+pwiForums._opts = new frsOptions( pwiForums._conf );
