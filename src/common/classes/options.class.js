@@ -8,7 +8,7 @@ import { pwixOptions } from 'meteor/pwix:options';
 
 import { frsModerate } from './frs_moderate.class.js';
 
-import '../js/constants.js';
+import '../js/index.js';
 
 export class frsOptions extends pwixOptions.Options {
 
@@ -61,7 +61,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'collections.prefix'( value ){
-        return this.getset_String_Fn( 'collections.prefix', value, { default: defaults.common.collections.prefix });
+        return this.getset_String_Fn( 'collections.prefix', value, { default: pwiForums._defaults.collections.prefix });
     }
 
     /**
@@ -70,7 +70,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'forums.access'( value ){
-        return this.getset_String_Fn( 'forums.access', value, { default: defaults.common.forums.access, ref: frsOptions.AccessMode });
+        return this.getset_String_Fn( 'forums.access', value, { default: pwiForums._defaults.forums.access, ref: frsOptions.AccessMode });
     }
 
     /**
@@ -79,7 +79,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'forums.inform'( value ){
-        return this.getset_String_Fn( 'forums.inform', value, { default: defaults.common.forums.inform, ref: frsModerate.Inform });
+        return this.getset_String_Fn( 'forums.inform', value, { default: pwiForums._defaults.forums.inform, ref: frsModerate.Inform });
     }
 
     /**
@@ -88,7 +88,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'forums.moderation'( value ){
-        return this.getset_String_Fn( 'forums.moderation', value, { default: defaults.common.forums.moderation, ref: frsModerate.Strategies });
+        return this.getset_String_Fn( 'forums.moderation', value, { default: pwiForums._defaults.forums.moderation, ref: frsModerate.Strategies });
     }
 
     /**
@@ -97,7 +97,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'forums.publicWriter'( value ){
-        return this.getset_String_Fn( 'forums.publicWriter', value, { default: defaults.common.forums.publicWriter, ref: frsOptions.PublicWriter });
+        return this.getset_String_Fn( 'forums.publicWriter', value, { default: pwiForums._defaults.forums.publicWriter, ref: frsOptions.PublicWriter });
     }
 
     /**
@@ -115,7 +115,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.allposts'( value ){
-        return this.getset_String_Fn( 'routes.allposts', value, { default: defaults.common.routes.allposts });
+        return this.getset_String_Fn( 'routes.allposts', value, { default: pwiForums._defaults.routes.allposts });
     }
 
     /**
@@ -124,7 +124,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.forums'( value ){
-        return this.getset_String_Fn( 'routes.forums', value, { default: defaults.common.routes.forums });
+        return this.getset_String_Fn( 'routes.forums', value, { default: pwiForums._defaults.routes.forums });
     }
 
     /**
@@ -133,7 +133,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.manager'( value ){
-        return this.getset_String_Fn( 'routes.manager', value, { default: defaults.common.routes.manager });
+        return this.getset_String_Fn( 'routes.manager', value, { default: pwiForums._defaults.routes.manager });
     }
 
     /**
@@ -142,7 +142,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.moderate'( value ){
-        return this.getset_String_Fn( 'routes.moderate', value, { default: defaults.common.routes.moderate });
+        return this.getset_String_Fn( 'routes.moderate', value, { default: pwiForums._defaults.routes.moderate });
     }
 
     /**
@@ -151,7 +151,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.posts'( value ){
-        return this.getset_String_Fn( 'routes.posts', value, { default: defaults.common.routes.posts });
+        return this.getset_String_Fn( 'routes.posts', value, { default: pwiForums._defaults.routes.posts });
     }
 
     /**
@@ -160,7 +160,7 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {String}
      */
     'routes.threads'( value ){
-        return this.getset_String_Fn( 'routes.threads', value, { default: defaults.common.routes.threads });
+        return this.getset_String_Fn( 'routes.threads', value, { default: pwiForums._defaults.routes.threads });
     }
 
     /**
@@ -169,6 +169,6 @@ export class frsOptions extends pwixOptions.Options {
      * @returns {Integer}
      */
     verbosity( value ){
-        return this.getset_Integer_Fn( 'verbosity', value, { default: defaults.common.verbosity });
+        return this.getset_Integer_Fn( 'verbosity', value, { default: pwiForums._defaults.verbosity });
     }
 }

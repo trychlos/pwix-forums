@@ -69,7 +69,7 @@ pwiForums = {
      * @returns {Object} the package configuration
      */
     configure: function( o ){
-        _.merge.recursive( pwiForums._conf, pwiForums._defaults, o );
+        _.merge( pwiForums._conf, pwiForums._defaults, o );
         pwiForums._opts = new frsOptions( pwiForums._conf );
 
         if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){

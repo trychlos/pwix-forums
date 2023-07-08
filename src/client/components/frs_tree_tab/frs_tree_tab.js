@@ -8,16 +8,11 @@
 
 import clone from 'just-clone';
 import deepEqual from 'deep-equal';
-import { jstree } from 'jstree';
-
-//import 'jstree/dist/jstree.min.js';
 
 import { tlTolert } from 'meteor/pwix:tolert';
 
 import { pwiForums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
-
-import '../../stylesheets/jstree-style.css';
 
 import '../frs_category_panel/frs_category_panel.js';
 import '../frs_forum_panel/frs_forum_panel.js';

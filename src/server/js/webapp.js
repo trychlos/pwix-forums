@@ -22,8 +22,7 @@ const _redirect = function( url, res, stringIdentifier ){
 }
 
 WebApp.connectHandlers.use( function( req, res, next ){
-    if( !_redirect( req.url, res, '/jstree/' ) &&
-        !_redirect( req.url, res, '/jquery-ui/' )){
+    if( !_redirect( req.url, res, '/jquery-ui/' )){
         next();
     }
 });

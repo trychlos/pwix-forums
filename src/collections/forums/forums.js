@@ -35,7 +35,7 @@ pwiForums.Forums = {
         // who is able to participate to this public forum ?
         publicWriter: {
             type: String,
-            defaultValue: defaults.common.forums.publicWriter
+            defaultValue: pwiForums._defaults.forums.publicWriter
         },
         // whether the forum is private (user must be identified and allowed to view and participate) ?
         private: {
@@ -62,7 +62,7 @@ pwiForums.Forums = {
         //  defaulting to the common configured one
         moderation: {
             type: String,
-            defaultValue: defaults.common.forums.moderation
+            defaultValue: pwiForums._defaults.forums.moderation
         },
         // the list of the moderators of *this* forum
         //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
@@ -90,7 +90,7 @@ pwiForums.Forums = {
         //  defaulting to the common configured one
         inform: {
             type: String,
-            defaultValue: defaults.common.forums.inform
+            defaultValue: pwiForums._defaults.forums.inform
         },
         // creation timestamp
         // mandatory
@@ -186,7 +186,7 @@ pwiForums.Forums = {
                 result.reason = FRS_REASON_NOTCONNECTED;
             }
         } else {
-            forum.publicWriter = forum.publicWriter || defaults.common.forums.publicWriter;
+            forum.publicWriter = forum.publicWriter || pwiForums._defaults.forums.publicWriter;
             switch( forum.publicWriter ){
                 case FRS_USER_ANYBODY:
                     result.reason = FRS_USER_ANYBODY;
