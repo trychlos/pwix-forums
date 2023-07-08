@@ -307,7 +307,6 @@ Dependencies as of v 1.0.0:
     '@popperjs/core': '^2.11.6',
     'bootstrap': '^5.2.1',
     'dotdotdot': '^1.1.0',
-    'jquery-ui-dist': '^1.13.2',
     'lodash': '^4.17.0',
     'printf': '^0.6.1'
 ```

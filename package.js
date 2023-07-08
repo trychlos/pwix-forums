@@ -32,6 +32,7 @@ function configure( api ){
     api.use( 'pwix:bootbox@1.0.0', 'client' );
     api.use( 'pwix:editor', 'client' );
     api.use( 'pwix:i18n@1.0.0' );
+    api.use( 'pwix:jquery-ui@1.0.0' );
     api.use( 'pwix:jstree@1.0.0' );
     api.use( 'pwix:modal@1.1.0', 'client' );
     api.use( 'pwix:modal-info@1.0.0', 'client' );
