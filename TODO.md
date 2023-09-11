@@ -78,7 +78,7 @@
 |      | 2023- 3- 1 | display has been heavily reviewed - seems correct at the moment |
 |      | 2023- 3- 5 | tooltips work, but are removed as without added value - so closing the point |
 |   13 | 2022-11- 1 | pwix:forums have an option so that new posts must be validated by a moderator before being displayed (was app #115) |
-|      | 2023- 2-27 | done with FRS_MODERATE_APRIORI option |
+|      | 2023- 2-27 | done with Forums.C.Moderation.APRIORI option |
 |   15 | 2022-11- 9 | have a test mails option which let the application send one of each mail template in order to facilitate the tests (was app #119) |
 |      |            | as of today, we have first verification mail, later verification mail, reset password, contact form |
 |      |            | + subscription mail + moderation information |

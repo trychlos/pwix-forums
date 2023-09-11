@@ -119,20 +119,20 @@ Template.frsModerate.onCreated( function(){
         popoverInfo( f, p ){
             let content = '';
             if( p.deletedBecause ){
-                pwixI18n.group( FRSI18N, 'moderate.options' ).every(( it ) => {
+                pwixI18n.group( I18N, 'moderate.options' ).every(( it ) => {
                     if( it.id === p.deletedBecause ){
                         label = it.label;
                         return false;
                     }
                     return true;
                 });
-                content = pwixI18n.label( FRSI18N, 'moderate.reason', label );
+                content = pwixI18n.label( I18N, 'moderate.reason', label );
             }
             content += '<br />';
             if( p.deletedText ){
-                content += pwixI18n.label( FRSI18N, 'moderate.supplement_text', p.deletedText );
+                content += pwixI18n.label( I18N, 'moderate.supplement_text', p.deletedText );
             } else {
-                content += pwixI18n.label( FRSI18N, 'moderate.no_supplement', label );
+                content += pwixI18n.label( I18N, 'moderate.no_supplement', label );
             }
             return content;
         },
@@ -434,7 +434,7 @@ Template.frsModerate.helpers({
     //  and not self-deleted (these posts are read-only when displayed)
     haveModerate( f, p ){
         const selfDeleted = ( p.deletedAt && !p.deletedBecause );
-        const validated = ( f.moderation === FRS_MODERATE_APRIORI && p.validatedAt );
+        const validated = ( f.moderation === Forums.C.Moderation.APRIORI && p.validatedAt );
         const moderated = ( p.deletedAt && p.deletedBecause );
         return !selfDeleted && !validated && !moderated;
     },
@@ -444,7 +444,7 @@ Template.frsModerate.helpers({
     //  and not self-deleted (these posts are read-only when displayed)
     haveValidate( f, p ){
         const selfDeleted = ( p.deletedAt && !p.deletedBecause );
-        const waitValidation = ( f.moderation === FRS_MODERATE_APRIORI && !p.validatedAt );
+        const waitValidation = ( f.moderation === Forums.C.Moderation.APRIORI && !p.validatedAt );
         const moderated = ( p.deletedAt && p.deletedBecause );
         return !selfDeleted && waitValidation && !moderated;
     },
@@ -461,7 +461,7 @@ Template.frsModerate.helpers({
     //  yes if post have been validated
     haveUnvalidate( f, p ){
         const selfDeleted = ( p.deletedAt && !p.deletedBecause );
-        const validated = ( f.moderation === FRS_MODERATE_APRIORI && p.validatedAt );
+        const validated = ( f.moderation === Forums.C.Moderation.APRIORI && p.validatedAt );
         return !selfDeleted && validated;
     },
 

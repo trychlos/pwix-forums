@@ -150,7 +150,7 @@ Forums.Posts = {
         let aprioriIds = [];
         let aposterIds = [];
         opts.forums.every(( f ) => {
-            if( f.moderation == FRS_MODERATE_APRIORI ){
+            if( f.moderation == Forums.C.Moderation.APRIORI ){
                 aprioriIds.push( f._id );
             } else {
                 aposterIds.push( f._id );
@@ -205,7 +205,7 @@ Forums.Posts = {
         }
         // display only validated posts in a forum moderated a priori, or posts of the user waiting for validation
         let validatedClause = null;
-        if( forum.moderation === FRS_MODERATE_APRIORI ){
+        if( forum.moderation === Forums.C.Moderation.APRIORI ){
             validatedClause = [{ validatedAt: { $ne: null }}];
             if( userId ){
                 validatedClause.push({ owner: userId });

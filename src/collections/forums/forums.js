@@ -43,7 +43,7 @@ Forums.Forums = {
             defaultValue: false
         },
         // the list of users which are allowed to view this private forum
-        //  FRS_FORUM_PRIVATE_VIEW is always allowed to view
+        //  Forums.C.Access.PRIVATE_VIEW is always allowed to view
         privateReaders: {
             type: Array,
             defaultValue: []
@@ -51,7 +51,7 @@ Forums.Forums = {
         "privateReaders.$": Object,
         "privateReaders.$.id": String,
         // the list of users which are allowed to participate (write in) to this private forum
-        //  FRS_FORUM_PRIVATE_EDIT is always allowed to participate
+        //  Forums.C.Access.PRIVATE_EDIT is always allowed to participate
         privateWriters: {
             type: Array,
             defaultValue: []
@@ -65,7 +65,7 @@ Forums.Forums = {
             defaultValue: Forums._defaults.forums.moderation
         },
         // the list of the moderators of *this* forum
-        //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
+        //  Forums.C.Access.MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
         moderators: {
             type: Array,
             defaultValue: []
@@ -151,7 +151,7 @@ Forums.Forums = {
     // Note: archived forums are not candidate to moderation
     canModerate( forum, userId ){
         const moderate = forum && userId && forum.archivedAt === null && forum.archivedBy === null &&
-            (( !forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PUBLIC_MODERATOR' )) || 
+            (( !forum.private && pwixRoles.userIsInRoles( userId, 'Forums.C.Access.MODERATOR' )) || 
              ( forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
              ( Forums.fn.ids( forum.moderators || [] ).includes( userId )));
         return moderate ? true : false;
@@ -169,76 +169,76 @@ Forums.Forums = {
         }
         let result = {
             editable: true,
-            reason: FRS_REASON_NONE
+            reason: Forums.C.Reason.NONE
         };
         if( forum.private ){
             if( user ){
                 if( Forums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
-                    reason = FRS_REASON_PRIVATEWRITERS;
+                    reason = Forums.C.Reason.PRIVATEWRITERS;
                 } else if( pwixRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
-                    reason = FRS_REASON_PRIVATEEDIT;
+                    reason = Forums.C.Reason.PRIVATEEDIT;
                 } else {
                     result.editable = false;
-                    result.reason = FRS_REASON_PRIVATE;
+                    result.reason = Forums.C.Reason.PRIVATE;
                 }
             } else {
                 result.editable = false;
-                result.reason = FRS_REASON_NOTCONNECTED;
+                result.reason = Forums.C.Reason.NOTCONNECTED;
             }
         } else {
             forum.publicWriter = forum.publicWriter || Forums._defaults.forums.publicWriter;
             switch( forum.publicWriter ){
-                case FRS_USER_ANYBODY:
-                    result.reason = FRS_USER_ANYBODY;
+                case Forums.C.Participation.ANYBODY:
+                    result.reason = Forums.C.Participation.ANYBODY;
                     break;
-                case FRS_USER_LOGGEDIN:
+                case Forums.C.Participation.LOGGEDIN:
                     if( user ){
-                        result.reason = FRS_USER_LOGGEDIN;
+                        result.reason = Forums.C.Participation.LOGGEDIN;
                     } else {
                         result.editable = false;
-                        result.reason = FRS_REASON_NOTCONNECTED;
+                        result.reason = Forums.C.Reason.NOTCONNECTED;
                     }
                     break;
-                case FRS_USER_EMAILADDRESS:
+                case Forums.C.Participation.EMAILADDRESS:
                     if( user ){
                         const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
                         if( o.origin === AC_EMAIL_ADDRESS ){
-                            result.reason = FRS_USER_EMAILADDRESS;
+                            result.reason = Forums.C.Participation.EMAILADDRESS;
                         } else {
                             result.editable = false;
-                            result.reason = FRS_REASON_NOEMAIL;
+                            result.reason = Forums.C.Reason.NOEMAIL;
                         }
                     } else {
                         result.editable = false;
-                        result.reason = FRS_REASON_NOTCONNECTED;
+                        result.reason = Forums.C.Reason.NOTCONNECTED;
                     }
                     break;
-                case FRS_USER_EMAILVERIFIED:
+                case Forums.C.Participation.EMAILVERIFIED:
                     if( user ){
                         const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
                         if( o.origin === AC_EMAIL_ADDRESS ){
                             if( Forums.fn.isEmailVerified( user, o.label )){
-                                result.reason = FRS_USER_EMAILVERIFIED;
+                                result.reason = Forums.C.Participation.EMAILVERIFIED;
                             } else {
                                 result.editable = false;
-                                result.reason = FRS_REASON_NOTVERIFIED;
+                                result.reason = Forums.C.Reason.NOTVERIFIED;
                             }
                         } else {
                             result.editable = false;
-                            result.reason = FRS_REASON_NOEMAIL;
+                            result.reason = Forums.C.Reason.NOEMAIL;
                         }
                     } else {
                         result.editable = false;
-                        result.reason = FRS_REASON_NOTCONNECTED;
+                        result.reason = Forums.C.Reason.NOTCONNECTED;
                     }
                     break;
-                case FRS_USER_APPFN:
+                case Forums.C.Participation.APPFN:
                     if( user ){
                         result.editable = Forums.opts()['forums.publicWriterAppFn']( forum );
-                        result.reason = FRS_REASON_APPFN;
+                        result.reason = Forums.C.Reason.APPFN;
                     } else {
                         result.editable = false;
-                        result.reason = FRS_REASON_NOTCONNECTED;
+                        result.reason = Forums.C.Reason.NOTCONNECTED;
                     }
                     break;
                 default:
@@ -256,17 +256,17 @@ Forums.Forums = {
         // default is to select all public+private and moderable forums
         //  we do not consider here archived forums to get messages published between since date and archive date
         let result = {
-            selector: { $and: [{ moderation: { $ne: FRS_MODERATE_NONE }}] },
+            selector: { $and: [{ moderation: { $ne: Forums.C.Moderation.NONE }}] },
             options: { sort: { title: 1 }}
         };
 
         // to be able to moderate a forum, identified user must have
         //  - FRS_PRIVATE_MODERATOR role for a private forum
-        //  - or FRS_PUBLIC_MODERATOR role for a public forum
+        //  - or Forums.C.Access.MODERATOR role for a public forum
         //  - or be identified in moderators array
         if( userId ){
             let conditions = [];
-            if( pwixRoles.userIsInRoles( userId, [ 'FRS_PUBLIC_MODERATOR' ])){
+            if( pwixRoles.userIsInRoles( userId, [ 'Forums.C.Access.MODERATOR' ])){
                 conditions.push({ private: { $ne: true }});
             }
             if( pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){

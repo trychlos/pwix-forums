@@ -7,7 +7,7 @@
  * 
  *          FRS_CATEGORY_MANAGER        per category
  * 
- *          FRS_FORUM_MANAGER           per forum
+ *          Forums.C.Access.MANAGER           per forum
  * 
  *          FRS_MODERATOR               forums moderation, all forums
  * 
@@ -40,16 +40,16 @@ Forums.roles = {
                     ]
                 },
                 {
-                    name: 'FRS_FORUM_MANAGER',
+                    name: 'Forums.C.Access.MANAGER',
                     children: [
                         {
-                            name: 'FRS_FORUM_CREATE'
+                            name: 'Forums.C.Access.CREATE'
                         },
                         {
-                            name: 'FRS_FORUM_UPDATE'
+                            name: 'Forums.C.Access.UPDATE'
                         },
                         {
-                            name: 'FRS_FORUM_DELETE'
+                            name: 'Forums.C.Access.DELETE'
                         }
                     ]
                 },
@@ -61,7 +61,7 @@ Forums.roles = {
                             name: 'FRS_MODERATOR',
                             children: [
                                 {
-                                    name: 'FRS_PUBLIC_MODERATOR'
+                                    name: 'Forums.C.Access.MODERATOR'
                                 },
                                 {
                                     name: 'FRS_PRIVATE_MODERATOR'

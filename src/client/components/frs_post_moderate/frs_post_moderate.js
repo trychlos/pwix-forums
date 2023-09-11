@@ -86,19 +86,19 @@ Template.frs_post_moderate.helpers({
 
     // whether we can or must inform the author ?
     informAuthor(){
-        return this.forum.inform !== FRS_INFORM_NONE;
+        return this.forum.inform !== Forums.C.Information.NONE;
     },
 
     // whether the moderator can choose to inform the author or not ?
     //  disable the checkbox if information is mandatory
     informEnabled(){
         this.forum.inform = this.forum.inform || defaults.common.forums.inform;
-        return this.forum.inform === FRS_INFORM_MUST ? 'disabled': '';
+        return this.forum.inform === Forums.C.Information.MUST ? 'disabled': '';
     },
 
     // display the information option as a long (HTML) text
     informText(){
-        const options = i18n.group( FRSI18N, 'forum_edit.informs_long' );
+        const options = i18n.group( I18N, 'forum_edit.informs_long' );
         const id = this.forum && this.forum.inform ? this.forum.inform : defaults.common.forums.inform;
         let label = '';
         options.every(( it ) => {
@@ -113,7 +113,7 @@ Template.frs_post_moderate.helpers({
 
     // returns the list of predefined reasons
     reasons(){
-        return i18n.group( FRSI18N, 'moderate.options' );
+        return i18n.group( I18N, 'moderate.options' );
     },
 
     // preselect the 'gtu' 'option
@@ -132,7 +132,7 @@ Template.frs_post_moderate.events({
             if( post ){
                 post.deletedAt = new Date();
                 post.deletedBy = Meteor.userId();
-                post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val() || 'FRS_REASON_NONE';
+                post.deletedBecause = instance.$( '.frs-reason' ).find( ':selected' ).val() || 'Forums.C.Reason.NONE';
                 post.deletedText = instance.$( '.frs-supplement' ).val().replace( '<', '' ).trim() || '';
                 let options = {
                     inform: instance.$( 'input.frs-inform' ).prop( 'checked' ),

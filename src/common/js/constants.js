@@ -2,44 +2,59 @@
  * pwix:forums/src/common/js/constants.js
  */
 
-// access to a forum
-FRS_FORUM_PUBLIC = 'FRS_FORUM_PUBLIC';
-FRS_FORUM_PRIVATE = 'FRS_FORUM_PRIVATE';
-FRS_INFORM_MAY
-// participation to the public forums
-FRS_USER_ANYBODY = 'FRS_USER_ANYBODY';
-FRS_USER_LOGGEDIN = 'FRS_USER_LOGGEDIN';
-FRS_USER_EMAILADDRESS = 'FRS_USER_EMAILADDRESS';
-FRS_USER_EMAILVERIFIED = 'FRS_USER_EMAILVERIFIED';
-FRS_USER_APPFN = 'FRS_USER_APPFN';
+Forums.C = {
 
-// forum moderation
-FRS_MODERATE_NONE = 'FRS_MODERATE_NONE';
-FRS_MODERATE_APRIORI = 'FRS_MODERATE_APRIORI';
-FRS_MODERATE_APOSTERIORI = 'FRS_MODERATE_APOSTERIORI';
+    // access mode
+    Access: {
+        PUBLIC:  'FRS_PUBLIC_ACCESS',
+        PRIVATE: 'FRS_PRIVATE_ACCESS'
+    },
 
-// whether to inform the author when a post is moderated ?
-FRS_INFORM_NONE = 'FRS_INFORM_NONE';
-FRS_INFORM_MAY = 'FRS_INFORM_MAY';
-FRS_INFORM_MUST = 'FRS_INFORM_MUST';
+    // whether to inform the author when a post is moderated ?
+    Information: {
+        NONE: 'FRS_INFORM_NONE',
+        MAY:  'FRS_INFORM_MAY',
+        MUST: 'FRS_INFORM_MUST'
+    },        
 
-// why a user cannot write into a forum ?
-FRS_REASON_NONE = 'FRS_REASON_NONE';
-FRS_REASON_NOTCONNECTED = 'FRS_REASON_NOTCONNECTED';
-FRS_REASON_NOEMAIL = 'FRS_REASON_NOEMAIL';
-FRS_REASON_NOTVERIFIED = 'FRS_REASON_NOTVERIFIED';
-FRS_REASON_APPFN = 'FRS_REASON_APPFN';
-FRS_REASON_PRIVATEWRITERS = 'FRS_REASON_PRIVATEWRITERS';
-FRS_REASON_PRIVATEEDIT = 'FRS_REASON_PRIVATEEDIT';
-FRS_REASON_PRIVATE = 'FRS_REASON_PRIVATE';
+    // how the forum is it moderated ?
+    Moderation: {
+        NONE:        'FRS_MODERATE_NONE',
+        APRIORI:     'FRS_MODERATE_APRIORI',
+        APOSTERIORI: 'FRS_MODERATE_APOSTERIORI'
+    },
 
-// verbosity level
-FRS_VERBOSE_NONE           = 0x00;
-FRS_VERBOSE_CONFIGURE      = 0x01 <<  0;
-FRS_VERBOSE_STARTUP        = 0x01 <<  1;
-FRS_VERBOSE_READY          = 0x01 <<  2;     // when ready(), client-only
-FRS_VERBOSE_COLLECTIONS    = 0x01 <<  3;
+    // who can participate to a public forum ?
+    Participation: {
+        ANYBODY:       'FRS_USER_ANYBODY',
+        LOGGEDIN:      'FRS_USER_LOGGEDIN',
+        EMAILADDRESS:  'FRS_USER_EMAILADDRESS',
+        EMAILVERIFIED: 'FRS_USER_EMAILVERIFIED',
+        APPFN:         'FRS_USER_APPFN'
+    },
+
+    // why a user cannot write into a forum ?
+    Reason: {
+        NONE:           'FRS_REASON_NONE',
+        NOTCONNECTED:   'FRS_REASON_NOTCONNECTED',
+        NOEMAIL:        'FRS_REASON_NOEMAIL',
+        NOTVERIFIED:    'FRS_REASON_NOTVERIFIED',
+        APPFN:          'FRS_REASON_APPFN',
+        PRIVATEWRITERS: 'FRS_REASON_PRIVATEWRITERS',
+        PRIVATEEDIT:    'FRS_REASON_PRIVATEEDIT',
+        PRIVATE:        'FRS_REASON_PRIVATE'
+    },
+
+    // verbosity level
+    Verbose: {
+        NONE:        0,
+        CONFIGURE:   0x01 <<  0,
+        STARTUP:     0x01 <<  1,
+        READY:       0x01 <<  2,     // when ready(), client-only
+        COLLECTIONS: 0x01 <<  3
+    }
+};
 
 // non exported constants
 
-FRSI18N = 'pwix:forums:i18n';
+I18N = 'pwix:forums:i18n';

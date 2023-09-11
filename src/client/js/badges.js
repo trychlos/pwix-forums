@@ -32,7 +32,7 @@ Forums.client.htmlArchivedBadge = function( f ){
 //
 //  f is the Forum
 Forums.client.htmlModerationStrategyBadge = function( f ){
-    const group = pwixI18n.group( FRSI18N, 'moderate.short_strategies' );
+    const group = pwixI18n.group( I18N, 'moderate.short_strategies' );
     const html = ''
         +'<span class="badge frs-bg-forum frs-badge-label"'
         +'  title="'+Forums.fn.i18n( 'badges.mod_strategy' )+'">'

@@ -146,7 +146,7 @@ Template.frsThreads.onCreated( function(){
     //  must be member of private list for private forum
     self.autorun(() => {
         const forum = self.FRS.forum.get();
-        const o = forum ? Forums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
+        const o = forum ? Forums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: Forums.C.Reason.NONE };
         self.FRS.writer.set( o.editable );
         self.FRS.reason.set( o.reason );
         //console.log( 'writer', self.FRS.writer.get());
@@ -268,7 +268,7 @@ Template.frsThreads.helpers({
     // display the reason for why the user is not allowed
     writableReason(){
         const reason = Template.instance().FRS.reason.get();
-        const group = i18n.group( FRSI18N, 'unwritable' );
+        const group = i18n.group( I18N, 'unwritable' );
         return Forums.fn.i18n( 'threads.not_writable', group[reason] );
     },
 

@@ -74,14 +74,14 @@ Forums.i18n = {
                 message_updated: 'Forum "%s" successfully updated',
                 message_created: 'Forum "%s" successfully created',
                 informs: [
-                    { id: FRS_INFORM_NONE, label: 'Author is not informed' },
-                    { id: FRS_INFORM_MAY, label: 'Moderator can choose to inform the author' },
-                    { id: FRS_INFORM_MUST, label: 'Author must be informed' }
+                    { id: Forums.C.Information.NONE, label: 'Author is not informed' },
+                    { id: Forums.C.Information.MAY, label: 'Moderator can choose to inform the author' },
+                    { id: Forums.C.Information.MUST, label: 'Author must be informed' }
                 ],
                 informs_long: [
-                    { id: FRS_INFORM_NONE, label: 'Due to the forum information option set, the author will not be informed of your decision.' },
-                    { id: FRS_INFORM_MAY, label: 'The forum information option let you choose to inform - or not - the author, and to provide him/her a reason.' },
-                    { id: FRS_INFORM_MUST, label: 'The forum information option makes mandatory for you to inform the author, and to provide him/her a reason.' }
+                    { id: Forums.C.Information.NONE, label: 'Due to the forum information option set, the author will not be informed of your decision.' },
+                    { id: Forums.C.Information.MAY, label: 'The forum information option let you choose to inform - or not - the author, and to provide him/her a reason.' },
+                    { id: Forums.C.Information.MUST, label: 'The forum information option makes mandatory for you to inform the author, and to provide him/her a reason.' }
                 ]
             },
             forums_home: {
@@ -142,14 +142,14 @@ Forums.i18n = {
                     { id: 'donotlove', label: 'I don\'t love you' }
                 ],
                 strategies: [
-                    { id: FRS_MODERATE_NONE, label: 'No moderation at all' },
-                    { id: FRS_MODERATE_APRIORI, label: 'Moderation a priori' },
-                    { id: FRS_MODERATE_APOSTERIORI, label: 'Moderation a posteriori' }
+                    { id: Forums.C.Moderation.NONE, label: 'No moderation at all' },
+                    { id: Forums.C.Moderation.APRIORI, label: 'Moderation a priori' },
+                    { id: Forums.C.Moderation.APOSTERIORI, label: 'Moderation a posteriori' }
                 ],
                 short_strategies: [
-                    { id: FRS_MODERATE_NONE, label: 'None' },
-                    { id: FRS_MODERATE_APRIORI, label: 'A priori' },
-                    { id: FRS_MODERATE_APOSTERIORI, label: 'A posteriori' }
+                    { id: Forums.C.Moderation.NONE, label: 'None' },
+                    { id: Forums.C.Moderation.APRIORI, label: 'A priori' },
+                    { id: Forums.C.Moderation.APOSTERIORI, label: 'A posteriori' }
                 ],
                 supplement_label: 'You may argument your decision and provide an additional reason:',
                 supplement_placeholder: 'Some optional words here as an added argument',
@@ -249,14 +249,14 @@ Forums.i18n = {
             },
             // these strings are to be added to a sentence - so do not begin with a capital
             unwritable: {
-                FRS_REASON_NONE: 'FRS_REASON_NONE',
-                FRS_REASON_NOTCONNECTED: 'you are not connected',
-                FRS_REASON_NOEMAIL: 'your profile does not exhibit any registered email address',
-                FRS_REASON_NOTVERIFIED: 'your email address has not yet been verified',
-                FRS_REASON_APPFN: 'participation is refused by the application',
-                FRS_REASON_PRIVATEWRITERS: 'FRS_REASON_PRIVATEWRITERS',
-                FRS_REASON_PRIVATEEDIT: 'FRS_REASON_PRIVATEEDIT',
-                FRS_REASON_PRIVATE: 'you are not allowed to participate to this private forum'
+                NONE: 'no reason',
+                NOTCONNECTED: 'you are not connected',
+                NOEMAIL: 'your profile does not exhibit any registered email address',
+                NOTVERIFIED: 'your email address has not yet been verified',
+                APPFN: 'participation is refused by the application',
+                PRIVATEWRITERS: 'PRIVATEWRITERS',
+                PRIVATEEDIT: 'PRIVATEEDIT',
+                PRIVATE: 'you are not allowed to participate to this private forum'
             }
         }
     },

@@ -1,4 +1,4 @@
-# pwix:forums - README
+# pwix:forums
 
 ## What is it ?
 
@@ -10,7 +10,7 @@ In `pwix:forums`, a forum can be public or private:
 
 - Who is able to write into a public forum is determined by the '`publicWriter`' parameter which qualifies a user topology (say for example logged-in users). A default value is configurable at the package level for all public forums, but each forum can have its own value.
 
-- Who can moderate a public forum is determined by either the '`FRS_PUBLIC_MODERATOR`' role, or a list of users able to moderate this particular forum.
+- Who can moderate a public forum is determined by either the '`Forums.C.Access.MODERATOR`' role, or a list of users able to moderate this particular forum.
 
 - Contrarily, a private forum is only accessible to an extensive and limitative set of users. So a readers and a writers lists are associated to each private forum.
 
@@ -69,20 +69,20 @@ The roles hierarchy is predefined in the `Forums.roles` object:
      |   |
      |   +- FRS_CATEGORY_DELETE         authorized to delete categories
      |
-     +- FRS_FORUM_MANAGER               authorized to manage (create, update,delete) forums
+     +- Forums.C.Access.MANAGER               authorized to manage (create, update,delete) forums
      |   |
-     |   +- FRS_FORUM_CREATE            authorized to create forums
+     |   +- Forums.C.Access.CREATE            authorized to create forums
      |   |
-     |   +- FRS_FORUM_UPDATE            authorized to update forums
+     |   +- Forums.C.Access.UPDATE            authorized to update forums
      |   |
-     |   +- FRS_FORUM_DELETE            authorized to delete forums
+     |   +- Forums.C.Access.DELETE            authorized to delete forums
      |
      +- FRS_MODERATOR_MANAGER           the moderators manager
      |   |
      |   +- FRS_MODERATOR               moderate all forums
      |   |   |                          Each forum may define an extensive list of moderators who may moderate this particular forum without having this general role
      |   |   |
-     |   |   +- FRS_PUBLIC_MODERATOR    moderate public forums
+     |   |   +- Forums.C.Access.MODERATOR    moderate public forums
      |   |   |
      |   |   +- FRS_PRIVATE_MODERATOR   moderate private forums
      |
@@ -94,11 +94,11 @@ The roles hierarchy is predefined in the `Forums.roles` object:
 ```
 The application should use this predefined object and merge it with its own roles at configuration time.
 
-### General configuration
+### Configuration
 
-General configuration is available through the `Forums.configure()` method, and providing an object with the keys you want override.
+The package's behavior can be configured through a call to the `Forums.configure()` method, with just a single javascript object argument, which itself should only contains the options you want override.
 
-The method should be called in same terms both in client and server sides, and from the top-level application code, _i.e._ before `Meteor.startup()`.
+Known configuration options are:
 
 - `collections.prefix`
 
@@ -134,11 +134,11 @@ The method should be called in same terms both in client and server sides, and f
 
 - `forums.access`
 
-    Provide a default value for new forums `access` parameter, defaulting to `FRS_FORUM_PUBLIC`.
+    Provide a default value for new forums `access` parameter, defaulting to `Forums.C.Access.PUBLIC`.
 
 - `forums.publicWriter`
 
-    Provide a default value for new forums `publicWriter` parameter, defaulting to `FRS_USER_EMAILVERIFIED`.
+    Provide a default value for new forums `publicWriter` parameter, defaulting to `Forums.C.Participation.EMAILVERIFIED`.
 
 - `forums.publicWriterAppFn`
 
@@ -146,35 +146,35 @@ The method should be called in same terms both in client and server sides, and f
 
     The `forum` object is provided as single argument; the function must return `true` to allow the currently logged-in user is allowed to write in the forum.
 
-    This parameter is only considered when `publicWriter` is `FRS_USER_APPFN` for the considered forum.
+    This parameter is only considered when `publicWriter` is `Forums.C.Participation.APPFN` for the considered forum.
 
     Default is a function which returns `false`.
 
 - `forums.moderation`
 
-    Provide a default value for new forums `moderation` parameter, defaulting to `FRS_MODERATE_APRIORI`.
+    Provide a default value for new forums `moderation` parameter, defaulting to `Forums.C.Moderation.APRIORI`.
 
     Known values are:
 
-    - `FRS_MODERATE_NONE`
-    - `FRS_MODERATE_APRIORI`
-    - `FRS_MODERATE_APOSTERIORI`.
+    - `Forums.C.Moderation.NONE`
+    - `Forums.C.Moderation.APRIORI`
+    - `Forums.C.Moderation.APOSTERIORI`.
 
 - `forums.inform`
 
-    Provide a default value for new forums `information` parameter, defaulting to `FRS_INFORM_MUST`.
+    Provide a default value for new forums `information` parameter, defaulting to `Forums.C.Information.MUST`.
 
     Known values are:
 
-    - `FRS_INFORM_NONE`
+    - `Forums.C.Information.NONE`
 
         The author is not informed of the moderation of his/her post.
 
-    - `FRS_INFORM_MAY`
+    - `Forums.C.Information.MAY`
 
         The moderator may choose to inform, or not the author.
 
-    - `FRS_INFORM_MUST`.
+    - `Forums.C.Information.MUST`.
 
         The author must be informed.
 
@@ -184,13 +184,13 @@ The method should be called in same terms both in client and server sides, and f
 
     Accepted value is an OR-ed result of the followings:
 
-    - `FRS_VERBOSE_NONE`
-    - `FRS_VERBOSE_CONFIGURE`
-    - `FRS_VERBOSE_STARTUP`
-    - `FRS_VERBOSE_READY`
-    - `FRS_VERBOSE_COLLECTIONS`
+    - `Forums.C.Verbose.NONE`
+    - `Forums.C.Verbose.CONFIGURE`
+    - `Forums.C.Verbose.STARTUP`
+    - `Forums.C.Verbose.READY`
+    - `Forums.C.Verbose.COLLECTIONS`
 
-    Default value is `FRS_VERBOSE_CONFIGURE|FRS_VERBOSE_READY`.
+    Default value is `Forums.C.Verbose.NONE`.
 
 Thanks to the `pwix:options` package, all these configuration parameters accept either a value, or a function which will return the expected value at run time.
 
@@ -200,8 +200,8 @@ Per forum configuration is available through the forums manager page.
 
 - `access` with values:
 
-    - `FRS_FORUM_PUBLIC`
-    - `FRS_FORUM_PRIVATE`
+    - `Forums.C.Access.PUBLIC`
+    - `Forums.C.Access.PRIVATE`
 
     defaulting to the value of `forums.access` general configuration parameter
 
@@ -211,27 +211,27 @@ Per forum configuration is available through the forums manager page.
 
     Possible values are:
 
-    - `FRS_USER_ANYBODY`
+    - `Forums.C.Participation.ANYBODY`
 
         Anybody is able to participate to public forums without even being connected.
 
         This option is provided for completeness, but we strongly advise against it
 
-    - `FRS_USER_LOGGEDIN`
+    - `Forums.C.Participation.LOGGEDIN`
 
         Being connected to the application is enough to participate to the public forums.
 
-    - `FRS_USER_EMAILADDRESS`
+    - `Forums.C.Participation.EMAILADDRESS`
 
         Public forum participation is allowed as soon as an email address is registered in the user account.
 
-    - `FRS_USER_EMAILVERIFIED`
+    - `Forums.C.Participation.EMAILVERIFIED`
 
         Public forum participation is allowed as soon as a verified email address is registered in the user account.
 
         This is the default.
 
-    - `FRS_USER_APPFN`
+    - `Forums.C.Participation.APPFN`
 
         Whether a connected user is allowed to participate to a public forum is determined at runtime by an application-provided function.
 
@@ -241,17 +241,17 @@ Per forum configuration is available through the forums manager page.
 
     Possible values are:
 
-    - `FRS_MODERATE_NONE`
+    - `Forums.C.Moderation.NONE`
     
         No moderation at all (not advisable).
 
-    - `FRS_MODERATE_APRIORI`
+    - `Forums.C.Moderation.APRIORI`
     
         Moderation _a priori_, posts are published after validation.
 
         This is the default.
 
-    - `FRS_MODERATE_APOSTERIORI`
+    - `Forums.C.Moderation.APOSTERIORI`
     
         Moderation _a posteriori_, posts are visible as soon as published by the user.
 

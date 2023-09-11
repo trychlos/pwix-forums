@@ -5,12 +5,12 @@ import { Mongo } from 'meteor/mongo';
 
 Meteor.startup( function(){
     // define the collections
-    if( Forums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
+    if( Forums.opts().verbosity() & Forums.C.Verbose.COLLECTIONS ){
         console.log( 'pwix:forums defining collections...' );
     }
     Forums.collections.every(( c ) => {
         const name = Forums.opts()['collections.prefix']() + Forums[c].radical;
-        if( Forums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
+        if( Forums.opts().verbosity() & Forums.C.Verbose.COLLECTIONS ){
             console.log( '   '+c+' -> '+name );
         }
         Forums.server.collections[c] = new Mongo.Collection( name );

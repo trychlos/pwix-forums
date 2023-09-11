@@ -143,7 +143,7 @@ Template.frs_forum_tab.helpers({
     haveModeration(){
         const rv = Template.currentData().forum;
         const f = rv ? rv.get() : null;
-        return f ? f.moderation !== FRS_MODERATE_NONE : true;
+        return f ? f.moderation !== Forums.C.Moderation.NONE : true;
     },
 
     // get a translated label

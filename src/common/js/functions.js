@@ -16,7 +16,7 @@ Forums.fn = {
     i18n( key ){
         let _args = [ ...arguments ];
         _args.shift();
-        return i18n.label( FRSI18N, key, ..._args );
+        return i18n.label( I18N, key, ..._args );
     },
 
     /**
