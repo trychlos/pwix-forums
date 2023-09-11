@@ -20,7 +20,7 @@
  *  configuration time (for example, to merge them with its own roles).
  */
 
-pwiForums.roles = {
+Forums.roles = {
     hierarchy: [
         {
             name: 'FRS_ADMIN',

@@ -5,13 +5,13 @@ Meteor.methods({
     // delete a category
     //  frs_tree_tab takes care of only allow a category to be deleted if it is empty (doesn't contain any forum)
     'frsCategories.delete'( id ){
-        let ret = pwiForums.server.collections.Categories.remove( id );
+        let ret = Forums.server.collections.Categories.remove( id );
         if( !ret ){
             throw new Meteor.Error(
                 'frsCategories.delete',
                 'Unable to delete the \''+id+'\' category' );
         }
-        ret = pwiForums.server.collections.Orders.remove({ type: 'FOR', category: id });
+        ret = Forums.server.collections.Orders.remove({ type: 'FOR', category: id });
         if( !ret ){
             throw new Meteor.Error(
                 'frsOrders.delete',
@@ -44,7 +44,7 @@ Meteor.methods({
         // the returned 'res' is an object with keys 'numberAffected' (the number of documents modified) and 'insertedId' (the unique _id of the document that was inserted, if any).
         //console.log( 'frsCategories.upsert: selector', selector );
         //console.log( 'frsCategories.upsert: modifier', modifier );
-        const res = pwiForums.server.collections.Categories.upsert( selector, { $set: modifier });
+        const res = Forums.server.collections.Categories.upsert( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsCategories.upsert',

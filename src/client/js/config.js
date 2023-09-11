@@ -9,8 +9,8 @@ _ready = {
     val: false
 };
 
-pwiForums = {
-    ...pwiForums,
+Forums = {
+    ...Forums,
     ...{
         /**
          * @summary Returned value is updated at package client startup.

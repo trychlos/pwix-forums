@@ -8,7 +8,7 @@
 
 import SimpleSchema from 'simpl-schema';
 
-pwiForums.Forums = {
+Forums.Forums = {
 
     // name radical
     radical: 'forums',
@@ -35,7 +35,7 @@ pwiForums.Forums = {
         // who is able to participate to this public forum ?
         publicWriter: {
             type: String,
-            defaultValue: pwiForums._defaults.forums.publicWriter
+            defaultValue: Forums._defaults.forums.publicWriter
         },
         // whether the forum is private (user must be identified and allowed to view and participate) ?
         private: {
@@ -62,7 +62,7 @@ pwiForums.Forums = {
         //  defaulting to the common configured one
         moderation: {
             type: String,
-            defaultValue: pwiForums._defaults.forums.moderation
+            defaultValue: Forums._defaults.forums.moderation
         },
         // the list of the moderators of *this* forum
         //  FRS_PUBLIC_MODERATOR (resp. FRS_PRIVATE_MODERATOR) is allowed to moderate all public (resp. private) forums
@@ -90,7 +90,7 @@ pwiForums.Forums = {
         //  defaulting to the common configured one
         inform: {
             type: String,
-            defaultValue: pwiForums._defaults.forums.inform
+            defaultValue: Forums._defaults.forums.inform
         },
         // creation timestamp
         // mandatory
@@ -138,7 +138,7 @@ pwiForums.Forums = {
     // Deny all client-side updates
     // cf. https://guide.meteor.com/security.html#allow-deny
     deny(){
-        pwiForums.server.collections.Forums.deny({
+        Forums.server.collections.Forums.deny({
             insert(){ return true; },
             update(){ return true; },
             remove(){ return true; },
@@ -153,7 +153,7 @@ pwiForums.Forums = {
         const moderate = forum && userId && forum.archivedAt === null && forum.archivedBy === null &&
             (( !forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PUBLIC_MODERATOR' )) || 
              ( forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
-             ( pwiForums.fn.ids( forum.moderators || [] ).includes( userId )));
+             ( Forums.fn.ids( forum.moderators || [] ).includes( userId )));
         return moderate ? true : false;
     },
 
@@ -173,7 +173,7 @@ pwiForums.Forums = {
         };
         if( forum.private ){
             if( user ){
-                if( pwiForums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
+                if( Forums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
                     reason = FRS_REASON_PRIVATEWRITERS;
                 } else if( pwixRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
                     reason = FRS_REASON_PRIVATEEDIT;
@@ -186,7 +186,7 @@ pwiForums.Forums = {
                 result.reason = FRS_REASON_NOTCONNECTED;
             }
         } else {
-            forum.publicWriter = forum.publicWriter || pwiForums._defaults.forums.publicWriter;
+            forum.publicWriter = forum.publicWriter || Forums._defaults.forums.publicWriter;
             switch( forum.publicWriter ){
                 case FRS_USER_ANYBODY:
                     result.reason = FRS_USER_ANYBODY;
@@ -201,7 +201,7 @@ pwiForums.Forums = {
                     break;
                 case FRS_USER_EMAILADDRESS:
                     if( user ){
-                        const o = pwiForums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
+                        const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
                         if( o.origin === AC_EMAIL_ADDRESS ){
                             result.reason = FRS_USER_EMAILADDRESS;
                         } else {
@@ -215,9 +215,9 @@ pwiForums.Forums = {
                     break;
                 case FRS_USER_EMAILVERIFIED:
                     if( user ){
-                        const o = pwiForums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
+                        const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
                         if( o.origin === AC_EMAIL_ADDRESS ){
-                            if( pwiForums.fn.isEmailVerified( user, o.label )){
+                            if( Forums.fn.isEmailVerified( user, o.label )){
                                 result.reason = FRS_USER_EMAILVERIFIED;
                             } else {
                                 result.editable = false;
@@ -234,7 +234,7 @@ pwiForums.Forums = {
                     break;
                 case FRS_USER_APPFN:
                     if( user ){
-                        result.editable = pwiForums.opts()['forums.publicWriterAppFn']( forum );
+                        result.editable = Forums.opts()['forums.publicWriterAppFn']( forum );
                         result.reason = FRS_REASON_APPFN;
                     } else {
                         result.editable = false;

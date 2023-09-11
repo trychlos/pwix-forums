@@ -152,7 +152,7 @@ Template.frsModerate.onCreated( function(){
         },
 
         postsQuery(){
-            self.FRS.posts.query.set( pwiForums.Posts.queryModerables({
+            self.FRS.posts.query.set( Forums.Posts.queryModerables({
                 forums: self.FRS.forums.moderables.get(),
                 since: self.FRS.opts.since.get(),
                 showValidated: self.FRS.opts.moderationShowValidated.get(),
@@ -195,7 +195,7 @@ Template.frsModerate.onCreated( function(){
                 //const dateStr = new Date( date.getTime() - ( date.getTimezoneOffset() * 60000 )).toISOString().split( 'T' )[0];
                 const dateStr = date.toISOString().split( 'T' )[0];
                 //console.log( 'setSinceDate', date, dateStr );
-                pwiForums.client.fn.userDataWrite( 'moderationSince', dateStr );
+                Forums.client.fn.userDataWrite( 'moderationSince', dateStr );
             }
         },
 
@@ -223,7 +223,7 @@ Template.frsModerate.onCreated( function(){
     };
 
     // initialize date with yesterday unless a date is found in user profile
-    const str = pwiForums.client.fn.userDataRead( 'moderationSince' );
+    const str = Forums.client.fn.userDataRead( 'moderationSince' );
     let initialDate = new Date();
     if( str ){
         initialDate.setTime( Date.parse( str ));
@@ -235,7 +235,7 @@ Template.frsModerate.onCreated( function(){
 
     // creates and initialize ReactiveVar's from user data for checkboxes settings
     self.FRS.opts.checkboxes.every(( data ) => {
-        self.FRS.opts[data] = new ReactiveVar( pwiForums.client.fn.userDataRead( data ) === 'true' );
+        self.FRS.opts[data] = new ReactiveVar( Forums.client.fn.userDataRead( data ) === 'true' );
         return true;
     });
 
@@ -249,7 +249,7 @@ Template.frsModerate.onCreated( function(){
 
     // build the moderable forums query
     self.autorun(() => {
-        self.FRS.forums.query.set( pwiForums.Forums.queryModerables( Meteor.userId()));
+        self.FRS.forums.query.set( Forums.Forums.queryModerables( Meteor.userId()));
         self.FRS.state.set( ST_FORUMS_QUERY );
     });
 
@@ -266,7 +266,7 @@ Template.frsModerate.onCreated( function(){
     self.autorun(() => {
         if( self.FRS.forums.handle.ready()){
             const query = self.FRS.forums.query.get();
-            self.FRS.forums.moderables.set( pwiForums.client.collections.Forums.find( query.selector, query.options ).fetch());
+            self.FRS.forums.moderables.set( Forums.client.collections.Forums.find( query.selector, query.options ).fetch());
             self.FRS.state.set( ST_FORUMS_FETCHED );
         }
     });
@@ -294,7 +294,7 @@ Template.frsModerate.onCreated( function(){
             let posts = [];
             //console.log( 'fetching published posts' );
             const query = self.FRS.posts.query.get();
-            const allPosts = pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch();
+            const allPosts = Forums.client.collections.Posts.find( query.selector, query.options ).fetch();
             //console.log( allPosts );
             allPosts.every(( p ) => {
                 p.dyn = {
@@ -393,18 +393,18 @@ Template.frsModerate.helpers({
 
     // display the moderation badge
     badgeModeration( f ){
-        return pwiForums.client.htmlModerationStrategyBadge( f );
+        return Forums.client.htmlModerationStrategyBadge( f );
     },
 
     // whether this is a new thread (created after the date)
     badgeNew( p ){
         const threadDate = new Date( p.pub.orig.createdAt );
-        return threadDate > Template.instance().FRS.opts.since.get() ? pwiForums.client.htmlNewThreadBadge() : '';
+        return threadDate > Template.instance().FRS.opts.since.get() ? Forums.client.htmlNewThreadBadge() : '';
     },
 
     // display a private badge
     badgePrivate( f ){
-        return pwiForums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
+        return Forums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
     },
 
     // do we have something to do with the current forum ?
@@ -467,7 +467,7 @@ Template.frsModerate.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
+        return Forums.fn.i18n( 'moderate.'+opts.hash.label );
     },
 
     // popover initialization
@@ -483,39 +483,39 @@ Template.frsModerate.helpers({
 
     // the posts has been moderated by who and when ?
     moderatedBy( p ){
-        return pwiForums.fn.i18n( 'moderate.moderated_by', p.dyn.rvModerator ? p.dyn.rvModerator.get().label : '', pwixI18n.dateTime( p.deletedAt ));
+        return Forums.fn.i18n( 'moderate.moderated_by', p.dyn.rvModerator ? p.dyn.rvModerator.get().label : '', pwixI18n.dateTime( p.deletedAt ));
     },
 
     // no moderable forum
     noForum(){
-        return pwiForums.fn.i18n( 'moderate.noforum' );
+        return Forums.fn.i18n( 'moderate.noforum' );
     },
 
     // no new post
     noNewPost(){
-        return pwiForums.fn.i18n( 'moderate.nonewpost', pwixI18n.date( Template.instance().FRS.opts.since.get()));
+        return Forums.fn.i18n( 'moderate.nonewpost', pwixI18n.date( Template.instance().FRS.opts.since.get()));
     },
 
     // the author of the post
     postAuthor( p ){
-        return pwiForums.fn.i18n( 'moderate.author', p.dyn.rvAuthorEmail.get().label, p.dyn.rvAuthorUsername.get().label );
+        return Forums.fn.i18n( 'moderate.author', p.dyn.rvAuthorEmail.get().label, p.dyn.rvAuthorUsername.get().label );
     },
 
     // catch each rendered post
     //  install a ReactiveVar which will hold the needed labels
     postCatch( f, p ){
         //console.log( 'postCatch' );
-        p.dyn.rvAuthorEmail = pwiForums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
-        p.dyn.rvAuthorUsername = pwiForums.fn.labelById( p.owner, AC_USERNAME );
-        p.dyn.rvValidator = p.validatedBy ? pwiForums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
-        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? pwiForums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
+        p.dyn.rvAuthorEmail = Forums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
+        p.dyn.rvAuthorUsername = Forums.fn.labelById( p.owner, AC_USERNAME );
+        p.dyn.rvValidator = p.validatedBy ? Forums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
+        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? Forums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
         p.dyn.rvStats = new ReactiveVar( null );
         Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.dyn.rvStats.set( res ); });
     },
 
     // when the post has it been created ?
     postDate( p ){
-        return pwiForums.fn.i18n( 'moderate.moderate_date', pwixI18n.dateTime( p.createdAt ));
+        return Forums.fn.i18n( 'moderate.moderate_date', pwixI18n.dateTime( p.createdAt ));
     },
 
     // end of a post
@@ -534,7 +534,7 @@ Template.frsModerate.helpers({
     postScore( p ){
         const stats = p.dyn.rvStats.get();
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
-        return pwiForums.fn.i18n( 'moderate.owner_score', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
+        return Forums.fn.i18n( 'moderate.owner_score', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
 
     // list the posts displayed in this forum
@@ -561,12 +561,12 @@ Template.frsModerate.helpers({
 
     // thread title
     threadTitle( p ){
-        return pwiForums.fn.i18n( 'moderate.thread_title', p.pub.orig.title );
+        return Forums.fn.i18n( 'moderate.thread_title', p.pub.orig.title );
     },
 
     // the posts has been validated by who and when ?
     validatedBy( p ){
-        return pwiForums.fn.i18n( 'moderate.validated_by', p.dyn.rvValidator ? p.dyn.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
+        return Forums.fn.i18n( 'moderate.validated_by', p.dyn.rvValidator ? p.dyn.rvValidator.get().label : '', pwixI18n.dateTime( p.validatedAt ));
     }
 });
 
@@ -587,7 +587,7 @@ Template.frsModerate.events({
         const checked = instance.$( event.currentTarget ).prop( 'checked' );
         const field = $( event.currentTarget ).data( 'frs-field' );
         instance.FRS.opts[field].set( checked );
-        pwiForums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
+        Forums.client.fn.userDataWrite( field, checked ? 'true' : 'false' );
     },
 
     // moderate the message
@@ -598,7 +598,7 @@ Template.frsModerate.events({
         pwixModal.run({
             mdBody: 'frs_post_moderate',
             mdClasses: 'modal-lg',
-            mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
+            mdTitle: Forums.fn.i18n( 'moderate.modal_title' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
             forum: instance.FRS.forum( forumId ),
             post: instance.FRS.post( forumId, postId ),
@@ -615,13 +615,13 @@ Template.frsModerate.events({
             if( err ){
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( pwiForums.fn.i18n( 'moderate.unmoderated' ));
+                tlTolert.success( Forums.fn.i18n( 'moderate.unmoderated' ));
             }
             // work-around to todo #54: stop and relaunch the subscription
             instance.FRS.postsSubscribe();
             // last user action
             const today = new Date();
-            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+            Forums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
     },
 
@@ -634,13 +634,13 @@ Template.frsModerate.events({
             if( err ){
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( pwiForums.fn.i18n( 'moderate.unvalidated' ));
+                tlTolert.success( Forums.fn.i18n( 'moderate.unvalidated' ));
             }
             // work-around to todo #54: stop and relaunch the subscription
             instance.FRS.postsSubscribe();
             // last user action
             const today = new Date();
-            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+            Forums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
     },
 
@@ -652,11 +652,11 @@ Template.frsModerate.events({
             if( err ){
                 tlTolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( pwiForums.fn.i18n( 'moderate.validated' ));
+                tlTolert.success( Forums.fn.i18n( 'moderate.validated' ));
             }
             // last user action
             const today = new Date();
-            pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+            Forums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
         });
     },
 
@@ -665,6 +665,6 @@ Template.frsModerate.events({
         console.log( event, data );
         // last user action
         const today = new Date();
-        pwiForums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
+        Forums.client.fn.userDataWrite( 'moderationLastDate', today.toISOString().substring( 0,10 ));
     }
 });

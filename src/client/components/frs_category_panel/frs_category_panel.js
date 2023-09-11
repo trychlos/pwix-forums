@@ -9,7 +9,7 @@
 
 import { tlTolert } from 'meteor/pwix:tolert';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import { frsColor } from '../../../common/classes/frs_color.class.js';
 
@@ -70,7 +70,7 @@ Template.frs_category_panel.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'category_edit.'+opts.hash.label );
+        return Forums.fn.i18n( 'category_edit.'+opts.hash.label );
     }
 });
 
@@ -80,7 +80,7 @@ Template.frs_category_panel.events({
     'click .frs-color-button'( event, instance ){
         pwixModal.run({
             mdBody: 'frs_color_panel',
-            mdTitle: pwiForums.fn.i18n( 'color.choose' ),
+            mdTitle: Forums.fn.i18n( 'color.choose' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
             rvColor: instance.FRS.rvColor
         });
@@ -103,7 +103,7 @@ Template.frs_category_panel.events({
                 if( err ){
                     tlTolert.error({ type:err.error, message:err.reason });
                 } else {
-                    tlTolert.success( pwiForums.fn.i18n( 'category_edit.'+( o._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
+                    tlTolert.success( Forums.fn.i18n( 'category_edit.'+( o._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
                     pwixModal.close();
                 }
             });

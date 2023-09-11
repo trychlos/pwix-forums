@@ -9,7 +9,7 @@
  */
 import SimpleSchema from 'simpl-schema';
 
-pwiForums.Orders = {
+Forums.Orders = {
 
     // name radical
     radical: 'orders',
@@ -74,7 +74,7 @@ pwiForums.Orders = {
     // Deny all client-side updates
     // cf. https://guide.meteor.com/security.html#allow-deny
     deny(){
-        pwiForums.server.collections.Orders.deny({
+        Forums.server.collections.Orders.deny({
             insert(){ return true; },
             update(){ return true; },
             remove(){ return true; },

@@ -11,7 +11,7 @@
 
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
 import '../../stylesheets/frs_forums.less';
@@ -33,28 +33,28 @@ Template.frsForums.helpers({
     // display a archived badge if apply
     badgeArchived( f ){
         if( f.archivedAt ){
-            return pwiForums.client.htmlArchivedBadge( f );
+            return Forums.client.htmlArchivedBadge( f );
         }
     },
 
     // display a moderator badge
     badgeModerator( f ){
-        return pwiForums.client.htmlModeratorBadge( f );
+        return Forums.client.htmlModeratorBadge( f );
     },
 
     // display count of posts
     badgePosts( f ){
-        return pwiForums.client.htmlPostsCountBadge( f );
+        return Forums.client.htmlPostsCountBadge( f );
     },
 
     // display a private badge
     badgePrivate( f ){
-        return pwiForums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
+        return Forums.client.htmlPrivateBadge( f, { publicIsTransparent: false });
     },
 
     // display count of threads
     badgeThreads( f ){
-        return pwiForums.client.htmlThreadsCountBadge( f );
+        return Forums.client.htmlThreadsCountBadge( f );
     },
 
     // catch the current category
@@ -95,7 +95,7 @@ Template.frsForums.helpers({
     // forum last post date badge
     //  take care of not publishing the email address
     forLastPost( f ){
-        return f.dyn.rvLastPostOwner ? pwiForums.fn.i18n( 'forums_home.last_post', i18n.dateTime( f.pub.lastPost.createdAt ), f.dyn.rvLastPostOwner.get().label ) : '';
+        return f.dyn.rvLastPostOwner ? Forums.fn.i18n( 'forums_home.last_post', i18n.dateTime( f.pub.lastPost.createdAt ), f.dyn.rvLastPostOwner.get().label ) : '';
     },
 
     // send the list of forums for the current category
@@ -113,7 +113,7 @@ Template.frsForums.helpers({
                     forumsList.push( f );
                     f.dyn = {
                         first: first,
-                        rvLastPostOwner: f.pub.lastPost ? pwiForums.fn.labelById( f.pub.lastPost.owner, AC_USERNAME ) : null
+                        rvLastPostOwner: f.pub.lastPost ? Forums.fn.labelById( f.pub.lastPost.owner, AC_USERNAME ) : null
                     };
                     first = false;
                     return true;
@@ -127,7 +127,7 @@ Template.frsForums.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'forums_home.'+opts.hash.label );
+        return Forums.fn.i18n( 'forums_home.'+opts.hash.label );
     },
 
     // add a .frs-top class if not the first forum of the category
@@ -137,6 +137,6 @@ Template.frsForums.helpers({
 
     // route to the threads of a forum
     route( f ){
-        return pwiForums.client.fn.routeThreads( f._id );
+        return Forums.client.fn.routeThreads( f._id );
     }
 });

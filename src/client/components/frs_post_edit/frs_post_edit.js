@@ -60,7 +60,7 @@
  *      - 'frs-post-edit-end' ends up the view (maybe auto-hiding itself, or going back to startup mode)
  */
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -209,7 +209,7 @@ Template.frs_post_edit.onCreated( function(){
         // Preview button activation
         previewOn(){
             self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_PREVIEW });
-            self.$( '.frs-message' ).removeClass( 'frs-hidden' ).text( pwiForums.fn.i18n( 'post_edit.preview_mode' ));
+            self.$( '.frs-message' ).removeClass( 'frs-hidden' ).text( Forums.fn.i18n( 'post_edit.preview_mode' ));
         },
 
         // Preview button disactivation
@@ -336,7 +336,7 @@ Template.frs_post_edit.helpers({
 
     // label translation
     i18n( opts ){
-        return pwiForums.fn.i18n( 'post_edit.'+opts.hash.label );
+        return Forums.fn.i18n( 'post_edit.'+opts.hash.label );
 
     },
 
@@ -420,11 +420,11 @@ Template.frs_post_edit.events({
         Meteor.call( 'frsPosts.upsert', o, ( err, res ) => {
             if( err ){
                 console.error( err );
-                tlTolert.error( pwiForums.fn.i18n( 'post_edit.msg_error' ));
+                tlTolert.error( Forums.fn.i18n( 'post_edit.msg_error' ));
                 instance.$( '.frs-post-edit' ).trigger( 'frs-post-edit-error', { err: err });
 
             } else {
-                tlTolert.success( pwiForums.fn.i18n( 'post_edit.msg_success' ));
+                tlTolert.success( Forums.fn.i18n( 'post_edit.msg_success' ));
                 instance.$( '.frs-post-edit' ).trigger( 'frs-post-edit-success', { post: res.upserted });
                 // close this component
                 instance.FRS.actionEnd( instance.FRS.cr.SUCCESS );

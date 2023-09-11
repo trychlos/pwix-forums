@@ -5,7 +5,7 @@
 import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
-pwiForums.fn = {
+Forums.fn = {
 
     /**
      * @summary A proxy to pwixI18n.label() method

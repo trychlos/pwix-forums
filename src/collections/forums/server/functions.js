@@ -2,8 +2,8 @@
  * pwix:forums/src/collections/forums/server/functions.js 
  */
 
-pwiForums.server.fn = {
-    ...pwiForums.server.fn,
+Forums.server.fn = {
+    ...Forums.server.fn,
 
     Forums: {
         // all forums requests eventually resolve to a find( something... )
@@ -14,28 +14,28 @@ pwiForums.server.fn = {
         // 'this' here is the same than inside of a publication
         byQuery( query ){
             const self = this;
-            const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Forums.radical;
+            const collectionName = Forums.opts()['collections.prefix']() + Forums.Forums.radical;
             let forums = {};
             //console.log( query );
 
         
             // query Posts
-            const rawCollection = pwiForums.server.collections.Posts.rawCollection();
+            const rawCollection = Forums.server.collections.Posts.rawCollection();
 
             function f_updatePost( forumId ){
                 let forum = forums[forumId];
                 if( forum ){
-                    const postQuery = pwiForums.Posts.queryReadables( forum, self.userId );
+                    const postQuery = Forums.Posts.queryReadables( forum, self.userId );
                     rawCollection.distinct( 'threadId', postQuery.selector )
                         .then(( res ) => {
                             console.log( forum.title, res );
                             forum.pub.threadsList = res;
                             self.changed( collectionName, forum._id, forum )
                         });
-                    pwiForums.server.collections.Posts.countDocuments( postQuery.selector )
+                    Forums.server.collections.Posts.countDocuments( postQuery.selector )
                         .then(( count ) => {
                             forum.pub.postsCount = count;
-                            forum.pub.lastPost = count ? pwiForums.server.collections.Posts.find({ forum: forumId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0] : null;
+                            forum.pub.lastPost = count ? Forums.server.collections.Posts.find({ forum: forumId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0] : null;
                             self.changed( collectionName, forum._id, forum )
                         });
                 }
@@ -43,7 +43,7 @@ pwiForums.server.fn = {
             
             // we set an observer on the whole Posts collection
             //  so that we are informed each time anything changes
-            const postObserver = pwiForums.server.collections.Posts.find().observe({
+            const postObserver = Forums.server.collections.Posts.find().observe({
                 added: function( post ){
                     f_updatePost( post.forum );
                 },
@@ -64,7 +64,7 @@ pwiForums.server.fn = {
                 doc.pub = {};
             }
         
-            const observer = pwiForums.server.collections.Forums.find( query.selector, query.options ).observe({
+            const observer = Forums.server.collections.Forums.find( query.selector, query.options ).observe({
                 added: function( doc){
                     f_updateForum( doc );
                     self.added( collectionName, doc._id, doc );

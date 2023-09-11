@@ -7,7 +7,7 @@
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -49,7 +49,7 @@ Template.frsPosts.onCreated( function(){
 
         // returns the 'id' post
         post( id ){
-            return pwiForums.client.collections.Posts.findOne({ _id: id });
+            return Forums.client.collections.Posts.findOne({ _id: id });
         },
 
         postDeleted( post ){
@@ -77,7 +77,7 @@ Template.frsPosts.onCreated( function(){
     self.autorun(() => {
         const handle = self.FRS.thread.handle.get();
         if( handle && handle.ready()){
-            const post = pwiForums.client.collections.Posts.findOne({ _id: self.FRS.thread.id.get() });
+            const post = Forums.client.collections.Posts.findOne({ _id: self.FRS.thread.id.get() });
             if( post ){
                 self.FRS.thread.obj.set( post );
                 self.FRS.forum.id.set( post.forum );
@@ -98,7 +98,7 @@ Template.frsPosts.onCreated( function(){
     // get the forum when ready
     self.autorun(() => {
         if( self.FRS.forum.id.get() && self.FRS.forum.handle && self.FRS.forum.handle.ready()){
-            const forum = pwiForums.client.collections.Forums.findOne({ _id: self.FRS.forum.id.get() });
+            const forum = Forums.client.collections.Forums.findOne({ _id: self.FRS.forum.id.get() });
             self.FRS.forum.obj.set( forum );
             //console.log( 'got forum', forum );
         }
@@ -110,10 +110,10 @@ Template.frsPosts.onCreated( function(){
         if( forum ){
             const threadId = self.FRS.thread.id.get();
             const userId = Meteor.userId();
-            const isModerator = userId ? pwiForums.Forums.canModerate( forum, userId ) : false;
+            const isModerator = userId ? Forums.Forums.canModerate( forum, userId ) : false;
             const withModerated = isModerator ? forum.showDeletedForAdmin : false;
             const withDeleted = userId ? forum.showDeletedForUser : false;
-            self.FRS.posts.query.set( pwiForums.Posts.queryReadables( forum, userId, {
+            self.FRS.posts.query.set( Forums.Posts.queryReadables( forum, userId, {
                 withModerated: withModerated,
                 withDeleted: withDeleted,
                 threadId: threadId
@@ -137,11 +137,11 @@ Template.frsPosts.onCreated( function(){
         const handle = self.FRS.posts.handle.get();
         if( handle && handle.ready()){
             const query = self.FRS.posts.query.get();
-            self.FRS.posts.cursor.set( pwiForums.client.collections.Posts.find( query.selector, query.options ));
-            self.FRS.posts.nonDeletedCount.set( pwiForums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());
+            self.FRS.posts.cursor.set( Forums.client.collections.Posts.find( query.selector, query.options ));
+            self.FRS.posts.nonDeletedCount.set( Forums.client.collections.Posts.find({ $and: [ query.selector, { deletedAt: null }]}, query.options ).count());
             self.FRS.posts.nonDeletedCountSet = true;
             console.log( 'got posts cursor' );
-            console.log(pwiForums.client.collections.Posts.find( query.selector, query.options ).fetch());
+            console.log(Forums.client.collections.Posts.find( query.selector, query.options ).fetch());
         }
     });
 
@@ -150,7 +150,7 @@ Template.frsPosts.onCreated( function(){
     //  must be member of private list for private forum
     self.autorun(() => {
         const forum = self.FRS.forum.obj.get();
-        const o = forum ? pwiForums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
+        const o = forum ? Forums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
         self.FRS.writer.set( o.editable );
         self.FRS.reason.set( o.reason );
     });
@@ -161,7 +161,7 @@ Template.frsPosts.onCreated( function(){
         console.log( 'non deleted count', self.FRS.posts.nonDeletedCount.get());
         if( self.FRS.posts.nonDeletedCountSet && self.FRS.posts.nonDeletedCount.get() === 0 ){
             const forum = self.FRS.forum.obj.get();
-            FlowRouter.go( pwiForums.client.fn.routeThreads( forum._id ));
+            FlowRouter.go( Forums.client.fn.routeThreads( forum._id ));
         }
     });
 });
@@ -170,24 +170,24 @@ Template.frsPosts.helpers({
     // archived forum badge
     badgeArchived(){
         const forum = Template.instance().FRS.forum.obj.get();
-        return pwiForums.client.htmlArchivedBadge( forum );
+        return Forums.client.htmlArchivedBadge( forum );
     },
 
     // display a moderator badge
     badgeModerator(){
         const forum = Template.instance().FRS.forum.obj.get();
-        return pwiForums.client.htmlModeratorBadge( forum );
+        return Forums.client.htmlModeratorBadge( forum );
     },
 
     // private forum badge
     badgePrivate(){
         const forum = Template.instance().FRS.forum.obj.get();
-        return pwiForums.client.htmlPrivateBadge( forum, { publicIsTransparent: false });
+        return Forums.client.htmlPrivateBadge( forum, { publicIsTransparent: false });
     },
 
     // writes a small label to says that a post has been deleted
     deletedLabel( it ){
-        return pwiForums.fn.i18n( 'threads.deleted_label', i18n.dateTime( it.deletedAt ));
+        return Forums.fn.i18n( 'threads.deleted_label', i18n.dateTime( it.deletedAt ));
     },
 
     // the forum title
@@ -203,14 +203,14 @@ Template.frsPosts.helpers({
 
     // writes a small label to says that a post is moderated and not visible
     moderatedLabel( it ){
-        return pwiForums.fn.i18n( 'threads.moderated_label', i18n.dateTime( it.deletedAt ), it.dynModerated.get().label, it.deletedBecause );
+        return Forums.fn.i18n( 'threads.moderated_label', i18n.dateTime( it.deletedAt ), it.dynModerated.get().label, it.deletedBecause );
     },
 
     // whether the current post has been moderated ?
     moderatedPost( it ){
         const moderated = it.deletedAt && it.deletedBecause;
         if( moderated ){
-            it.dynModerated = pwiForums.fn.labelById( it.deletedBy, AC_USERNAME );
+            it.dynModerated = Forums.fn.labelById( it.deletedBy, AC_USERNAME );
         }
         return moderated;
     },
@@ -259,7 +259,7 @@ Template.frsPosts.helpers({
         }
         const reason = Template.instance().FRS.reason.get();
         const group = i18n.group( FRSI18N, 'unwritable' );
-        return pwiForums.fn.i18n( 'posts.not_writable', group[reason] );
+        return Forums.fn.i18n( 'posts.not_writable', group[reason] );
     }
 });
 

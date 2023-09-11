@@ -56,7 +56,7 @@ As simple as
 
 `pwix:forums` relies on `pwix:roles` to manager roles.
 
-The roles hierarchy is predefined in the `pwiForums.roles` object:
+The roles hierarchy is predefined in the `Forums.roles` object:
 
 ```
     FRS_ADMIN                           do anything anywhere
@@ -96,7 +96,7 @@ The application should use this predefined object and merge it with its own role
 
 ### General configuration
 
-General configuration is available through the `pwiForums.configure()` method, and providing an object with the keys you want override.
+General configuration is available through the `Forums.configure()` method, and providing an object with the keys you want override.
 
 The method should be called in same terms both in client and server sides, and from the top-level application code, _i.e._ before `Meteor.startup()`.
 
@@ -269,7 +269,7 @@ Private forums also have:
 
 ### Globally exported object
 
-The `pwix:forums` package exports a single `pwiForums` object which holds all necessary data and functions.
+The `pwix:forums` package exports a single `Forums` object which holds all necessary data and functions.
 
 ### Blaze templates
 

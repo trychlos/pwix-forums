@@ -12,7 +12,7 @@ const _false = function(){
     return false;
 }
 
-pwiForums = {
+Forums = {
     _conf: {},
     _defaults: {
         collections: {
@@ -69,14 +69,14 @@ pwiForums = {
      * @returns {Object} the package configuration
      */
     configure: function( o ){
-        _.merge( pwiForums._conf, pwiForums._defaults, o );
-        pwiForums._opts = new frsOptions( pwiForums._conf );
+        _.merge( Forums._conf, Forums._defaults, o );
+        Forums._opts = new frsOptions( Forums._conf );
 
-        if( pwiForums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){
+        if( Forums.opts().verbosity() & FRS_VERBOSE_CONFIGURE ){
             console.log( 'pwix:forums configure() with', o );
         }
 
-        return pwiForums._conf;
+        return Forums._conf;
     },
 
     // internationalization
@@ -88,7 +88,7 @@ pwiForums = {
      * @returns {acOptionsConf} the runtime configuration object
      */
     opts(){
-        return pwiForums._opts;
+        return Forums._opts;
     },
 
     /**
@@ -108,5 +108,5 @@ pwiForums = {
     }
 };
 
-_.merge( pwiForums._conf, pwiForums._defaults );
-pwiForums._opts = new frsOptions( pwiForums._conf );
+_.merge( Forums._conf, Forums._defaults );
+Forums._opts = new frsOptions( Forums._conf );

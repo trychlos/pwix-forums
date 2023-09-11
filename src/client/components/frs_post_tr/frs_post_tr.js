@@ -19,7 +19,7 @@ import { pwixBootbox } from 'meteor/pwix:bootbox';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 import { pwixModal } from 'meteor/pwix:modal';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import '../../stylesheets/frs_forums.less';
 import '../frsPosts/frsPosts.less';
@@ -131,7 +131,7 @@ Template.frs_post_tr.onCreated( function(){
     // get the owner username
     self.autorun(() => {
         let post = Template.currentData().post;
-        post.rvAuthor = pwiForums.fn.labelById( post.owner, AC_USERNAME );
+        post.rvAuthor = Forums.fn.labelById( post.owner, AC_USERNAME );
     })
 });
 
@@ -173,12 +173,12 @@ Template.frs_post_tr.helpers({
 
     // label translation
     i18n( opts ){
-        return pwiForums.fn.i18n( 'threads.'+opts.hash.label );
+        return Forums.fn.i18n( 'threads.'+opts.hash.label );
     },
 
     // whether the current user is a moderator of this forum ?
     isModerator(){
-        return pwiForums.Forums.canModerate( Template.currentData().forum, Meteor.userId());
+        return Forums.Forums.canModerate( Template.currentData().forum, Meteor.userId());
     },
 
     // let the owner edit his own post
@@ -210,11 +210,11 @@ Template.frs_post_tr.helpers({
 
     postOwner( it ){
         const rv = it ? it.rvAuthor.get() : null;
-        return pwiForums.fn.i18n( 'threads.posted_by', rv ? rv.label : '' );
+        return Forums.fn.i18n( 'threads.posted_by', rv ? rv.label : '' );
     },
 
     posted( it ){
-        return pwiForums.fn.i18n( 'threads.posted_on', i18n.dateTime( it.createdAt ));
+        return Forums.fn.i18n( 'threads.posted_on', i18n.dateTime( it.createdAt ));
     }
 });
 
@@ -224,15 +224,15 @@ Template.frs_post_tr.events({
         const post = Template.currentData().post;
         const postId = post._id;
         pwixBootbox.confirm(
-            pwiForums.fn.i18n( 'threads.delete_confirm' ), function( ret ){
+            Forums.fn.i18n( 'threads.delete_confirm' ), function( ret ){
                 if( ret ){
                     const target = instance.$( 'tr.frs-post-tr' ).closest( '.frs-body' );
                     Meteor.call( 'frsPosts.delete', post, ( err, res ) => {
                         if( err ){
                             console.error( err );
-                            tlTolert.error( pwiForums.fn.i18n( 'threads.delete_error' ));
+                            tlTolert.error( Forums.fn.i18n( 'threads.delete_error' ));
                         } else {
-                            tlTolert.success( pwiForums.fn.i18n( 'threads.delete_success' ));
+                            tlTolert.success( Forums.fn.i18n( 'threads.delete_success' ));
                             target.trigger( 'frs-post-tr-deleted', { post: post });
                         }
                     });
@@ -256,7 +256,7 @@ Template.frs_post_tr.events({
         pwixModal.run({
             mdBody: 'frs_post_moderate',
             mdClasses: 'modal-lg',
-            mdTitle: pwiForums.fn.i18n( 'moderate.modal_title' ),
+            mdTitle: Forums.fn.i18n( 'moderate.modal_title' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
             forum: forum,
             post: post

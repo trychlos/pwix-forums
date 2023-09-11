@@ -13,7 +13,7 @@ Meteor.methods({
             deletedAt: new Date(),
             deletedBy: this.userId
         }};
-        const res = pwiForums.server.collections.Posts.upsert( selector, { $set: modifier });
+        const res = Forums.server.collections.Posts.upsert( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsPosts.delete',
@@ -40,15 +40,15 @@ Meteor.methods({
             deletedBecause: post.deletedBecause,
             deletedText: post.deletedText
         };
-        let res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $set: modifier });
+        let res = Forums.server.collections.Posts.update({ _id: post._id }, { $set: modifier });
         console.log( 'moderating post', post, res );
         // if the just-moderated post was a thread leader, then find another one if possible
         /*
-        const fetched = pwiForums.server.collections.Posts.find({ threadId: post.threadId, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+        const fetched = Forums.server.collections.Posts.find({ threadId: post.threadId, deletedAt: null }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
         if( fetched.length ){
             const newLeader = fetched[0];
             newLeader.title = post.title;
-            res = pwiForums.server.collections.Posts.update({ _id: newLeader._id }, { $set: { title: newLeader.title }});
+            res = Forums.server.collections.Posts.update({ _id: newLeader._id }, { $set: { title: newLeader.title }});
             console.log( 'promoting new thread leader', newLeader, res );
         }
         */
@@ -67,23 +67,23 @@ Meteor.methods({
         delete post.deletedBy;
         delete post.deletedBecause;
         delete post.deletedText;
-        let res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
+        let res = Forums.server.collections.Posts.update({ _id: post._id }, { $unset: unset });
         console.log( 'frsPosts.unmoderate', post, unset, res );
         // may be it a new thread leader (because it was before being moderated) ?
         //  search the current thread leader, and test against the creation date
         /*
-        const fetched = pwiForums.server.collections.Posts.find({ threadLeader: true, threadId: post.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
+        const fetched = Forums.server.collections.Posts.find({ threadLeader: true, threadId: post.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch();
         if( fetched.length ){
             const currentLeader = fetched[0];
             if( post.createdAt.getTime() < currentLeader.createdAt.getTime()){
                 // unpromote current leader
                 currentLeader.threadLeader = false;
-                res = pwiForums.server.collections.Posts.update({ _id: currentLeader._id }, { $set: { threadLeader: false }});
+                res = Forums.server.collections.Posts.update({ _id: currentLeader._id }, { $set: { threadLeader: false }});
                 console.log( 'unpromoting current thread leader', currentLeader, res );
                 // promoting the new one
                 post.threadLeader = true;
                 post.title = post.title || currentLeader.title;
-                res = pwiForums.server.collections.Posts.update({ _id: post._id }, { $set: { threadLeader: true, title: post.title }});
+                res = Forums.server.collections.Posts.update({ _id: post._id }, { $set: { threadLeader: true, title: post.title }});
                 console.log( 'promoting new thread leader', post, res );
             }
         }
@@ -99,7 +99,7 @@ Meteor.methods({
             validatedAt: 1,
             validatedBy: 1
         };
-        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $unset: unset });
+        const res = Forums.server.collections.Posts.update({ _id: id }, { $unset: unset });
         console.log( 'frsPosts.unvalidate', unset, res );
         return res;
     },
@@ -108,7 +108,7 @@ Meteor.methods({
     //  the passed-in object may or may not contains an _id
     'frsPosts.upsert'( o ){
         let modifier = {};
-        const res = pwiForums.server.fn.Posts.upsert( o, modifier );
+        const res = Forums.server.fn.Posts.upsert( o, modifier );
         if( !res ){
             throw new Meteor.Error(
                 'frsPosts.upsert',
@@ -120,7 +120,7 @@ Meteor.methods({
             }
             /*
             if( o.threadLeader ){
-                const updRes = pwiForums.server.collections.Posts.update({ _id: res.upserted._id }, { $set: { threadId: res.upserted._id }});
+                const updRes = Forums.server.collections.Posts.update({ _id: res.upserted._id }, { $set: { threadId: res.upserted._id }});
                 console.log( 'update threadId for this new threadLeader', updRes, res.upserted._id );
             }
             */
@@ -132,11 +132,11 @@ Meteor.methods({
     // returns an object with postsCount and statsCount
     'frsPosts.userStats'( userId ){
         // the total count of posts (including deleted)
-        const posts = pwiForums.server.collections.Posts.find({ owner: userId }).count();
+        const posts = Forums.server.collections.Posts.find({ owner: userId }).count();
         // the auto-deleted count
-        const auto = pwiForums.server.collections.Posts.find({ owner: userId, deletedAt: { $ne: null }, deletedBy: userId }).count();
+        const auto = Forums.server.collections.Posts.find({ owner: userId, deletedAt: { $ne: null }, deletedBy: userId }).count();
         // the moderated (i.e. deleted by someone else)
-        const moderated = pwiForums.server.collections.Posts.find({ owner: userId, deletedAt: { $ne: null }, deletedBy: { $ne: userId }}).count();
+        const moderated = Forums.server.collections.Posts.find({ owner: userId, deletedAt: { $ne: null }, deletedBy: { $ne: userId }}).count();
         const res = { posts: posts, auto: auto, moderated: moderated };
         console.log( 'userStats', res );
         return res;
@@ -148,7 +148,7 @@ Meteor.methods({
             validatedAt: new Date(),
             validatedBy: Meteor.userId()
         };
-        const res = pwiForums.server.collections.Posts.update({ _id: id }, { $set: set });
+        const res = Forums.server.collections.Posts.update({ _id: id }, { $set: set });
         console.log( 'frsPosts.validate', set, res );
         return res;
     }

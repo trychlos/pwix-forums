@@ -5,22 +5,22 @@ import { Mongo } from 'meteor/mongo';
 
 Meteor.startup( function(){
     // define the collections
-    if( pwiForums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
+    if( Forums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
         console.log( 'pwix:forums defining collections...' );
     }
-    pwiForums.collections.every(( c ) => {
-        const name = pwiForums.opts()['collections.prefix']() + pwiForums[c].radical;
-        if( pwiForums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
+    Forums.collections.every(( c ) => {
+        const name = Forums.opts()['collections.prefix']() + Forums[c].radical;
+        if( Forums.opts().verbosity() & FRS_VERBOSE_COLLECTIONS ){
             console.log( '   '+c+' -> '+name );
         }
-        pwiForums.server.collections[c] = new Mongo.Collection( name );
-        pwiForums.server.collections[c].attachSchema( pwiForums[c].schema );
-        pwiForums[c].deny();
-        if( pwiForums[c].serverTransform ){
-            pwiForums.server.collections[c].serverTransform( pwiForums[c].serverTransform );
+        Forums.server.collections[c] = new Mongo.Collection( name );
+        Forums.server.collections[c].attachSchema( Forums[c].schema );
+        Forums[c].deny();
+        if( Forums[c].serverTransform ){
+            Forums.server.collections[c].serverTransform( Forums[c].serverTransform );
         }
-        //console.log( pwiForums.server.collections[c] );
+        //console.log( Forums.server.collections[c] );
         return true;
     });
-    //console.log( pwiForums );
+    //console.log( Forums );
 });

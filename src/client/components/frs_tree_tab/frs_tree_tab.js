@@ -11,7 +11,7 @@ import deepEqual from 'deep-equal';
 
 import { tlTolert } from 'meteor/pwix:tolert';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
 import '../frs_category_panel/frs_category_panel.js';
@@ -49,16 +49,16 @@ Template.frs_tree_tab.onCreated( function(){
        // actually all the 'text' of a node will goes inside of <a>..</a> tags. May perfectly be full HTML
        createCategoryNode( c ){
             //console.log( c );
-            const labelCount = pwiForums.fn.i18n( 'tree_tab.for_count' );
-            const titleInfo = pwiForums.fn.i18n( 'tree_tab.cat_info' );
-            const titleEdit = pwiForums.fn.i18n( 'tree_tab.cat_edit', c.title );
-            const titleDelete = pwiForums.fn.i18n( 'tree_tab.cat_delete', c.title );
+            const labelCount = Forums.fn.i18n( 'tree_tab.for_count' );
+            const titleInfo = Forums.fn.i18n( 'tree_tab.cat_info' );
+            const titleEdit = Forums.fn.i18n( 'tree_tab.cat_edit', c.title );
+            const titleDelete = Forums.fn.i18n( 'tree_tab.cat_delete', c.title );
             //console.log( titleEdit );
             const div = ''
                 +'<div class="d-flex align-items-center flex-grow-1">'
                 +'    <span>'+c.title+'</span>'
                 +'    <span class="frs-ml1"></span>'
-                +'    <span class="badge frs-badge-btn frs-ml025" title="'+pwiForums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.color+';">&nbsp;</span>'
+                +'    <span class="badge frs-badge-btn frs-ml025" title="'+Forums.fn.i18n( 'tree_tab.cat_color' )+'" style="background-color:'+c.color+';">&nbsp;</span>'
                 +'</div>'
                 +'<div class="frs-badges d-flex align-items-center frs-ml1">'
                 +'    <span class="badge frs-badge-btn frs-bg-cat frs-ml025" title="'+labelCount+'">'+c.forums.length+'</span>'
@@ -80,20 +80,20 @@ Template.frs_tree_tab.onCreated( function(){
             const div = ''
                 +'<span class="flex-grow-1">'+f.title+'</span>'
                 +'<div class="frs-badges d-flex align-items-center frs-ml1">'
-                +   pwiForums.client.htmlModerationStrategyBadge( f )
+                +   Forums.client.htmlModerationStrategyBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlThreadsCountBadge( f )
+                +   Forums.client.htmlThreadsCountBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlPostsCountBadge( f )
+                +   Forums.client.htmlPostsCountBadge( f )
                 +   '<span class="frs-ml1"></span>'
-                +   pwiForums.client.htmlPrivateBadge( f )
+                +   Forums.client.htmlPrivateBadge( f )
                 +   '<span class="frs-ml025"></span>'
-                +   pwiForums.client.htmlArchivedBadge( f )
+                +   Forums.client.htmlArchivedBadge( f )
                 +'</div>'
                 +'<div class="frs-buttons d-flex align-items-center frs-ml1">'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-info" data-frs-id="F-'+f._id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-edit-for" data-frs-id="F-'+f._id+'" title="'+pwiForums.fn.i18n( 'tree_tab.for_edit', f.title )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
-                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-delete-for" data-frs-id="F-'+f._id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+pwiForums.fn.i18n( 'tree_tab.for_delete', f.title )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-info" data-frs-id="F-'+f._id+'" title="'+Forums.fn.i18n( 'tree_tab.for_info' )+'"><span class="fa-solid fa-fw fa-info"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-edit-for" data-frs-id="F-'+f._id+'" title="'+Forums.fn.i18n( 'tree_tab.for_edit', f.title )+'"><span class="fa-solid fa-fw fa-pen-to-square"></span></button>'
+                +'    <button class="btn btn-sm btn-primary frs-bg-forum frs-ml025 frs-delete-for" data-frs-id="F-'+f._id+'"'+( self.FRS.deletableForum( parent, f ) ? '' : 'disabled' )+' title="'+Forums.fn.i18n( 'tree_tab.for_delete', f.title )+'"><span class="fa-solid fa-fw fa-trash"></span></button>'
                 +'</div>';
             self.$( '#frsTreeTabTree' ).jstree( true ).create_node( parent, { "id": "frstree_"+f._id, "text": div, "orig":"FOR", "doc": f });
         },
@@ -102,7 +102,7 @@ Template.frs_tree_tab.onCreated( function(){
         //  - do not delete the default category
         //  - do not delete a non-empty category
         deletableCategory( c ){
-            if( c._id === pwiForums.Categories.default ){
+            if( c._id === Forums.Categories.default ){
                 return false;
             }
             if( c.forums && c.forums.length ){
@@ -304,19 +304,19 @@ Template.frs_tree_tab.helpers({
     categoriesCount(){
         const self = Template.instance();
         const count = self.FRS.orderedTree.categoriesCount();
-        return pwiForums.fn.i18n( count > 1 ? 'tree_tab.catcount_plural' : ( count ? 'tree_tab.catcount_singular' : 'tree_tab.catcount_none' ), count );
+        return Forums.fn.i18n( count > 1 ? 'tree_tab.catcount_plural' : ( count ? 'tree_tab.catcount_singular' : 'tree_tab.catcount_none' ), count );
     },
 
     // a label with the total count of forums
     forumsCount(){
         const self = Template.instance();
         const count = self.FRS.orderedTree.forumsCountAll();
-        return pwiForums.fn.i18n( count > 1 ? 'tree_tab.forcount_plural' : ( count ? 'tree_tab.forcount_singular' : 'tree_tab.forcount_none' ), count );
+        return Forums.fn.i18n( count > 1 ? 'tree_tab.forcount_plural' : ( count ? 'tree_tab.forcount_singular' : 'tree_tab.forcount_none' ), count );
     },
 
     // get a translated label
     i18n( opts ){
-        return pwiForums.fn.i18n( 'tree_tab.'+opts.hash.label );
+        return Forums.fn.i18n( 'tree_tab.'+opts.hash.label );
     }
 });
 
@@ -326,14 +326,14 @@ Template.frs_tree_tab.events({
         const o = instance.FRS.orderedTree.category( ids[1] );
         //console.log( 'frs-delete', ids );
         pwixBootbox.confirm(
-            pwiForums.fn.i18n( 'tree_tab.cat_confirm_delete', o.title ), function( ret ){
+            Forums.fn.i18n( 'tree_tab.cat_confirm_delete', o.title ), function( ret ){
                 if( ret ){
                     console.log( 'calling frsCategories.delete for \''+o.title+'\' category' );
                     Meteor.call( 'frsCategories.delete', o._id, ( e, res ) => {
                         if( e ){
                             tlTolert.error({ type:e.error, message:e.reason });
                         } else {
-                            tlTolert.success( pwiForums.fn.i18n( 'tree_tab.cat_deleted', o.title ) );
+                            tlTolert.success( Forums.fn.i18n( 'tree_tab.cat_deleted', o.title ) );
                         }
                     });
                 }
@@ -346,14 +346,14 @@ Template.frs_tree_tab.events({
         const o = instance.FRS.orderedTree.forum( ids[1] );
         //console.log( 'frs-delete', ids );
         pwixBootbox.confirm(
-            pwiForums.fn.i18n( 'tree_tab.for_confirm_delete', o.title ), function( ret ){
+            Forums.fn.i18n( 'tree_tab.for_confirm_delete', o.title ), function( ret ){
                 if( ret ){
                     console.log( 'calling frsForums.delete for \''+o.title+'\' forum' );
                     Meteor.call( 'frsForums.delete', o._id, ( e, res ) => {
                         if( e ){
                             tlTolert.error({ type:e.error, message:e.reason });
                         } else {
-                            tlTolert.success( pwiForums.fn.i18n( 'tree_tab.for_deleted', o.title ) );
+                            tlTolert.success( Forums.fn.i18n( 'tree_tab.for_deleted', o.title ) );
                         }
                     });
                 }
@@ -369,7 +369,7 @@ Template.frs_tree_tab.events({
         //Blaze.renderWithData( Template.frs_category_panel, { cat: o }, $( 'body' )[0] );
         pwixModal.run({
             mdBody: 'frs_category_panel',
-            mdTitle: pwiForums.fn.i18n( 'category_edit.modal_edit' ),
+            mdTitle: Forums.fn.i18n( 'category_edit.modal_edit' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
             cat: instance.FRS.orderedTree.category( ids[1] )
         });
@@ -383,7 +383,7 @@ Template.frs_tree_tab.events({
         //Blaze.renderWithData( Template.frs_forum_panel, { forum: o }, $( 'body' )[0] );
         pwixModal.run({
             mdBody: 'frs_forum_panel',
-            mdTitle: pwiForums.fn.i18n( 'forum_edit.modal_edit' ),
+            mdTitle: Forums.fn.i18n( 'forum_edit.modal_edit' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
             mdClasses: "modal-lg",
             forum: instance.FRS.orderedTree.forum( ids[1] )
@@ -400,11 +400,11 @@ Template.frs_tree_tab.events({
         switch( ids[0] ){
             case 'C':
                 object = instance.FRS.orderedTree.category( ids[1] );
-                title = pwiForums.fn.i18n( 'tree_tab.cat_info' );
+                title = Forums.fn.i18n( 'tree_tab.cat_info' );
                 break;
             case 'F':
                 object = instance.FRS.orderedTree.forum( ids[1] );
-                title = pwiForums.fn.i18n( 'tree_tab.for_info' );
+                title = Forums.fn.i18n( 'tree_tab.for_info' );
                 break;
         }
         if( object ){
@@ -418,7 +418,7 @@ Template.frs_tree_tab.events({
     'click .frs-new-category'( event, instance ){
         pwixModal.run({
             mdBody: 'frs_category_panel',
-            mdTitle: pwiForums.fn.i18n( 'category_edit.modal_new' ),
+            mdTitle: Forums.fn.i18n( 'category_edit.modal_new' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
             cat: null
         });
@@ -429,7 +429,7 @@ Template.frs_tree_tab.events({
     'click .frs-new-forum'( event, instance ){
         pwixModal.run({
             mdBody: 'frs_forum_panel',
-            mdTitle: pwiForums.fn.i18n( 'forum_edit.modal_new' ),
+            mdTitle: Forums.fn.i18n( 'forum_edit.modal_new' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
             mdClasses: "modal-lg",
             forum: null

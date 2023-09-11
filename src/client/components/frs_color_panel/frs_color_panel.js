@@ -54,7 +54,7 @@ Template.frs_color_panel.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'color.'+opts.hash.label );
+        return Forums.fn.i18n( 'color.'+opts.hash.label );
     }
 });
 

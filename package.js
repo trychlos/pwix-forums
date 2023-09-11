@@ -9,7 +9,7 @@ Package.describe({
 Package.onUse( function( api ){
     configure( api );
     api.export([
-        'pwiForums'
+        'Forums'
     ]);
     api.mainModule( 'src/client/js/index.js', 'client' );
     api.mainModule( 'src/server/js/index.js', 'server' );
@@ -29,16 +29,16 @@ function configure( api ){
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );
     api.use( 'pwix:accounts-tools@0.1.0' );
-    api.use( 'pwix:bootbox@1.0.0', 'client' );
-    api.use( 'pwix:editor', 'client' );
+    api.use( 'pwix:bootbox@1.0.0' );
+    api.use( 'pwix:editor' );
     api.use( 'pwix:i18n@1.0.0' );
     api.use( 'pwix:jquery-ui@1.0.0' );
     api.use( 'pwix:jstree@1.0.0' );
-    api.use( 'pwix:modal@1.1.0', 'client' );
-    api.use( 'pwix:modal-info@1.0.0', 'client' );
-    api.use( 'pwix:options@1.0.0' );
-    api.use( 'pwix:roles' );
-    api.use( 'pwix:tolert@1.0.0', 'client' );
+    api.use( 'pwix:modal@1.1.0' );
+    api.use( 'pwix:modal-info@1.0.0' );
+    api.use( 'pwix:options@2.0.0' );
+    api.use( 'pwix:roles@1.1.0' );
+    api.use( 'pwix:tolert@1.0.0' );
     api.use( 'tmeasday:check-npm-versions@1.0.2', 'server' );
     api.use( 'webapp', 'server' );
     api.addFiles( 'src/client/components/frsAllPosts/frsAllPosts.js', 'client' );

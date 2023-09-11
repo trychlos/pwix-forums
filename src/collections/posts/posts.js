@@ -7,7 +7,7 @@
  */
 import SimpleSchema from 'simpl-schema';
 
-pwiForums.Posts = {
+Forums.Posts = {
 
     // name radical
     radical: 'posts',
@@ -121,7 +121,7 @@ pwiForums.Posts = {
     // Deny all client-side updates
     // cf. https://guide.meteor.com/security.html#allow-deny
     deny(){
-        pwiForums.server.collections.Posts.deny({
+        Forums.server.collections.Posts.deny({
             insert(){ return true; },
             update(){ return true; },
             remove(){ return true; },

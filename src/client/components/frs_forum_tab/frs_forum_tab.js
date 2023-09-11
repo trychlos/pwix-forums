@@ -13,7 +13,7 @@
 import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 import { frsModerate } from '../../../common/classes/frs_moderate.class.js';
 
@@ -63,7 +63,7 @@ Template.frs_forum_tab.onCreated( function(){
                 self.FRS.orig = { ...forum };
                 self.FRS.origSet.set( true );
                 if( forum.archivedAt && forum.archivedBy ){
-                    forum.dynArchived = pwiForums.fn.labelById( forum.archivedBy, AC_USERNAME );
+                    forum.dynArchived = Forums.fn.labelById( forum.archivedBy, AC_USERNAME );
                 }
             }
         }
@@ -80,7 +80,7 @@ Template.frs_forum_tab.helpers({
     catSelected( c ){
         const rv = Template.currentData().forum;
         const f = rv ? rv.get() : null;
-        const cat_id = f ? f.category : pwiForums.Categories.default;
+        const cat_id = f ? f.category : Forums.Categories.default;
         return cat_id === c._id ? 'selected' : '';
     },
 
@@ -88,7 +88,7 @@ Template.frs_forum_tab.helpers({
     forArchivedAtBy: function(){
         const rv = Template.currentData().forum;
         const f = rv ? rv.get() : null;
-        return pwiForums.fn.i18n( 'forum_edit.archived_by_label', i18n.dateTime( f.archivedAt ), f.archivedBy, f.dynArchived.get().label );
+        return Forums.fn.i18n( 'forum_edit.archived_by_label', i18n.dateTime( f.archivedAt ), f.archivedBy, f.dynArchived.get().label );
     },
 
     // forum comment
@@ -148,7 +148,7 @@ Template.frs_forum_tab.helpers({
 
     // get a translated label
     i18n( opts ){
-        return pwiForums.fn.i18n( 'forum_edit.'+opts.hash.label );
+        return Forums.fn.i18n( 'forum_edit.'+opts.hash.label );
     },
 
     // returns the list of known information options

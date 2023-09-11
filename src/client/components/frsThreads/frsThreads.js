@@ -112,7 +112,7 @@ Template.frsThreads.onCreated( function(){
     self.autorun(() => {
         const forum = self.FRS.forum.get();
         if( forum ){
-            self.FRS.posts.query.set( pwiForums.Posts.queryReadables( forum, Meteor.userId()));
+            self.FRS.posts.query.set( Forums.Posts.queryReadables( forum, Meteor.userId()));
             self.FRS.posts.handle.set( self.subscribe( 'frsPosts.byQuery', self.FRS.posts.query.get()));
         }
     });
@@ -125,14 +125,14 @@ Template.frsThreads.onCreated( function(){
             let list = [];
             forum.pub.threadsList.every(( id ) => {
                 const selector = self.FRS.posts.query.get().selector;
-                const post = pwiForums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
+                const post = Forums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 if( post ){
                     post.dyn = {
-                        rvLastPostOwner: pwiForums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ),
-                        rvOwner: pwiForums.fn.labelById( post.owner, AC_USERNAME ),
+                        rvLastPostOwner: Forums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ),
+                        rvOwner: Forums.fn.labelById( post.owner, AC_USERNAME ),
                         rvPostsCount: new ReactiveVar( 0 )
                     };
-                    pwiForums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });
+                    Forums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });
                     list.push( post );
                 }
                 return true;
@@ -146,7 +146,7 @@ Template.frsThreads.onCreated( function(){
     //  must be member of private list for private forum
     self.autorun(() => {
         const forum = self.FRS.forum.get();
-        const o = forum ? pwiForums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
+        const o = forum ? Forums.Forums.canWrite( forum, Meteor.user()) : { editable: false, reason: FRS_REASON_NONE };
         self.FRS.writer.set( o.editable );
         self.FRS.reason.set( o.reason );
         //console.log( 'writer', self.FRS.writer.get());
@@ -157,19 +157,19 @@ Template.frsThreads.helpers({
     // archived forum badge
     badgeArchived(){
         const forum = Template.instance().FRS.forum.get();
-        return pwiForums.client.htmlArchivedBadge( forum );
+        return Forums.client.htmlArchivedBadge( forum );
     },
 
     // display a moderator badge
     badgeModerator(){
         const forum = Template.instance().FRS.forum.get();
-        return pwiForums.client.htmlModeratorBadge( forum );
+        return Forums.client.htmlModeratorBadge( forum );
     },
 
     // private forum badge
     badgePrivate(){
         const forum = Template.instance().FRS.forum.get();
-        return pwiForums.client.htmlPrivateBadge( forum, { publicIsTransparent: false });
+        return Forums.client.htmlPrivateBadge( forum, { publicIsTransparent: false });
     },
 
     // whether the 'new' button is enabled ?
@@ -203,7 +203,7 @@ Template.frsThreads.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'threads.'+opts.hash.label );
+        return Forums.fn.i18n( 'threads.'+opts.hash.label );
     },
 
     // params for frs_post_edit when wanting create a new thread
@@ -237,7 +237,7 @@ Template.frsThreads.helpers({
     threadLast( it ){
         const forum = Template.instance().FRS.forum.get();
         const lastPost = forum ? forum.pub.lastPost : null;
-        return lastPost ? pwiForums.fn.i18n( 'threads.last_post', i18n.dateTime( lastPost.createdAt ), it.dyn.rvLastPostOwner.get().label ) : '';
+        return lastPost ? Forums.fn.i18n( 'threads.last_post', i18n.dateTime( lastPost.createdAt ), it.dyn.rvLastPostOwner.get().label ) : '';
     },
 
     threadOwner( it ){
@@ -258,7 +258,7 @@ Template.frsThreads.helpers({
     },
 
     threadTooltip( it ){
-        return pwiForums.fn.i18n( 'threads.tooltip', pwiForums.client.fn.routePosts( it._id ));
+        return Forums.fn.i18n( 'threads.tooltip', Forums.client.fn.routePosts( it._id ));
     },
 
     threadsList(){
@@ -269,7 +269,7 @@ Template.frsThreads.helpers({
     writableReason(){
         const reason = Template.instance().FRS.reason.get();
         const group = i18n.group( FRSI18N, 'unwritable' );
-        return pwiForums.fn.i18n( 'threads.not_writable', group[reason] );
+        return Forums.fn.i18n( 'threads.not_writable', group[reason] );
     },
 
     // whether the current user is allowed to create a thread in this forum ?
@@ -289,14 +289,14 @@ Template.frsThreads.events({
     // click on a row to open the thread
     'click .frs-thread-tr'( event, instance ){
         const threadId = $( event.currentTarget ).data( 'row-id' );
-        FlowRouter.go( pwiForums.client.fn.routePosts( threadId ));
+        FlowRouter.go( Forums.client.fn.routePosts( threadId ));
         return false;
     },
 
     // a new thread has been posted -> go to the Posts page
     'frs-post-edit-success .frs-new-thread'( event, instance, data ){
         //console.log( data.post );
-        FlowRouter.go( pwiForums.client.fn.routePosts( data.post._id ));
+        FlowRouter.go( Forums.client.fn.routePosts( data.post._id ));
     },
 
     // when the panel is closed by itself

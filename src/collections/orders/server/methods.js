@@ -12,7 +12,7 @@ Meteor.methods({
         // first, and always, set the new order in the new category
         let selector = { type:'FOR', category: parms.newcat };
         let modifier = { order: parms.newcatorder, updatedAt: new Date(), updatedBy: Meteor.userId() };
-        let res = pwiForums.server.collections.Orders.update( selector, { $set: modifier });
+        let res = Forums.server.collections.Orders.update( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsOrders.update',
@@ -24,7 +24,7 @@ Meteor.methods({
         if( parms.prevcat !== parms.newcat ){
             selector = { type:'FOR', category: parms.prevcat };
             modifier = { order: parms.prevcatorder, updatedAt: new Date(), updatedBy: Meteor.userId() };
-            res = pwiForums.server.collections.Orders.update( selector, { $set: modifier });
+            res = Forums.server.collections.Orders.update( selector, { $set: modifier });
             if( !res ){
                 throw new Meteor.Error(
                     'frsOrders.update',
@@ -45,7 +45,7 @@ Meteor.methods({
 
     // upsert an order
     'frsOrders.upsert'( selector, order ){
-        let origs = pwiForums.server.collections.Orders.find( selector )
+        let origs = Forums.server.collections.Orders.find( selector )
         if( origs ){
             origs.fetch();
         }
@@ -66,7 +66,7 @@ Meteor.methods({
         // the returned 'res' is an object with keys 'numberAffected' (the number of documents modified) and 'insertedId' (the unique _id of the document that was inserted, if any).
         //console.log( 'frsOrders.upsertForCategories: selector', selector );
         //console.log( 'frsOrders.upsertForCategories: modifier', modifier );
-        const res = pwiForums.server.collections.Orders.upsert( selector, { $set: modifier });
+        const res = Forums.server.collections.Orders.upsert( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsOrders.upsert',

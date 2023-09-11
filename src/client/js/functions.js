@@ -6,21 +6,21 @@ import { Promise } from 'meteor/promise';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Tracker } from 'meteor/tracker';
 
-pwiForums.client.fn = {
+Forums.client.fn = {
 
     // compute the actual route to display the list of forums
     routeForums(){
-        return pwiForums.opts()['routes.forums']();
+        return Forums.opts()['routes.forums']();
     },
 
     // compute the actual route to display the list of posts in a thread
     routePosts( id ){
-        return pwiForums.opts()['routes.posts']().replace( ':threadId', id );
+        return Forums.opts()['routes.posts']().replace( ':threadId', id );
     },
 
     // compute the actual route to display the provided forum content (aka list of opened threads)
     routeThreads( id ){
-        return pwiForums.opts()['routes.threads']().replace( ':forumId', id );
+        return Forums.opts()['routes.threads']().replace( ':forumId', id );
     },
 
     /*
@@ -30,8 +30,8 @@ pwiForums.client.fn = {
      * @returns {String} the named value, or null
      */
     userDataRead( name ){
-        const settings = pwiForums.opts()['collections.prefix']()+'settings.'+name;
-        let result = pwiForums.client.userSettings.get();
+        const settings = Forums.opts()['collections.prefix']()+'settings.'+name;
+        let result = Forums.client.userSettings.get();
         settings.split( '.' ).every(( it ) => {
             if( result && result[it] ){
                 result = result[it];
@@ -56,16 +56,16 @@ pwiForums.client.fn = {
                 emails: 1,
                 username: 1
             };
-            const settings = pwiForums.opts()['collections.prefix']()+'settings';
+            const settings = Forums.opts()['collections.prefix']()+'settings';
             dict[settings] = 1;
             Meteor.callPromise( 'frsUsers.accountById', userId, dict )
                 .then(( res ) => {
-                    pwiForums.client.userSettings.set( res );
+                    Forums.client.userSettings.set( res );
                     console.log( 'user data', res );
                     return Promise.resolve( res );
                 });
         } else {
-            pwiForums.client.userSettings.set( null );
+            Forums.client.userSettings.set( null );
         }
     },
 
@@ -76,32 +76,32 @@ pwiForums.client.fn = {
      * @param {String} value a string value to be set
      */
     userDataWrite( name, value ){
-        const settings = pwiForums.opts()['collections.prefix']()+'settings';
+        const settings = Forums.opts()['collections.prefix']()+'settings';
         //console.log( settings+'.'+name, value );
         pwixAccountsTools.writeData( Meteor.userId(), settings+'.'+name, value );
-        pwiForums.client.fn.userDataUpdate();
+        Forums.client.fn.userDataUpdate();
     },
 
     // a callback defined for the pwixRoles:prView component
     //  must return a Promise
     viewRoles( tab ){
-        //console.log( 'pwix:forums pwiForums.client.fn.viewRoles' );
+        //console.log( 'pwix:forums Forums.client.fn.viewRoles' );
         const userId = Meteor.userId();
         return new Promise(( resolve, reject ) => {
             let html = '';
             if( userId ){
-                html += '<p>' + pwiForums.fn.i18n( 'roles_view.public_label' ) + '</p>';
-                const privQuery = pwiForums.Forums.queryPrivates( userId );
+                html += '<p>' + Forums.fn.i18n( 'roles_view.public_label' ) + '</p>';
+                const privQuery = Forums.Forums.queryPrivates( userId );
                 const privHandle = Meteor.subscribe( 'frsForums.byQuery', privQuery );
-                const moderQuery = pwiForums.Forums.queryModerables( userId );
+                const moderQuery = Forums.Forums.queryModerables( userId );
                 const moderHandle = Meteor.subscribe( 'frsForums.byQuery', moderQuery );
                 const rv = new ReactiveVar( 0 );
                 let done = 0;
                 Tracker.autorun(() => {
                     if( privHandle.ready()){
-                        const privates = pwiForums.client.collections.Forums.find( privQuery.selector, privQuery.options ).fetch();
+                        const privates = Forums.client.collections.Forums.find( privQuery.selector, privQuery.options ).fetch();
                         if( privates.length ){
-                            html += '<p>' + pwiForums.fn.i18n( 'roles_view.private_label' );
+                            html += '<p>' + Forums.fn.i18n( 'roles_view.private_label' );
                             html += '<ul>'
                             privates.every(( f ) => {
                                 html += '<li>'+f.title+'</li>';
@@ -116,9 +116,9 @@ pwiForums.client.fn = {
                 });
                 Tracker.autorun(() => {
                     if( moderHandle.ready()){
-                        const moderables = pwiForums.client.collections.Forums.find( moderQuery.selector, moderQuery.options ).fetch();
+                        const moderables = Forums.client.collections.Forums.find( moderQuery.selector, moderQuery.options ).fetch();
                         if( moderables.length ){
-                            html += '<p>' + pwiForums.fn.i18n( 'roles_view.moderators_label' );
+                            html += '<p>' + Forums.fn.i18n( 'roles_view.moderators_label' );
                             html += '<ul>'
                             moderables.every(( f ) => {
                                 html += '<li>'+f.title+'</li>';
@@ -137,7 +137,7 @@ pwiForums.client.fn = {
                     }
                 });
             } else {
-                resolve( pwiForums.fn.i18n( 'roles_view.none' ))
+                resolve( Forums.fn.i18n( 'roles_view.none' ))
             }
         });
     },

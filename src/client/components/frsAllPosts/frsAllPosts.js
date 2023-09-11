@@ -32,7 +32,7 @@ Template.frsAllPosts.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'allPosts.'+opts.hash.label );
+        return Forums.fn.i18n( 'allPosts.'+opts.hash.label );
     },
 
     // manage options through a ReactiveDict

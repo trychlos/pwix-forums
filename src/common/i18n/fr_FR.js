@@ -2,8 +2,8 @@
  * pwix:forums/src/common/i18n/fr_FR.js
  */
 
-pwiForums.i18n = {
-    ...pwiForums.i18n,
+Forums.i18n = {
+    ...Forums.i18n,
     ...{
         fr_FR: {
             allPosts: {

@@ -33,14 +33,14 @@ Template.frs_posts_options.onCreated( function(){
 
         // read a user option
         optRead( key, value ){
-            return pwiForums.client.fn.userDataRead( self.FRS.name.get()+key );
+            return Forums.client.fn.userDataRead( self.FRS.name.get()+key );
         },
 
         // write a user option
         optWrite( key, value ){
             const name = self.FRS.name.get()+key;
             self.FRS.options.set( name, value )
-            pwiForums.client.fn.userDataWrite( name, value );
+            Forums.client.fn.userDataWrite( name, value );
         },
 
         // set the Date date if not empty and different
@@ -93,15 +93,15 @@ Template.frs_posts_options.onRendered( function(){
 
     // initialize the datepicker
     self.autorun(() => {
-        pwiForums.client.fn.waitForElements( '.frs-posts-options .input-date input' )
+        Forums.client.fn.waitForElements( '.frs-posts-options .input-date input' )
             .then(( nodes ) => {
                 const toUTC = function( str ){
-                    const local = $.datepicker.parseDate( pwiForums.fn.i18n( 'posts_options.date_parse' ), str );
+                    const local = $.datepicker.parseDate( Forums.fn.i18n( 'posts_options.date_parse' ), str );
                     const utc = new Date( Date.UTC( local.getFullYear(), local.getMonth(), local.getDate(), 0, 0, 0 ));
                     return utc;
                 };
                 self.$( nodes[0] ).datepicker({
-                    format: pwiForums.fn.i18n( 'posts_options.date_format' ),
+                    format: Forums.fn.i18n( 'posts_options.date_format' ),
                     todayHighlight: true,
                     onClose: function( date, dp ){
                         self.FRS.setSinceDate( toUTC( date ));
@@ -126,12 +126,12 @@ Template.frs_posts_options.helpers({
 
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'posts_options.'+opts.hash.label );
+        return Forums.fn.i18n( 'posts_options.'+opts.hash.label );
     },
 
     // current since date to initialize the input element
     since(){
-        return $.datepicker.formatDate( pwiForums.fn.i18n( 'posts_options.date_parse' ), Template.instance().FRS.since.get());
+        return $.datepicker.formatDate( Forums.fn.i18n( 'posts_options.date_parse' ), Template.instance().FRS.since.get());
     },
 
 });

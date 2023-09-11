@@ -1,10 +1,10 @@
 
 Meteor.publish( 'frsPosts.byId', function( id ){
-    return pwiForums.server.collections.Posts.find({ _id: id });
+    return Forums.server.collections.Posts.find({ _id: id });
 });
 
 Meteor.publish( 'frsPosts.byQuery', function( query ){
-    return pwiForums.server.collections.Posts.find( query.selector, query.options );
+    return Forums.server.collections.Posts.find( query.selector, query.options );
 });
 
 // returns the list of to-be-moderated posts depending of user display options
@@ -18,5 +18,5 @@ Meteor.publish( 'frsPosts.byQuery', function( query ){
 //  may be not the actual display order, but enough to compute display breaks
 
 Meteor.publish( 'frsPosts.moderablesByQuery', function( query ){
-    return ( pwiForums.server.fn.Posts.moderablesByQuery.bind( this ))( query );
+    return ( Forums.server.fn.Posts.moderablesByQuery.bind( this ))( query );
 });

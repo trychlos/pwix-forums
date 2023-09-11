@@ -11,7 +11,7 @@
  */
 import SimpleSchema from 'simpl-schema';
 
-pwiForums.Categories = {
+Forums.Categories = {
 
     // name radical
     radical: 'categories',
@@ -71,7 +71,7 @@ pwiForums.Categories = {
     // Deny all client-side updates
     // cf. https://guide.meteor.com/security.html#allow-deny
     deny(){
-        pwiForums.server.collections.Categories.deny({
+        Forums.server.collections.Categories.deny({
             insert(){ return true; },
             update(){ return true; },
             remove(){ return true; },

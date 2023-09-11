@@ -44,7 +44,7 @@
 |   59 | 2023- 3- 1 | inform the author of a moderated post |
 |   62 | 2023- 3- 1 | owner may see and delete his own post, with the mention 'waiting for validation' |
 |   64 | 2023- 3- 3 | Posts.queryReadables() should honor showDeletedForAdmin and showDeletedForUser |
-|   65 | 2023- 6-12 | Have pwiForums.i18n.namespace() to let another package add a translation to this one |
+|   65 | 2023- 6-12 | Have Forums.i18n.namespace() to let another package add a translation to this one |
 |   66 |  |  |
 
 ---

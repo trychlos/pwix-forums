@@ -5,8 +5,8 @@ Meteor.methods({
     //  categorize all attached forum to 'none'
     //  returns the impacted forums
     'frsForums.categoryDeleted'( id ){
-        const list = pwiForums.server.collections.Forums.find({ category:id });
-        const ret = pwiForums.server.collections.Forums.update({ category:id }, { $set: { category:pwiForums.Categories.default }});
+        const list = Forums.server.collections.Forums.find({ category:id });
+        const ret = Forums.server.collections.Forums.update({ category:id }, { $set: { category:Forums.Categories.default }});
         if( !ret ){
             throw new Meteor.Error(
                 'frsForums.categoryDeleted',
@@ -18,7 +18,7 @@ Meteor.methods({
 
     // delete a forum
     'frsForums.delete'( id ){
-        let ret = pwiForums.server.collections.Forums.remove( id );
+        let ret = Forums.server.collections.Forums.remove( id );
         console.log( 'Forums.delete \''+id+'\' returns '+ret );
         if( !ret ){
             throw new Meteor.Error(
@@ -33,11 +33,11 @@ Meteor.methods({
         console.log( 'frsForums.setCategory: id='+id );
         const selector = { _id: id };
         let modifier = {
-            category: newcat ? newcat : pwiForums.Categories.default,
+            category: newcat ? newcat : Forums.Categories.default,
             updatedAt: new Date(),
             updatedBy: Meteor.userId()
         }
-        const res = pwiForums.server.collections.Forums.update( selector, { $set: modifier });
+        const res = Forums.server.collections.Forums.update( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsForums.setCategory',
@@ -85,7 +85,7 @@ Meteor.methods({
         // the returned 'res' is an object with keys 'numberAffected' (the number of documents modified) and 'insertedId' (the unique _id of the document that was inserted, if any).
         //console.log( 'frsForums.upsert: selector', selector );
         //console.log( 'frsForums.upsert: modifier', modifier );
-        const res = pwiForums.server.collections.Forums.upsert( selector, { $set: modifier });
+        const res = Forums.server.collections.Forums.upsert( selector, { $set: modifier });
         if( !res ){
             throw new Meteor.Error(
                 'frsForums.upsert',

@@ -21,7 +21,7 @@
 
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -37,8 +37,8 @@ Template.frs_post_moderate.onCreated( function(){
         const post = Template.currentData().post;
         post.dyn = {
             rvStats: new ReactiveVar( null ),
-            rvAuthorEmail: pwiForums.fn.labelById( post.owner, AC_EMAIL_ADDRESS ),
-            rvAuthorUsername: pwiForums.fn.labelById( post.owner, AC_USERNAME )
+            rvAuthorEmail: Forums.fn.labelById( post.owner, AC_EMAIL_ADDRESS ),
+            rvAuthorUsername: Forums.fn.labelById( post.owner, AC_USERNAME )
         };
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {
@@ -69,7 +69,7 @@ Template.frs_post_moderate.helpers({
         const post = this.post;
         const stats = post ? post.dyn.rvStats.get() : null;
         const percent = stats ? (( parseInt(( stats.moderated * 100 / stats.posts ) * 10 )) / 10 )+'%' : '';
-        return pwiForums.fn.i18n( 'moderate.owner_posted', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
+        return Forums.fn.i18n( 'moderate.owner_posted', stats ? stats.posts : 0, stats ? stats.moderated : 0, percent );
     },
 
     // email of user
@@ -81,7 +81,7 @@ Template.frs_post_moderate.helpers({
 
     // label translation
     i18n( opts ){
-        return pwiForums.fn.i18n( 'moderate.'+opts.hash.label );
+        return Forums.fn.i18n( 'moderate.'+opts.hash.label );
     },
 
     // whether we can or must inform the author ?
@@ -144,7 +144,7 @@ Template.frs_post_moderate.events({
                         tlTolert.error( 'message_error' );
                     } else {
                         //console.log( res );
-                        tlTolert.success( pwiForums.fn.i18n( 'moderate.message_success' ));
+                        tlTolert.success( Forums.fn.i18n( 'moderate.message_success' ));
                         pwixModal.close();
                         if( target ){
                             target.trigger( 'frs-post-moderate-moderated', { post, ...options });

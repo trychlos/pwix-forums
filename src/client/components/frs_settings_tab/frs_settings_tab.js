@@ -8,6 +8,6 @@ import './frs_settings_tab.html';
 Template.frs_settings_tab.helpers({
     // get a translated label
     i18n( opts ){
-        return pwiForums.fn.i18n( 'settings_tab.'+opts.hash.label );
+        return Forums.fn.i18n( 'settings_tab.'+opts.hash.label );
     }
 });

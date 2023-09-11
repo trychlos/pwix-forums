@@ -2,7 +2,7 @@
  * pwix:forums/src/client/components/frs_breadcrumb/frs_breadcrumb.js
  *
  * Display the current hierarchy inside of the forums.
- * Because the labels must be internationalized, the possible herarchy is registered as a pwiForums.client array
+ * Because the labels must be internationalized, the possible herarchy is registered as a Forums.client array
  * 
  * Parms:
  *  - page: the current page identified y its breadcrumb name
@@ -25,7 +25,7 @@ Template.frs_breadcrumb.helpers({
     // returns the label associated to the item
     //  concatenated with the provided label, if any - but only for the current page
     breadLabel( it ){
-        let str = pwiForums.fn.i18n( 'breadcrumb.'+it.key );
+        let str = Forums.fn.i18n( 'breadcrumb.'+it.key );
         const page = Template.currentData().page;
         if( it.name === page ){
             const label = Template.currentData().label;
@@ -38,8 +38,8 @@ Template.frs_breadcrumb.helpers({
     breadLink( it ){
         const data = Template.currentData();
         if( it.fn ){
-            if( typeof pwiForums.client.fn[it.fn] === 'function' ){
-                return pwiForums.client.fn[it.fn]( data.args );
+            if( typeof Forums.client.fn[it.fn] === 'function' ){
+                return Forums.client.fn[it.fn]( data.args );
             } else {
                 return it.fn;
             }
@@ -52,9 +52,9 @@ Template.frs_breadcrumb.helpers({
     breadList(){
         let array = [];
         const current = Template.currentData().page;
-        for( let i=0 ; i<pwiForums.client.breadcrumb.length ; ++i ){
-            array.push( pwiForums.client.breadcrumb[i] );
-            if( pwiForums.client.breadcrumb[i].name === current ){
+        for( let i=0 ; i<Forums.client.breadcrumb.length ; ++i ){
+            array.push( Forums.client.breadcrumb[i] );
+            if( Forums.client.breadcrumb[i].name === current ){
                 break;
             }
         }

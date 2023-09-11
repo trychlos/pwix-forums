@@ -50,7 +50,7 @@ Template.frsManager.onRendered( function(){
 Template.frsManager.helpers({
     // i18n
     i18n( opts ){
-        return pwiForums.fn.i18n( 'manager.'+opts.hash.label );
+        return Forums.fn.i18n( 'manager.'+opts.hash.label );
     }
 });
 

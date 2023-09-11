@@ -2,24 +2,24 @@
  * pwix:forums/src/collections/posts/server/functions.js 
  */
 
-pwiForums.server.fn = {
-    ...pwiForums.server.fn,
+Forums.server.fn = {
+    ...Forums.server.fn,
 
     Posts: {
         // publish a cursor of moderable posts, attaching the original creator (may be deleted or moderated) post to each one
         // 'this' here is the same than inside of a publication
         moderablesByQuery( query ){
             const self = this;
-            const collectionName = pwiForums.opts()['collections.prefix']() + pwiForums.Posts.radical;
+            const collectionName = Forums.opts()['collections.prefix']() + Forums.Posts.radical;
         
             // add thread title
             function f_addFields( doc ){
                 doc.pub = {};
-                doc.pub.orig = pwiForums.server.collections.Posts.find({ _id: doc.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
+                doc.pub.orig = Forums.server.collections.Posts.find({ _id: doc.threadId }, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 return doc;
             }
         
-            const observer = pwiForums.server.collections.Posts.find( query.selector, query.options ).observe({
+            const observer = Forums.server.collections.Posts.find( query.selector, query.options ).observe({
                 added: function( doc){
                     //console.log( 'adding', doc );
                     self.added( collectionName, doc._id, f_addFields( doc ));
@@ -83,7 +83,7 @@ pwiForums.server.fn = {
             // the returned 'res' is an object with keys 'numberAffected' (the number of documents modified) and 'insertedId' (the unique _id of the document that was inserted, if any).
             //console.log( 'frsCategories.upsert: selector', selector );
             //console.log( 'frsCategories.upsert: modifier', modifier );
-            return pwiForums.server.collections.Posts.upsert( selector, { $set: modifier });
+            return Forums.server.collections.Posts.upsert( selector, { $set: modifier });
         }
     }
 };

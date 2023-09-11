@@ -2,7 +2,7 @@
  * pwix:forums/src/client/js/breadcrumb.js
  */
 
-pwiForums.client.breadcrumb = [
+Forums.client.breadcrumb = [
     {
         name: 'forums',
         key: 'forums',

@@ -12,7 +12,7 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 import { tlTolert } from 'meteor/pwix:tolert';
 
-import { pwiForums } from '../../js/index.js';
+import { Forums } from '../../js/index.js';
 
 import '../../stylesheets/frs_forums.less';
 
@@ -67,7 +67,7 @@ Template.frs_forum_panel.onCreated( function(){
         dataModerators( it ){
             return {
                 selection: self.FRS.moderators,
-                text: new ReactiveVar( pwiForums.fn.i18n( 'forum_edit.moderators_text' ))
+                text: new ReactiveVar( Forums.fn.i18n( 'forum_edit.moderators_text' ))
             };
         },
 
@@ -76,7 +76,7 @@ Template.frs_forum_panel.onCreated( function(){
         dataPrivate( it ){
             return {
                 selection: self.FRS.privUsers,
-                text: new ReactiveVar( pwiForums.fn.i18n( 'forum_edit.privusers_text' ))
+                text: new ReactiveVar( Forums.fn.i18n( 'forum_edit.privusers_text' ))
             };
         },
 
@@ -123,12 +123,12 @@ Template.frs_forum_panel.onRendered( function(){
 Template.frs_forum_panel.helpers({
     // get a translated label
     i18n( opts ){
-        return pwiForums.fn.i18n( 'forum_edit.'+opts.hash.label );
+        return Forums.fn.i18n( 'forum_edit.'+opts.hash.label );
     },
     // modal title
     modalTitle(){
         const f = Template.instance().FRS.forum.get();
-        return pwiForums.fn.i18n( 'forum_edit.'+( f && f._id ? 'modal_edit' : 'modal_new' ));
+        return Forums.fn.i18n( 'forum_edit.'+( f && f._id ? 'modal_edit' : 'modal_new' ));
     },
     // whether the pane is active ?
     paneActive( it ){
@@ -154,7 +154,7 @@ Template.frs_forum_panel.helpers({
     },
     // the tab label
     tabLabel( it ){
-        return pwiForums.fn.i18n( 'forum_edit.'+it.tab_label );
+        return Forums.fn.i18n( 'forum_edit.'+it.tab_label );
     },
     // the aria label for an active tab
     tabSelected( it ){
@@ -172,7 +172,7 @@ Template.frs_forum_panel.events({
         if( data.button === MD_BUTTON_SAVE ){
             let f = instance.FRS.forum.get();
             if( !f.category ){
-                f.category = pwiForums.Categories.default;
+                f.category = Forums.Categories.default;
             }
             f.privateUsers = instance.FRS.privUsers.get();
             f.moderators = instance.FRS.moderators.get();
@@ -183,7 +183,7 @@ Template.frs_forum_panel.events({
                     tlTolert.error( 'message_error' );
                 } else {
                     console.log( res );
-                    tlTolert.success( pwiForums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
+                    tlTolert.success( Forums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
                     pwixModal.close();
                 }
             });

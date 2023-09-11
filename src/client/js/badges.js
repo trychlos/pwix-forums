@@ -16,12 +16,12 @@ import { frsModerate } from '../../common/classes/frs_moderate.class.js';
 //  archived forum: color=warning      icon=lock
 //
 //  f is the Forum
-pwiForums.client.htmlArchivedBadge = function( f ){
+Forums.client.htmlArchivedBadge = function( f ){
     let html = '';
     if( f ){
         html += ''
         +'<span class="badge '+( f.archivedAt ? 'text-bg-warning' : 'frs-transparent' )+' frs-badge-round"'
-        +'  title="'+pwiForums.fn.i18n( 'badges.'+( f.archivedAt ? 'for_ro' : 'for_rw' ))+'">'
+        +'  title="'+Forums.fn.i18n( 'badges.'+( f.archivedAt ? 'for_ro' : 'for_rw' ))+'">'
         +'    <span class="fa-solid fa-lock"></span>'
         +'</span>';
     }
@@ -31,11 +31,11 @@ pwiForums.client.htmlArchivedBadge = function( f ){
 // display the moderate strategy badge
 //
 //  f is the Forum
-pwiForums.client.htmlModerationStrategyBadge = function( f ){
+Forums.client.htmlModerationStrategyBadge = function( f ){
     const group = pwixI18n.group( FRSI18N, 'moderate.short_strategies' );
     const html = ''
         +'<span class="badge frs-bg-forum frs-badge-label"'
-        +'  title="'+pwiForums.fn.i18n( 'badges.mod_strategy' )+'">'
+        +'  title="'+Forums.fn.i18n( 'badges.mod_strategy' )+'">'
         + frsModerate.short( f.moderation )
         +'</span>';
     return html;
@@ -44,25 +44,25 @@ pwiForums.client.htmlModerationStrategyBadge = function( f ){
 // display a moderator badge
 //
 //  f is the Forum
-pwiForums.client.htmlModeratorBadge = function( f ){
+Forums.client.htmlModeratorBadge = function( f ){
     let html = '';
     const userId = Meteor.userId();
-    if( pwiForums.Forums.canModerate( f, userId )){
+    if( Forums.Forums.canModerate( f, userId )){
         html += ''
         +'<span class="badge frs-badge-label frs-bg-forum"'
-        +'  title="'+pwiForums.fn.i18n( 'badges.moderator' )+'">'
-        + pwiForums.fn.i18n( 'badges.moderator' )
+        +'  title="'+Forums.fn.i18n( 'badges.moderator' )+'">'
+        + Forums.fn.i18n( 'badges.moderator' )
         +'</span>';
     }
     return html;
 }
 
 // display a new thread badge
-pwiForums.client.htmlNewThreadBadge = function(){
+Forums.client.htmlNewThreadBadge = function(){
     const html = ''
         +'<span class="badge frs-badge-label frs-bg-post"'
-        +'  title="'+pwiForums.fn.i18n( 'badges.new_thread' )+'">'
-        + pwiForums.fn.i18n( 'badges.new_label' )
+        +'  title="'+Forums.fn.i18n( 'badges.new_thread' )+'">'
+        + Forums.fn.i18n( 'badges.new_label' )
         +'</span>';
     return html;
 }
@@ -71,14 +71,14 @@ pwiForums.client.htmlNewThreadBadge = function(){
 //  if small size: only display the count (without the label)
 //
 // f is the forum
-pwiForums.client.htmlPostsCountBadge = function( f ){
+Forums.client.htmlPostsCountBadge = function( f ){
     let html = '';
     if( f ){
         const width = uiLayout.view();
         //console.log( width );
         html += ''
             +'<span class="badge frs-badge-label frs-bg-forum">'
-            +( width === UI_VIEW_SM ? f.pub.postsCount : pwiForums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
+            +( width === UI_VIEW_SM ? f.pub.postsCount : Forums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
             +'</span>';
     }
     return html;
@@ -91,14 +91,14 @@ pwiForums.client.htmlPostsCountBadge = function( f ){
 // f is the forum
 // opts:
 //  - publicIsTransparent, default to false
-pwiForums.client.htmlPrivateBadge = function( f, opts=null ){
+Forums.client.htmlPrivateBadge = function( f, opts=null ){
     let html = '';
     if( f ){
         const publicIsTransparent = opts && Object.keys( opts ).includes( 'publicIsTransparent' ) ? opts.publicIsTransparent : false;
         const publicClass = publicIsTransparent ? 'frs-transparent' : 'text-bg-info';
         html += ''
             +'<span class="badge '+( f.private ? 'text-bg-warning' : publicClass )+' frs-badge-round"'
-            +'  title="'+pwiForums.fn.i18n( 'badges.'+( f.private ? 'for_private' : 'for_public' ))+'">'
+            +'  title="'+Forums.fn.i18n( 'badges.'+( f.private ? 'for_private' : 'for_public' ))+'">'
             +'    <span class="fa-solid '+( f.private ? 'fa-user-gear' : 'fa-users' )+'"></span>'
             +'</span>';
     }
@@ -108,12 +108,12 @@ pwiForums.client.htmlPrivateBadge = function( f, opts=null ){
 // display the threads count badge
 //
 // f is the forum
-pwiForums.client.htmlThreadsCountBadge = function( f ){
+Forums.client.htmlThreadsCountBadge = function( f ){
     let html = '';
     if( f ){
         html += ''
             +'<span class="badge frs-badge-label frs-bg-forum">'
-            + pwiForums.fn.i18n( 'badges.threads_count', f.pub.threadsList.length )
+            + Forums.fn.i18n( 'badges.threads_count', f.pub.threadsList.length )
             +'</span>';
     }
     return html;

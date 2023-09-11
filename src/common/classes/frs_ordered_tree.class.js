@@ -102,7 +102,7 @@ export class frsOrderedTree {
         function f_pushCat( cat ){
             cat.forums = [];
             self._priv.build.tree.push( cat );
-            if( cat._id === pwiForums.Categories.default ){
+            if( cat._id === Forums.Categories.default ){
                 _defaultFound = true;
             }
         }
@@ -186,7 +186,7 @@ export class frsOrderedTree {
             }
 
             // keep default category for later use
-            if( c._id === pwiForums.Categories.default ){
+            if( c._id === Forums.Categories.default ){
                 _catDefault = c;
             }
 
@@ -197,9 +197,9 @@ export class frsOrderedTree {
         forsCollection.every(( f ) => {
             if( !f.d_attached ){
                 _catDefault.forums.push( f );
-                self._priv.build.forOrders[pwiForums.Categories.default] = _catDefault;
-                if( f.category !== pwiForums.Categories.default ){
-                    f.category = pwiForums.Categories.default;
+                self._priv.build.forOrders[Forums.Categories.default] = _catDefault;
+                if( f.category !== Forums.Categories.default ){
+                    f.category = Forums.Categories.default;
                     self._priv.build.forUpdated[f._id] = f;
                 }
             }
@@ -219,8 +219,8 @@ export class frsOrderedTree {
      */
     _defaultCategory(){
         return {
-            _id: pwiForums.Categories.default,
-            title: pwiForums.fn.i18n( 'manager.default_category_label' ),
+            _id: Forums.Categories.default,
+            title: Forums.fn.i18n( 'manager.default_category_label' ),
             color: '#ff9800'
         };
     }
@@ -283,7 +283,7 @@ export class frsOrderedTree {
         // subscribe to our collections at instanciation time
         Tracker.autorun(() => {
             self._priv.categories.handle = Meteor.subscribe( 'frsCategories.listAll' );
-            self._priv.forums.query.set( pwiForums.Forums.queryReadables( Meteor.userId()));
+            self._priv.forums.query.set( Forums.Forums.queryReadables( Meteor.userId()));
             self._priv.forums.handle = Meteor.subscribe( 'frsForums.byQuery', self._priv.forums.query.get());
             self._priv.orders.handle = Meteor.subscribe( 'frsOrders.listAll' );
         })
@@ -291,7 +291,7 @@ export class frsOrderedTree {
         // we keep as intern reactive vars the records read from our collections
         Tracker.autorun(() => {
             if( self._priv.categories.handle.ready()){
-                self._priv.categories.collection.set( pwiForums.client.collections.Categories.find({}, { sort: { title: 1 }}).fetch() || [] );
+                self._priv.categories.collection.set( Forums.client.collections.Categories.find({}, { sort: { title: 1 }}).fetch() || [] );
                 self._priv.categories.got.set( true );
                 console.log( 'frsCategories', self._priv.categories.collection.get());
             }
@@ -299,14 +299,14 @@ export class frsOrderedTree {
         Tracker.autorun(() => {
             if( self._priv.forums.handle.ready()){
                 const query = self._priv.forums.query.get();
-                self._priv.forums.collection.set( pwiForums.client.collections.Forums.find( query.selector ).fetch() || [] );
+                self._priv.forums.collection.set( Forums.client.collections.Forums.find( query.selector ).fetch() || [] );
                 self._priv.forums.got.set( true );
                 console.log( 'frsForums', self._priv.forums.collection.get());
             }
         });
         Tracker.autorun(() => {
             if( self._priv.orders.handle.ready()){
-                self._priv.orders.collection.set( pwiForums.client.collections.Orders.find().fetch() || [] );
+                self._priv.orders.collection.set( Forums.client.collections.Orders.find().fetch() || [] );
                 self._priv.orders.got.set( true );
                 console.log( 'frsOrders', self._priv.orders.collection.get());
             }
@@ -403,11 +403,11 @@ export class frsOrderedTree {
             if( self._priv.build.forUpdateCollection.get()){
                 Object.keys( self._priv.build.forUpdated ).every(( id ) => {
                     console.log( 'repairing Forums collection', id );
-                    Meteor.call( 'frsForums.setCategory', id, pwiForums.Categories.default, ( err, res ) => {
+                    Meteor.call( 'frsForums.setCategory', id, Forums.Categories.default, ( err, res ) => {
                         if( err ){
                             console.error( err );
                         } else {
-                            console.log( 'frsForums.setCategory', id, pwiForums.Categories.default, res );
+                            console.log( 'frsForums.setCategory', id, Forums.Categories.default, res );
                         }
                     });
                     return true;
