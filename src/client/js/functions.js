@@ -78,7 +78,7 @@ Forums.client.fn = {
     userDataWrite( name, value ){
         const settings = Forums.opts()['collections.prefix']()+'settings';
         //console.log( settings+'.'+name, value );
-        pwixAccountsTools.writeData( Meteor.userId(), settings+'.'+name, value );
+        AccountsTools.writeData( Meteor.userId(), settings+'.'+name, value );
         Forums.client.fn.userDataUpdate();
     },
 

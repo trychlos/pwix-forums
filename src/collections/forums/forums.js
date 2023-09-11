@@ -201,8 +201,8 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILADDRESS:
                     if( user ){
-                        const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
-                        if( o.origin === AC_EMAIL_ADDRESS ){
+                        const o = Forums.fn.labelByDoc( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
                             result.reason = Forums.C.Participation.EMAILADDRESS;
                         } else {
                             result.editable = false;
@@ -215,8 +215,8 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILVERIFIED:
                     if( user ){
-                        const o = Forums.fn.labelByDoc( user, AC_EMAIL_ADDRESS );
-                        if( o.origin === AC_EMAIL_ADDRESS ){
+                        const o = Forums.fn.labelByDoc( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
                             if( Forums.fn.isEmailVerified( user, o.label )){
                                 result.reason = Forums.C.Participation.EMAILVERIFIED;
                             } else {

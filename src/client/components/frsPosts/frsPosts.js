@@ -5,7 +5,7 @@
  */
 
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-import { pwixI18n as i18n } from 'meteor/pwix:i18n';
+import { pwixI18n } from 'meteor/pwix:i18n';
 
 import { Forums } from '../../js/index.js';
 
@@ -187,7 +187,7 @@ Template.frsPosts.helpers({
 
     // writes a small label to says that a post has been deleted
     deletedLabel( it ){
-        return Forums.fn.i18n( 'threads.deleted_label', i18n.dateTime( it.deletedAt ));
+        return Forums.fn.i18n( 'threads.deleted_label', pwixI18n.dateTime( it.deletedAt ));
     },
 
     // the forum title
@@ -203,14 +203,14 @@ Template.frsPosts.helpers({
 
     // writes a small label to says that a post is moderated and not visible
     moderatedLabel( it ){
-        return Forums.fn.i18n( 'threads.moderated_label', i18n.dateTime( it.deletedAt ), it.dynModerated.get().label, it.deletedBecause );
+        return Forums.fn.i18n( 'threads.moderated_label', pwixI18n.dateTime( it.deletedAt ), it.dynModerated.get().label, it.deletedBecause );
     },
 
     // whether the current post has been moderated ?
     moderatedPost( it ){
         const moderated = it.deletedAt && it.deletedBecause;
         if( moderated ){
-            it.dynModerated = Forums.fn.labelById( it.deletedBy, AC_USERNAME );
+            it.dynModerated = Forums.fn.labelById( it.deletedBy, AccountsTools.C.PreferredLabel.USERNAME );
         }
         return moderated;
     },
@@ -258,7 +258,7 @@ Template.frsPosts.helpers({
             return '';
         }
         const reason = Template.instance().FRS.reason.get();
-        const group = i18n.group( I18N, 'unwritable' );
+        const group = pwixI18n.group( I18N, 'unwritable' );
         return Forums.fn.i18n( 'posts.not_writable', group[reason] );
     }
 });

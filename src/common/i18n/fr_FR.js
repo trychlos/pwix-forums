@@ -249,14 +249,14 @@ Forums.i18n = {
             },
             // these strings are to be added to a sentence - so do not begin with a capital
             unwritable: {
-                NONE: 'no reason',
-                NOTCONNECTED: 'you are not connected',
-                NOEMAIL: 'your profile does not exhibit any registered email address',
-                NOTVERIFIED: 'your email address has not yet been verified',
-                APPFN: 'participation is refused by the application',
-                PRIVATEWRITERS: 'PRIVATEWRITERS',
-                PRIVATEEDIT: 'PRIVATEEDIT',
-                PRIVATE: 'you are not allowed to participate to this private forum'
+                FRS_REASON_NONE: 'no reason',
+                FRS_REASON_NOTCONNECTED: 'you are not connected',
+                FRS_REASON_NOEMAIL: 'your profile does not exhibit any registered email address',
+                FRS_REASON_NOTVERIFIED: 'your email address has not yet been verified',
+                FRS_REASON_APPFN: 'participation is refused by the application',
+                FRS_REASON_PRIVATEWRITERS: 'PRIVATEWRITERS',
+                FRS_REASON_PRIVATEEDIT: 'PRIVATEEDIT',
+                FRS_REASON_PRIVATE: 'you are not allowed to participate to this private forum'
             }
         }
     },

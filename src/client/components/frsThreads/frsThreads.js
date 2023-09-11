@@ -5,8 +5,7 @@
  */
 
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
-import { pwixI18n as i18n } from 'meteor/pwix:i18n';
-import { ReactiveDict } from 'meteor/reactive-dict';
+import { pwixI18n } from 'meteor/pwix:i18n';
 
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
 
@@ -128,8 +127,8 @@ Template.frsThreads.onCreated( function(){
                 const post = Forums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 if( post ){
                     post.dyn = {
-                        rvLastPostOwner: Forums.fn.labelById( forum.pub.lastPost.owner, AC_USERNAME ),
-                        rvOwner: Forums.fn.labelById( post.owner, AC_USERNAME ),
+                        rvLastPostOwner: Forums.fn.labelById( forum.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ),
+                        rvOwner: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.USERNAME ),
                         rvPostsCount: new ReactiveVar( 0 )
                     };
                     Forums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });
@@ -250,7 +249,7 @@ Template.frsThreads.helpers({
     },
 
     threadStarted( it ){
-        return i18n.date( it.createdAt );
+        return pwixI18n.date( it.createdAt );
     },
 
     threadTitle( it ){
@@ -268,7 +267,7 @@ Template.frsThreads.helpers({
     // display the reason for why the user is not allowed
     writableReason(){
         const reason = Template.instance().FRS.reason.get();
-        const group = i18n.group( I18N, 'unwritable' );
+        const group = pwixI18n.group( I18N, 'unwritable' );
         return Forums.fn.i18n( 'threads.not_writable', group[reason] );
     },
 

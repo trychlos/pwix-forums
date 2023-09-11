@@ -271,6 +271,12 @@ Private forums also have:
 
 The `pwix:forums` package exports a single `Forums` object which holds all necessary data and functions.
 
+### Methods
+
+#### `Forums.ready()`
+
+A client-only reactive data source, which becomes true when the package is ready (at startup).
+
 ### Blaze templates
 
 #### `frsForums`

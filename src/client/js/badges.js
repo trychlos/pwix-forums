@@ -7,7 +7,7 @@
  */
 
 import { pwixI18n } from 'meteor/pwix:i18n';
-import { uiLayout } from 'meteor/pwix:layout';
+import { Layout } from 'meteor/pwix:layout';
 
 import { frsModerate } from '../../common/classes/frs_moderate.class.js';
 
@@ -74,11 +74,11 @@ Forums.client.htmlNewThreadBadge = function(){
 Forums.client.htmlPostsCountBadge = function( f ){
     let html = '';
     if( f ){
-        const width = uiLayout.view();
+        const view = Layout.view();
         //console.log( width );
         html += ''
             +'<span class="badge frs-badge-label frs-bg-forum">'
-            +( width === UI_VIEW_SM ? f.pub.postsCount : Forums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
+            +( view === Layout.C.View.SM ? f.pub.postsCount : Forums.fn.i18n( 'badges.posts_count', f.pub.postsCount ))
             +'</span>';
     }
     return html;

@@ -505,10 +505,10 @@ Template.frsModerate.helpers({
     //  install a ReactiveVar which will hold the needed labels
     postCatch( f, p ){
         //console.log( 'postCatch' );
-        p.dyn.rvAuthorEmail = Forums.fn.labelById( p.owner, AC_EMAIL_ADDRESS );
-        p.dyn.rvAuthorUsername = Forums.fn.labelById( p.owner, AC_USERNAME );
-        p.dyn.rvValidator = p.validatedBy ? Forums.fn.labelById( p.validatedBy, AC_USERNAME ) : null;
-        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? Forums.fn.labelById( p.deletedBy, AC_USERNAME ) : null;
+        p.dyn.rvAuthorEmail = Forums.fn.labelById( p.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+        p.dyn.rvAuthorUsername = Forums.fn.labelById( p.owner, AccountsTools.C.PreferredLabel.USERNAME );
+        p.dyn.rvValidator = p.validatedBy ? Forums.fn.labelById( p.validatedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
+        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? Forums.fn.labelById( p.deletedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
         p.dyn.rvStats = new ReactiveVar( null );
         Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.dyn.rvStats.set( res ); });
     },

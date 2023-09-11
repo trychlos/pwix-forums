@@ -37,8 +37,8 @@ Template.frs_post_moderate.onCreated( function(){
         const post = Template.currentData().post;
         post.dyn = {
             rvStats: new ReactiveVar( null ),
-            rvAuthorEmail: Forums.fn.labelById( post.owner, AC_EMAIL_ADDRESS ),
-            rvAuthorUsername: Forums.fn.labelById( post.owner, AC_USERNAME )
+            rvAuthorEmail: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ),
+            rvAuthorUsername: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.USERNAME )
         };
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {

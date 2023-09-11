@@ -63,7 +63,7 @@ Template.frs_forum_tab.onCreated( function(){
                 self.FRS.orig = { ...forum };
                 self.FRS.origSet.set( true );
                 if( forum.archivedAt && forum.archivedBy ){
-                    forum.dynArchived = Forums.fn.labelById( forum.archivedBy, AC_USERNAME );
+                    forum.dynArchived = Forums.fn.labelById( forum.archivedBy, AccountsTools.C.PreferredLabel.USERNAME );
                 }
             }
         }

@@ -86,24 +86,24 @@ Template.frs_post_edit.onCreated( function(){
         //  for the different use cases
         behavior: {
             EDIT: {
-                startMode: TE_MODE_STANDARD,
-                endMode: TE_MODE_STANDARD,
+                startMode: Editor.C.Mode.STANDARD,
+                endMode: Editor.C.Mode.STANDARD,
                 hideOnClose: false,
                 setContent( post ){ return post.content; },
                 setTitle( post ){ return post.title; },
-                wantTitle( post ){ return self.FRS.editorMode.get() === TE_MODE_EDITION && !post.threadId; }
+                wantTitle( post ){ return self.FRS.editorMode.get() === Editor.C.Mode.EDITION && !post.threadId; }
             },
             NEW: {
-                startMode: TE_MODE_EDITION,
-                endMode: TE_MODE_HIDDEN,
+                startMode: Editor.C.Mode.EDITION,
+                endMode: Editor.C.Mode.HIDDEN,
                 hideOnClose: true,
                 setContent( post ){ return ''; },
                 setTitle( post ){ return ''; },
                 wantTitle( post ){ return true; }
             },
             REPLY: {
-                startMode: TE_MODE_EDITION,
-                endMode: TE_MODE_HIDDEN,
+                startMode: Editor.C.Mode.EDITION,
+                endMode: Editor.C.Mode.HIDDEN,
                 hideOnClose: true,
                 setContent( post ){ return ''; },
                 setTitle( post ){ return ''; },
@@ -139,7 +139,7 @@ Template.frs_post_edit.onCreated( function(){
         // open the editor and gain the focus
         activates(){
             if( self.FRS.allowed.get()){
-                self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
+                self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: Editor.C.Mode.EDITION });
 
             } else {
                 console.error( 'edition refused as user is not allowed' );
@@ -208,13 +208,13 @@ Template.frs_post_edit.onCreated( function(){
 
         // Preview button activation
         previewOn(){
-            self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_PREVIEW });
+            self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: Editor.C.Mode.PREVIEW });
             self.$( '.frs-message' ).removeClass( 'frs-hidden' ).text( Forums.fn.i18n( 'post_edit.preview_mode' ));
         },
 
         // Preview button disactivation
         //  we want explicitely toggle off the button when the view is cancel'ed
-        previewOff( editorMode=TE_MODE_EDITION ){
+        previewOff( editorMode=Editor.C.Mode.EDITION ){
             self.$( 'button.frs-preview-btn' ).removeClass( 'active' ).prop( 'aria-pressed', false );
             self.$( '.frs-message' ).addClass( 'frs-hidden' ).text( '' );
             self.$( '.teScriber' ).trigger( 'te-mode-set', { mode: editorMode });
@@ -298,11 +298,11 @@ Template.frs_post_edit.onRendered( function(){
     self.autorun(() => {
         const editorMode = self.FRS.editorMode.get();
         switch( editorMode ){
-            case TE_MODE_STANDARD:
+            case Editor.C.Mode.STANDARD:
                 break;
-            case TE_MODE_PREVIEW:
+            case Editor.C.Mode.PREVIEW:
                 break;
-            case TE_MODE_EDITION:
+            case Editor.C.Mode.EDITION:
                 break;
         }
     });
@@ -356,7 +356,7 @@ Template.frs_post_edit.helpers({
     // buttons are shown in edition and preview modes
     showButtons(){
         const editorMode = Template.instance().FRS.editorMode.get();
-        return editorMode && editorMode !== TE_MODE_STANDARD;
+        return editorMode && editorMode !== Editor.C.Mode.STANDARD;
     },
 
     // in NEW mode, a title is mandatory (edited post title)
@@ -441,7 +441,7 @@ Template.frs_post_edit.events({
     // the edition mode is requested
     'frs-post-edit-edition .frs-post-edit'( event, instance ){
         if( instance.FRS.startedUp.get()){
-            instance.$( '.teScriber' ).trigger( 'te-mode-set', { mode: TE_MODE_EDITION });
+            instance.$( '.teScriber' ).trigger( 'te-mode-set', { mode: Editor.C.Mode.EDITION });
         }
     },
 

@@ -2,7 +2,7 @@
  * pwix:forums/src/common/js/functions.js
  */
 
-import { pwixAccountsTools } from 'meteor/pwix:accounts-tools';
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 Forums.fn = {
@@ -38,39 +38,39 @@ Forums.fn = {
     },
 
     /**
-     * @summary A proxy to pwixAccountsTools.isEmailverified()
+     * @summary A proxy to AccountsTools.isEmailverified()
      * @locus Anywhere
      * @param {Object} user the user document
      * @param {String} email the email addressed to check
      * @returns {Boolean} whether the email address has been verified
      */
     isEmailVerified( user, email ){
-        return pwixAccountsTools.isEmailVerified( user, email );
+        return AccountsTools.isEmailVerified( user, email );
     },
 
     /**
-     * @summary A proxy to pwixAccountsTools.preferredLabelByDoc() method
+     * @summary A proxy to AccountsTools.preferredLabelByDoc() method
      * @locus Anywhere
      * @param {Object} user the user document
      * @param {String} preferred whether we want a username or an email address
      * @returns {Object} an object:
      *  - label: the label to preferentially use when referring to the user
-     *  - origin: whether it was a AC_USERNAME or a AC_EMAIL_ADDRESS
+     *  - origin: whether it was a AccountsTools.C.PreferredLabel.USERNAME or a AccountsTools.C.PreferredLabel.EMAIL_ADDRESS
      */
     labelByDoc( user, preferred ){
-        return pwixAccountsTools.preferredLabelByDoc( user, preferred );
+        return AccountsTools.preferredLabelByDoc( user, preferred );
     },
 
     /**
-     * @summary A proxy to pwixAccountsTools.preferredLabelById() method
+     * @summary A proxy to AccountsTools.preferredLabelById() method
      * @locus Anywhere
      * @param {String} id the user identifier
      * @param {String} preferred whether we want a username or an email address
      * @returns {ReactiveVar} a new ReactiveVar which will eventually contain an object:
      *  - label: the label to preferentially use when referring to the user
-     *  - origin: whether it is a AC_USERNAME or a AC_EMAIL_ADDRESS
+     *  - origin: whether it is a AccountsTools.C.PreferredLabel.USERNAME or a AccountsTools.C.PreferredLabel.EMAIL_ADDRESS
      */
     labelById( id, preferred ){
-        return pwixAccountsTools.preferredLabelById( id, preferred );
+        return AccountsTools.preferredLabelById( id, preferred );
     }
 };
