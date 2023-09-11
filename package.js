@@ -23,22 +23,22 @@ Package.onTest( function( api ){
 });
 
 function configure( api ){
-    api.versionsFrom( '1.8.1' );
+    api.versionsFrom( '2.13.2' );
     api.use( 'aldeed:collection2@3.5.0' );
     api.use( 'blaze-html-templates@2.0.0', 'client' );
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );
     api.use( 'pwix:accounts-tools@0.1.0' );
-    api.use( 'pwix:bootbox@1.0.0' );
-    api.use( 'pwix:editor' );
-    api.use( 'pwix:i18n@1.0.0' );
+    api.use( 'pwix:bootbox@1.5.0' );
+    api.use( 'pwix:editor@1.2.0' );
+    api.use( 'pwix:i18n@1.5.0' );
     api.use( 'pwix:jquery-ui@1.0.0' );
     api.use( 'pwix:jstree@1.0.0' );
-    api.use( 'pwix:modal@1.1.0' );
-    api.use( 'pwix:modal-info@1.0.0' );
+    api.use( 'pwix:modal@1.7.0' );
+    api.use( 'pwix:modal-info@1.4.0' );
     api.use( 'pwix:options@2.0.0' );
     api.use( 'pwix:roles@1.1.0' );
-    api.use( 'pwix:tolert@1.0.0' );
+    api.use( 'pwix:tolert@1.4.0' );
     api.use( 'tmeasday:check-npm-versions@1.0.2', 'server' );
     api.use( 'webapp', 'server' );
     api.addFiles( 'src/client/components/frsAllPosts/frsAllPosts.js', 'client' );
