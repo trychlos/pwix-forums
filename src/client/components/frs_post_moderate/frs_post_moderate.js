@@ -37,8 +37,8 @@ Template.frs_post_moderate.onCreated( function(){
         const post = Template.currentData().post;
         post.dyn = {
             rvStats: new ReactiveVar( null ),
-            rvAuthorEmail: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ),
-            rvAuthorUsername: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.USERNAME )
+            rvAuthorEmail: AccountsTools.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ),
+            rvAuthorUsername: AccountsTools.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME )
         };
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {
@@ -92,14 +92,14 @@ Template.frs_post_moderate.helpers({
     // whether the moderator can choose to inform the author or not ?
     //  disable the checkbox if information is mandatory
     informEnabled(){
-        this.forum.inform = this.forum.inform || defaults.common.forums.inform;
+        this.forum.inform = this.forum.inform || Forums._defaults.forums.inform;
         return this.forum.inform === Forums.C.Information.MUST ? 'disabled': '';
     },
 
     // display the information option as a long (HTML) text
     informText(){
         const options = i18n.group( I18N, 'forum_edit.informs_long' );
-        const id = this.forum && this.forum.inform ? this.forum.inform : defaults.common.forums.inform;
+        const id = this.forum && this.forum.inform ? this.forum.inform : Forums._defaults.forums.inform;
         let label = '';
         options.every(( it ) => {
             if( it.id === id ){
