@@ -58,8 +58,8 @@ Forums.server.fn = {
             // when a Forum document is added, changed or is removed:
             function f_updateForum( doc ){
                 // make sure some fields have at least a default value
-                doc.moderation = doc.moderation || defaults.common.forums.moderation;
-                doc.inform = doc.inform || defaults.common.forums.inform;
+                doc.moderation = doc.moderation || Forums._defaults.forums.moderation;
+                doc.inform = doc.inform || Forums._defaults.forums.inform;
                 // prepare for some published fields
                 doc.pub = {};
             }
