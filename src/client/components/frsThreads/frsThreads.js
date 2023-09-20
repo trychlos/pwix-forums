@@ -127,8 +127,8 @@ Template.frsThreads.onCreated( function(){
                 const post = Forums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 if( post ){
                     post.dyn = {
-                        rvLastPostOwner: Forums.fn.labelById( forum.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ),
-                        rvOwner: Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.USERNAME ),
+                        rvLastPostOwner: Forums.fn.preferredLabel( forum.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ),
+                        rvOwner: Forums.fn.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME ),
                         rvPostsCount: new ReactiveVar( 0 )
                     };
                     Forums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });
@@ -236,7 +236,7 @@ Template.frsThreads.helpers({
     threadLast( it ){
         const forum = Template.instance().FRS.forum.get();
         const lastPost = forum ? forum.pub.lastPost : null;
-        return lastPost ? Forums.fn.i18n( 'threads.last_post', i18n.dateTime( lastPost.createdAt ), it.dyn.rvLastPostOwner.get().label ) : '';
+        return lastPost ? Forums.fn.i18n( 'threads.last_post', pwixI18n.dateTime( lastPost.createdAt ), it.dyn.rvLastPostOwner.get().label ) : '';
     },
 
     threadOwner( it ){

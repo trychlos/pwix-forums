@@ -210,7 +210,7 @@ Template.frsPosts.helpers({
     moderatedPost( it ){
         const moderated = it.deletedAt && it.deletedBecause;
         if( moderated ){
-            it.dynModerated = Forums.fn.labelById( it.deletedBy, AccountsTools.C.PreferredLabel.USERNAME );
+            it.dynModerated = Forums.fn.preferredLabel( it.deletedBy, AccountsTools.C.PreferredLabel.USERNAME );
         }
         return moderated;
     },

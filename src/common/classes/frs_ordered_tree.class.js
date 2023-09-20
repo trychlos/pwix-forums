@@ -18,7 +18,7 @@
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Tracker } from 'meteor/tracker';
 
-import { pwixRoles } from 'meteor/pwix:roles';
+import { Roles } from 'meteor/pwix:roles';
 
 import '../js/index.js';
 
@@ -267,7 +267,7 @@ export class frsOrderedTree {
     // whether the user is allowed to try to repair the orders
     _isAllowed(){
         const userId = Meteor.userId();
-        return userId && pwixRoles.userIsInRoles( userId, FORUM_ADMIN );
+        return userId && Roles.userIsInRoles( userId, FORUM_ADMIN );
     }
 
     // public data

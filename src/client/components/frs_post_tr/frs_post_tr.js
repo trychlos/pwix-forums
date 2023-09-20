@@ -131,7 +131,7 @@ Template.frs_post_tr.onCreated( function(){
     // get the owner username
     self.autorun(() => {
         let post = Template.currentData().post;
-        post.rvAuthor = Forums.fn.labelById( post.owner, AccountsTools.C.PreferredLabel.USERNAME );
+        post.rvAuthor = Forums.fn.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME );
     })
 });
 

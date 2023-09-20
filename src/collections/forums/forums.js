@@ -151,8 +151,8 @@ Forums.Forums = {
     // Note: archived forums are not candidate to moderation
     canModerate( forum, userId ){
         const moderate = forum && userId && forum.archivedAt === null && forum.archivedBy === null &&
-            (( !forum.private && pwixRoles.userIsInRoles( userId, 'Forums.C.Access.MODERATOR' )) || 
-             ( forum.private && pwixRoles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
+            (( !forum.private && Roles.userIsInRoles( userId, 'Forums.C.Access.MODERATOR' )) || 
+             ( forum.private && Roles.userIsInRoles( userId, 'FRS_PRIVATE_MODERATOR' )) ||
              ( Forums.fn.ids( forum.moderators || [] ).includes( userId )));
         return moderate ? true : false;
     },
@@ -175,7 +175,7 @@ Forums.Forums = {
             if( user ){
                 if( Forums.fn.ids( forum.privateWriters || [] ).includes( user._id )){
                     reason = Forums.C.Reason.PRIVATEWRITERS;
-                } else if( pwixRoles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
+                } else if( Roles.userIsInRoles( user._id, [ 'FRS_PRIVATE_EDIT' ])){
                     reason = Forums.C.Reason.PRIVATEEDIT;
                 } else {
                     result.editable = false;
@@ -201,7 +201,7 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILADDRESS:
                     if( user ){
-                        const o = Forums.fn.labelByDoc( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        const o = Forums.fn.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
                         if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
                             result.reason = Forums.C.Participation.EMAILADDRESS;
                         } else {
@@ -215,7 +215,7 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILVERIFIED:
                     if( user ){
-                        const o = Forums.fn.labelByDoc( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        const o = Forums.fn.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
                         if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
                             if( Forums.fn.isEmailVerified( user, o.label )){
                                 result.reason = Forums.C.Participation.EMAILVERIFIED;
@@ -266,10 +266,10 @@ Forums.Forums = {
         //  - or be identified in moderators array
         if( userId ){
             let conditions = [];
-            if( pwixRoles.userIsInRoles( userId, [ 'Forums.C.Access.MODERATOR' ])){
+            if( Roles.userIsInRoles( userId, [ 'Forums.C.Access.MODERATOR' ])){
                 conditions.push({ private: { $ne: true }});
             }
-            if( pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
+            if( Roles.userIsInRoles( userId, [ 'FRS_PRIVATE_MODERATOR' ])){
                 conditions.push({ private: { $eq: true }});
             }
             conditions.push({ 'moderators.id': userId });
@@ -303,7 +303,7 @@ Forums.Forums = {
         let result = { selector: {}, options: { sort: { title: 1 }}};
 
         // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
-        if( userId && pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+        if( userId && Roles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
             result.selector = { private: true };
 
         // user is identified but doesn't have required role => is he registered as a privateReader ?
@@ -330,7 +330,7 @@ Forums.Forums = {
         let result = { selector: {}, options: { sort: { title: 1 }}};
 
         // user is identified and exhibit FRS_PRIVATE_VIEW: all private forums are visible
-        if( userId && pwixRoles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
+        if( userId && Roles.userIsInRoles( userId, [ 'FRS_PRIVATE_VIEW' ])){
             ; // nothing to add to the default (full) result
 
         // user is identified but doesn't have required role => is he registered as a privateReader ?

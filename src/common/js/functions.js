@@ -7,11 +7,14 @@ import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 Forums.fn = {
 
-    /**
+    /*
      * @summary A proxy to pwixI18n.label() method
      * @locus Anywhere
      * @param {String} key the key to the to-be-translated label
      * @returns {String} the translated string in the configured language
+     * 
+     * Forums.fn.i18n( 'my.own.key' );
+     * pwixI18n.label( I18N, 'my.own.key' );
      */
     i18n( key ){
         let _args = [ ...arguments ];
@@ -51,26 +54,13 @@ Forums.fn = {
     /**
      * @summary A proxy to AccountsTools.preferredLabelByDoc() method
      * @locus Anywhere
-     * @param {Object} user the user document
+     * @param {Object} arg the user identifier or document
      * @param {String} preferred whether we want a username or an email address
      * @returns {Object} an object:
      *  - label: the label to preferentially use when referring to the user
      *  - origin: whether it was a AccountsTools.C.PreferredLabel.USERNAME or a AccountsTools.C.PreferredLabel.EMAIL_ADDRESS
      */
-    labelByDoc( user, preferred ){
-        return AccountsTools.preferredLabelByDoc( user, preferred );
+    preferredLabel( arg, preferred ){
+        return new ReactiveVar( AccountsTools.preferredLabel( arg, preferred ));
     },
-
-    /**
-     * @summary A proxy to AccountsTools.preferredLabelById() method
-     * @locus Anywhere
-     * @param {String} id the user identifier
-     * @param {String} preferred whether we want a username or an email address
-     * @returns {ReactiveVar} a new ReactiveVar which will eventually contain an object:
-     *  - label: the label to preferentially use when referring to the user
-     *  - origin: whether it is a AccountsTools.C.PreferredLabel.USERNAME or a AccountsTools.C.PreferredLabel.EMAIL_ADDRESS
-     */
-    labelById( id, preferred ){
-        return AccountsTools.preferredLabelById( id, preferred );
-    }
 };

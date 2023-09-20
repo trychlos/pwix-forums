@@ -113,7 +113,7 @@ Template.frsForums.helpers({
                     forumsList.push( f );
                     f.dyn = {
                         first: first,
-                        rvLastPostOwner: f.pub.lastPost ? Forums.fn.labelById( f.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ) : null
+                        rvLastPostOwner: f.pub.lastPost ? Forums.fn.preferredLabel( f.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ) : null
                     };
                     first = false;
                     return true;

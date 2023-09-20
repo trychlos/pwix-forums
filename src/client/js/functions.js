@@ -82,7 +82,7 @@ Forums.client.fn = {
         Forums.client.fn.userDataUpdate();
     },
 
-    // a callback defined for the pwixRoles:prView component
+    // a callback defined for the Roles:prView component
     //  must return a Promise
     viewRoles( tab ){
         //console.log( 'pwix:forums Forums.client.fn.viewRoles' );
