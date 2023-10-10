@@ -6,10 +6,11 @@
  * Parms:
  */
 
-import clone from 'just-clone';
-import deepEqual from 'deep-equal';
+import _ from 'lodash';
 
-import { tlTolert } from 'meteor/pwix:tolert';
+import { Modal } from 'meteor/pwix:modal';
+import { ModalInfo } from 'meteor/pwix:modal-info';
+import { Tolert } from 'meteor/pwix:tolert';
 
 import { Forums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
@@ -126,7 +127,7 @@ Template.frs_tree_tab.onCreated( function(){
             //console.log( order );
             Meteor.call( 'frsOrders.upsert', selector, order, ( e, res ) => {
                 if( e ){
-                    tlTolert.error({ type:e.error, message:e.reason });
+                    Tolert.error({ type:e.error, message:e.reason });
                 } else {
                     console.log( '\''+selector.type+'\' new order array successfully saved' );
                 }
@@ -156,7 +157,7 @@ Template.frs_tree_tab.onCreated( function(){
             //  - update the forum category
             Meteor.call( 'frsOrders.postMove', parms, ( e, res ) => {
                 if( e ){
-                    tlTolert.error({ type:e.error, message:e.reason });
+                    Tolert.error({ type:e.error, message:e.reason });
                 } else {
                     console.log( 'new order array successfully saved', res );
                 }
@@ -246,8 +247,8 @@ Template.frs_tree_tab.onRendered( function(){
     self.autorun(() => {
         if( self.FRS.status.get() === ST_TREE_READY || self.FRS.status.get() === ST_TREE_DONE ){
             const tree = self.FRS.orderedTree.tree();
-            if( !deepEqual( tree, self.FRS.previousTree )){
-                self.FRS.previousTree = clone( tree );
+            if( !_.isEqual( tree, self.FRS.previousTree )){
+                self.FRS.previousTree = _.cloneDeep( tree );
                 self.FRS.status.set( ST_TREE_TOBEREBUILT );
             }
         }
@@ -331,9 +332,9 @@ Template.frs_tree_tab.events({
                     console.log( 'calling frsCategories.delete for \''+o.title+'\' category' );
                     Meteor.call( 'frsCategories.delete', o._id, ( e, res ) => {
                         if( e ){
-                            tlTolert.error({ type:e.error, message:e.reason });
+                            Tolert.error({ type:e.error, message:e.reason });
                         } else {
-                            tlTolert.success( Forums.fn.i18n( 'tree_tab.cat_deleted', o.title ) );
+                            Tolert.success( Forums.fn.i18n( 'tree_tab.cat_deleted', o.title ) );
                         }
                     });
                 }
@@ -351,9 +352,9 @@ Template.frs_tree_tab.events({
                     console.log( 'calling frsForums.delete for \''+o.title+'\' forum' );
                     Meteor.call( 'frsForums.delete', o._id, ( e, res ) => {
                         if( e ){
-                            tlTolert.error({ type:e.error, message:e.reason });
+                            Tolert.error({ type:e.error, message:e.reason });
                         } else {
-                            tlTolert.success( Forums.fn.i18n( 'tree_tab.for_deleted', o.title ) );
+                            Tolert.success( Forums.fn.i18n( 'tree_tab.for_deleted', o.title ) );
                         }
                     });
                 }
@@ -367,7 +368,7 @@ Template.frs_tree_tab.events({
         console.log( ids, instance.FRS.orderedTree.category( ids[1] ));
         //let o = instance.FRS.orderedTree.category( ids[1] );
         //Blaze.renderWithData( Template.frs_category_panel, { cat: o }, $( 'body' )[0] );
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_category_panel',
             mdTitle: Forums.fn.i18n( 'category_edit.modal_edit' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
@@ -381,7 +382,7 @@ Template.frs_tree_tab.events({
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
         //let o = instance.FRS.orderedTree.forum( ids[1] );
         //Blaze.renderWithData( Template.frs_forum_panel, { forum: o }, $( 'body' )[0] );
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_forum_panel',
             mdTitle: Forums.fn.i18n( 'forum_edit.modal_edit' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
@@ -396,27 +397,36 @@ Template.frs_tree_tab.events({
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
         let object = null;
         let title = null;
+        let name = null;
         //console.log( 'frs-info', ids );
         switch( ids[0] ){
             case 'C':
                 object = instance.FRS.orderedTree.category( ids[1] );
                 title = Forums.fn.i18n( 'tree_tab.cat_info' );
+                name = object.title;
                 break;
             case 'F':
                 object = instance.FRS.orderedTree.forum( ids[1] );
                 title = Forums.fn.i18n( 'tree_tab.for_info' );
+                name = object.title;
                 break;
         }
         if( object ){
-            //console.log( object );
-            Blaze.renderWithData( Template.miDialog, { object: object, name: object.title, title: title }, $( 'body' )[0] );
+            Modal.run({
+                mdTitle: title,
+                mdBody: 'miPanel',
+                mdButtons: [ Modal.C.Button.CLOSE ],
+                // parameters targeting the miPanel component
+                object: object,
+                name: name
+            });
         }
         return false;
     },
 
     // new category
     'click .frs-new-category'( event, instance ){
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_category_panel',
             mdTitle: Forums.fn.i18n( 'category_edit.modal_new' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
@@ -427,7 +437,7 @@ Template.frs_tree_tab.events({
 
     // new forum
     'click .frs-new-forum'( event, instance ){
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_forum_panel',
             mdTitle: Forums.fn.i18n( 'forum_edit.modal_new' ),
             mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
