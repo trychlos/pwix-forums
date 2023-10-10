@@ -8,9 +8,10 @@
  * Parms:
  * - forum: the edited object, or null
  */
-import { ReactiveVar } from 'meteor/reactive-var';
 
-import { tlTolert } from 'meteor/pwix:tolert';
+import { Modal } from 'meteor/pwix:modal';
+import { ReactiveVar } from 'meteor/reactive-var';
+import { Tolert } from 'meteor/pwix:tolert';
 
 import { Forums } from '../../js/index.js';
 
@@ -91,7 +92,7 @@ Template.frs_forum_panel.onCreated( function(){
 Template.frs_forum_panel.onRendered( function(){
     const self = this;
 
-    pwixModal.setTarget( self.$( '.frs-forum-panel' ));
+    Modal.set({ target: self.$( '.frs-forum-panel' )});
 
     // set our variables as soon as we get the forum
     //  - private users
@@ -180,10 +181,10 @@ Template.frs_forum_panel.events({
             Meteor.call( 'frsForums.upsert', f, ( err, res ) => {
                 if( err ){
                     console.error( err );
-                    tlTolert.error( 'message_error' );
+                    Tolert.error( 'message_error' );
                 } else {
                     console.log( res );
-                    tlTolert.success( Forums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
+                    Tolert.success( Forums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
                     pwixModal.close();
                 }
             });

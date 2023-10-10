@@ -15,9 +15,9 @@
  *    provides { post: <post> } object data
  */
 
-import { pwixBootbox } from 'meteor/pwix:bootbox';
+import { Bootbox } from 'meteor/pwix:bootbox';
+import { Modal } from 'meteor/pwix:modal';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
-import { pwixModal } from 'meteor/pwix:modal';
 
 import { Forums } from '../../js/index.js';
 
@@ -223,16 +223,16 @@ Template.frs_post_tr.events({
     'click .frs-delete-btn'( event, instance ){
         const post = Template.currentData().post;
         const postId = post._id;
-        pwixBootbox.confirm(
+        Bootbox.confirm(
             Forums.fn.i18n( 'threads.delete_confirm' ), function( ret ){
                 if( ret ){
                     const target = instance.$( 'tr.frs-post-tr' ).closest( '.frs-body' );
                     Meteor.call( 'frsPosts.delete', post, ( err, res ) => {
                         if( err ){
                             console.error( err );
-                            tlTolert.error( Forums.fn.i18n( 'threads.delete_error' ));
+                            Tolert.error( Forums.fn.i18n( 'threads.delete_error' ));
                         } else {
-                            tlTolert.success( Forums.fn.i18n( 'threads.delete_success' ));
+                            Tolert.success( Forums.fn.i18n( 'threads.delete_success' ));
                             target.trigger( 'frs-post-tr-deleted', { post: post });
                         }
                     });
@@ -253,11 +253,11 @@ Template.frs_post_tr.events({
     'click .frs-moderate-btn'( event, instance ){
         const post = Template.currentData().post;
         const forum = Template.currentData().forum;
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_post_moderate',
             mdClasses: 'modal-lg',
             mdTitle: Forums.fn.i18n( 'moderate.modal_title' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.OK ],
             forum: forum,
             post: post
         });

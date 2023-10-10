@@ -420,11 +420,11 @@ Template.frs_post_edit.events({
         Meteor.call( 'frsPosts.upsert', o, ( err, res ) => {
             if( err ){
                 console.error( err );
-                tlTolert.error( Forums.fn.i18n( 'post_edit.msg_error' ));
+                Tolert.error( Forums.fn.i18n( 'post_edit.msg_error' ));
                 instance.$( '.frs-post-edit' ).trigger( 'frs-post-edit-error', { err: err });
 
             } else {
-                tlTolert.success( Forums.fn.i18n( 'post_edit.msg_success' ));
+                Tolert.success( Forums.fn.i18n( 'post_edit.msg_success' ));
                 instance.$( '.frs-post-edit' ).trigger( 'frs-post-edit-success', { post: res.upserted });
                 // close this component
                 instance.FRS.actionEnd( instance.FRS.cr.SUCCESS );

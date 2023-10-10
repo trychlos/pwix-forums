@@ -19,6 +19,7 @@
  *  confirms the dialog.
  */
 
+import { Modal } from 'meteor/pwix:modal';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
 import { Forums } from '../../js/index.js';
@@ -55,7 +56,7 @@ Template.frs_post_moderate.onCreated( function(){
 
 Template.frs_post_moderate.onRendered( function(){
     const self = this;
-    pwixModal.setTarget( self.$( '.frs-post-moderate' ));
+    Modal.set({ target: self.$( '.frs-post-moderate' )});
 });
 
 Template.frs_post_moderate.helpers({
@@ -141,11 +142,11 @@ Template.frs_post_moderate.events({
                 Meteor.call( 'frsPosts.moderate', post, options, ( err, res ) => {
                     if( err ){
                         console.error( err );
-                        tlTolert.error( 'message_error' );
+                        Tolert.error( 'message_error' );
                     } else {
                         //console.log( res );
-                        tlTolert.success( Forums.fn.i18n( 'moderate.message_success' ));
-                        pwixModal.close();
+                        Tolert.success( Forums.fn.i18n( 'moderate.message_success' ));
+                        Modal.close();
                         if( target ){
                             target.trigger( 'frs-post-moderate-moderated', { post, ...options });
                         }

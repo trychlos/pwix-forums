@@ -2,10 +2,11 @@
  * pwix:forums/src/cient/components/frsModerate/frsModerate.js
  */
 
+import { Modal } from 'meteor/pwix:modal';
+import { pwixI18n } from 'meteor/pwix:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
-import { pwixI18n } from 'meteor/pwix:i18n';
-import { tlTolert } from 'meteor/pwix:tolert';
+import { Tolert } from 'meteor/pwix:tolert';
 
 import dotdotdot from 'dotdotdot';
 import printf from 'printf';
@@ -595,11 +596,11 @@ Template.frsModerate.events({
         const forumId = instance.$( event.currentTarget ).data( 'frs-forum' );
         const postId = instance.$( event.currentTarget ).data( 'frs-post' );
         //console.log( 'postId', postId, 'forumId', forumId, 'post', post );
-        pwixModal.run({
+        Modal.run({
             mdBody: 'frs_post_moderate',
             mdClasses: 'modal-lg',
             mdTitle: Forums.fn.i18n( 'moderate.modal_title' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_OK ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.OK ],
             forum: instance.FRS.forum( forumId ),
             post: instance.FRS.post( forumId, postId ),
             target: instance.$( '.frsModerate' )
@@ -613,9 +614,9 @@ Template.frsModerate.events({
         //console.log( 'postId', postId );
         Meteor.call( 'frsPosts.unmoderate', instance.FRS.post( forumId, postId ), ( err, res ) => {
             if( err ){
-                tlTolert.error({ type:err.error, message:err.reason });
+                Tolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( Forums.fn.i18n( 'moderate.unmoderated' ));
+                Tolert.success( Forums.fn.i18n( 'moderate.unmoderated' ));
             }
             // work-around to todo #54: stop and relaunch the subscription
             instance.FRS.postsSubscribe();
@@ -632,9 +633,9 @@ Template.frsModerate.events({
         //console.log( 'postId', postId );
         Meteor.call( 'frsPosts.unvalidate', postId, ( err, res ) => {
             if( err ){
-                tlTolert.error({ type:err.error, message:err.reason });
+                Tolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( Forums.fn.i18n( 'moderate.unvalidated' ));
+                Tolert.success( Forums.fn.i18n( 'moderate.unvalidated' ));
             }
             // work-around to todo #54: stop and relaunch the subscription
             instance.FRS.postsSubscribe();
@@ -650,9 +651,9 @@ Template.frsModerate.events({
         //console.log( 'postId', postId );
         Meteor.call( 'frsPosts.validate', postId, ( err, res ) => {
             if( err ){
-                tlTolert.error({ type:err.error, message:err.reason });
+                Tolert.error({ type:err.error, message:err.reason });
             } else {
-                tlTolert.success( Forums.fn.i18n( 'moderate.validated' ));
+                Tolert.success( Forums.fn.i18n( 'moderate.validated' ));
             }
             // last user action
             const today = new Date();

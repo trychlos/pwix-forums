@@ -5,6 +5,7 @@
  * - rvColor: a ReactiveVar which contains the initial color, and will return the selected one
  */
 
+import { Modal } from 'meteor/pwix:modal';
 import { ReactiveVar } from 'meteor/reactive-var';
 
 import { frsColor } from '../../../common/classes/frs_color.class.js';
@@ -28,7 +29,7 @@ Template.frs_color_panel.onCreated( function(){
 Template.frs_color_panel.onRendered( function(){
     const self = this;
 
-    pwixModal.setTarget( self.$( '.frs-color-panel' ));
+    Modal.set({ target: self.$( '.frs-color-panel' )});
 
     // set the provided color as the current one
     self.autorun(() => {
@@ -69,7 +70,7 @@ Template.frs_color_panel.events({
     'md-click .frs-color-panel'( event, instance, data ){
         if( data.button === MD_BUTTON_OK ){
             Template.currentData().rvColor.set( instance.FRS.rvCurrent.get());
-            pwixModal.close();
+            Modal.close();
         }
     }
 });

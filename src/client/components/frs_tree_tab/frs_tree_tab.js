@@ -8,6 +8,7 @@
 
 import _ from 'lodash';
 
+import { Bootbox } from 'meteor/pwix:bootbox';
 import { Modal } from 'meteor/pwix:modal';
 import { ModalInfo } from 'meteor/pwix:modal-info';
 import { Tolert } from 'meteor/pwix:tolert';
@@ -326,7 +327,7 @@ Template.frs_tree_tab.events({
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
         const o = instance.FRS.orderedTree.category( ids[1] );
         //console.log( 'frs-delete', ids );
-        pwixBootbox.confirm(
+        Bootbox.confirm(
             Forums.fn.i18n( 'tree_tab.cat_confirm_delete', o.title ), function( ret ){
                 if( ret ){
                     console.log( 'calling frsCategories.delete for \''+o.title+'\' category' );
@@ -346,7 +347,7 @@ Template.frs_tree_tab.events({
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
         const o = instance.FRS.orderedTree.forum( ids[1] );
         //console.log( 'frs-delete', ids );
-        pwixBootbox.confirm(
+        Bootbox.confirm(
             Forums.fn.i18n( 'tree_tab.for_confirm_delete', o.title ), function( ret ){
                 if( ret ){
                     console.log( 'calling frsForums.delete for \''+o.title+'\' forum' );
@@ -371,7 +372,7 @@ Template.frs_tree_tab.events({
         Modal.run({
             mdBody: 'frs_category_panel',
             mdTitle: Forums.fn.i18n( 'category_edit.modal_edit' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.SAVE ],
             cat: instance.FRS.orderedTree.category( ids[1] )
         });
         return false;
@@ -385,7 +386,7 @@ Template.frs_tree_tab.events({
         Modal.run({
             mdBody: 'frs_forum_panel',
             mdTitle: Forums.fn.i18n( 'forum_edit.modal_edit' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.SAVE ],
             mdClasses: "modal-lg",
             forum: instance.FRS.orderedTree.forum( ids[1] )
         });
@@ -429,7 +430,7 @@ Template.frs_tree_tab.events({
         Modal.run({
             mdBody: 'frs_category_panel',
             mdTitle: Forums.fn.i18n( 'category_edit.modal_new' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.SAVE ],
             cat: null
         });
         return false;
@@ -440,7 +441,7 @@ Template.frs_tree_tab.events({
         Modal.run({
             mdBody: 'frs_forum_panel',
             mdTitle: Forums.fn.i18n( 'forum_edit.modal_new' ),
-            mdButtons: [ MD_BUTTON_CANCEL, MD_BUTTON_SAVE ],
+            mdButtons: [ Modal.C.Button.CANCEL, Modal.C.Button.SAVE ],
             mdClasses: "modal-lg",
             forum: null
         });
