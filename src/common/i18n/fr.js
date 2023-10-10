@@ -5,7 +5,8 @@
 Forums.i18n = {
     ...Forums.i18n,
     ...{
-        fr_FR: {
+        // have a 'fr' key so that it is used even if the application asks for 'fr_FR'
+        fr: {
             allPosts: {
                 page_title: 'All the posts',
                 page_comment: 'You are seeing here all messages since the specified date, posted in the forums you are allowed to access.'

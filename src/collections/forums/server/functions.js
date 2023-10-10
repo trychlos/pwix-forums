@@ -18,7 +18,6 @@ Forums.server.fn = {
             let forums = {};
             //console.log( query );
 
-        
             // query Posts
             const rawCollection = Forums.server.collections.Posts.rawCollection();
 
@@ -63,7 +62,7 @@ Forums.server.fn = {
                 // prepare for some published fields
                 doc.pub = {};
             }
-        
+
             const observer = Forums.server.collections.Forums.find( query.selector, query.options ).observe({
                 added: function( doc){
                     f_updateForum( doc );
@@ -83,11 +82,11 @@ Forums.server.fn = {
                     f_updatePost( doc._id );
                 }
             });
-        
+
             self.onStop( function(){
                 observer.stop();
             });
-        
+
             self.ready();
         }
     }

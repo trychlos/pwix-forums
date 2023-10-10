@@ -26,6 +26,7 @@ Template.frs_breadcrumb.helpers({
     //  concatenated with the provided label, if any - but only for the current page
     breadLabel( it ){
         let str = Forums.fn.i18n( 'breadcrumb.'+it.key );
+        //console.debug( it, str );
         const page = Template.currentData().page;
         if( it.name === page ){
             const label = Template.currentData().label;
@@ -58,6 +59,7 @@ Template.frs_breadcrumb.helpers({
                 break;
             }
         }
+        //console.debug( array );
         return array;
     }
 });

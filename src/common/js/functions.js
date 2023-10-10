@@ -3,7 +3,7 @@
  */
 
 import { AccountsTools } from 'meteor/pwix:accounts-tools';
-import { pwixI18n as i18n } from 'meteor/pwix:i18n';
+import { pwixI18n } from 'meteor/pwix:i18n';
 
 Forums.fn = {
 
@@ -19,7 +19,7 @@ Forums.fn = {
     i18n( key ){
         let _args = [ ...arguments ];
         _args.shift();
-        return i18n.label( I18N, key, ..._args );
+        return pwixI18n.label( I18N, key, ..._args );
     },
 
     /**
