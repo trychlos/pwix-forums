@@ -16,6 +16,7 @@ Forums.i18n = {
                 for_private: 'Forum is private',
                 for_rw: 'Forum is opened',
                 for_ro: 'Forum is archived',
+                forums_count: '%s forum(s)',
                 moderator: 'Moderator',
                 threads_count: '%s thread(s)',
                 posts_count: '%s post(s)',

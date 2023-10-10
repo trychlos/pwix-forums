@@ -49,18 +49,5 @@ Forums.fn = {
      */
     isEmailVerified( user, email ){
         return AccountsTools.isEmailVerified( user, email );
-    },
-
-    /**
-     * @summary A proxy to AccountsTools.preferredLabelByDoc() method
-     * @locus Anywhere
-     * @param {Object} arg the user identifier or document
-     * @param {String} preferred whether we want a username or an email address
-     * @returns {Object} an object:
-     *  - label: the label to preferentially use when referring to the user
-     *  - origin: whether it was a AccountsTools.C.PreferredLabel.USERNAME or a AccountsTools.C.PreferredLabel.EMAIL_ADDRESS
-     */
-    preferredLabel( arg, preferred ){
-        return new ReactiveVar( AccountsTools.preferredLabel( arg, preferred ));
-    },
+    }
 };

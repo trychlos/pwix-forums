@@ -9,7 +9,9 @@
  * Params: none
  */
 
-import { pwixI18n as i18n } from 'meteor/pwix:i18n';
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
+import { pwixI18n } from 'meteor/pwix:i18n';
+import { ReactiveVar } from 'meteor/reactive-var';
 
 import { Forums } from '../../js/index.js';
 import { frsOrderedTree } from '../../../common/classes/frs_ordered_tree.class.js';
@@ -95,7 +97,9 @@ Template.frsForums.helpers({
     // forum last post date badge
     //  take care of not publishing the email address
     forLastPost( f ){
-        return f.dyn.rvLastPostOwner ? Forums.fn.i18n( 'forums_home.last_post', i18n.dateTime( f.pub.lastPost.createdAt ), f.dyn.rvLastPostOwner.get().label ) : '';
+        if( f.pub.lastPost ){
+            return f.dyn.rvLastPostOwner ? Forums.fn.i18n( 'forums_home.last_post', pwixI18n.dateTime( f.pub.lastPost.createdAt ), f.dyn.rvLastPostOwner.get()) : '';
+        }
     },
 
     // send the list of forums for the current category
@@ -113,8 +117,12 @@ Template.frsForums.helpers({
                     forumsList.push( f );
                     f.dyn = {
                         first: first,
-                        rvLastPostOwner: f.pub.lastPost ? Forums.fn.preferredLabel( f.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ) : null
+                        rvLastPostOwner: new ReactiveVar( null )// ? Forums.fn.preferredLabel( ,  ) : null
                     };
+                    if( f.pub.lastPost ){
+                        AccountsTools.preferredLabel( f.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME )
+                            .then(( res ) => { f.dyn.rvLastPostOwner.set( res.label ); });
+                    }
                     first = false;
                     return true;
                 });
@@ -123,6 +131,11 @@ Template.frsForums.helpers({
             return true;
         });
         return forumsList;
+    },
+
+    // a title for the badge
+    forumsCount( c ){
+        return Forums.fn.i18n( 'badges.forums_count', c.forums.length );
     },
 
     // i18n
