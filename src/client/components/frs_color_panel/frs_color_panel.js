@@ -68,7 +68,7 @@ Template.frs_color_panel.events({
 
     // dialog validation
     'md-click .frs-color-panel'( event, instance, data ){
-        if( data.button === MD_BUTTON_OK ){
+        if( data.button.id === Modal.C.Button.OK ){
             Template.currentData().rvColor.set( instance.FRS.rvCurrent.get());
             Modal.close();
         }

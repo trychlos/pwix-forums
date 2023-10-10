@@ -95,7 +95,7 @@ Template.frs_category_panel.events({
 
     // Modal click
     'md-click .frs-category-panel'( event, instance, data ){
-        if( data.button === MD_BUTTON_SAVE ){
+        if( data.button.id === Modal.C.Button.SAVE ){
             let o = instance.data.cat || {};
             o.title = instance.$( '.frs-title' ).val();
             o.description = instance.$( '.frs-description' ).val();

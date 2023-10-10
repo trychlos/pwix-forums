@@ -127,7 +127,7 @@ Template.frs_post_moderate.events({
 
     // confirm the operation
     'md-click .frs-post-moderate'( event, instance, data ){
-        if( data.button === MD_BUTTON_OK ){
+        if( data.button.id === Modal.C.Button.OK ){
             let post = Template.currentData().post;
             const target = Template.currentData().target;
             if( post ){

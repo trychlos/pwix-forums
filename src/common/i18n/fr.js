@@ -30,6 +30,7 @@ Forums.i18n = {
                 threads: 'Threads'
             },
             category_edit: {
+                color_label: 'Color',
                 modal_edit: 'Edit a category',
                 modal_new: 'Create a new category',
                 title_label: 'Title',

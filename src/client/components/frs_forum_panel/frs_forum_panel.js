@@ -170,7 +170,7 @@ Template.frs_forum_panel.helpers({
 Template.frs_forum_panel.events({
     'md-click .frs-forum-panel'( event, instance, data ){
         //console.log( event, instance, data );
-        if( data.button === MD_BUTTON_SAVE ){
+        if( data.button.id === Modal.C.Button.SAVE ){
             let f = instance.FRS.forum.get();
             if( !f.category ){
                 f.category = Forums.Categories.default;

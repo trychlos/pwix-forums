@@ -366,7 +366,7 @@ Template.frs_tree_tab.events({
     // edit a category
     'click .frs-edit-cat'( event, instance ){
         const ids = instance.$( event.currentTarget ).data( 'frs-id' ).split( '-' );
-        console.log( ids, instance.FRS.orderedTree.category( ids[1] ));
+        //console.debug( ids, instance.FRS.orderedTree.category( ids[1] ));
         //let o = instance.FRS.orderedTree.category( ids[1] );
         //Blaze.renderWithData( Template.frs_category_panel, { cat: o }, $( 'body' )[0] );
         Modal.run({
