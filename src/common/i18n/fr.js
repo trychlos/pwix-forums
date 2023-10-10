@@ -237,7 +237,6 @@ Forums.i18n = {
                 cat_color: 'The category\'s color',
                 cat_edit: 'Edit the \'%s\' category',
                 cat_delete: 'Delete the \'%s\' category',
-                for_count: 'Forums count',
                 for_edit: 'Edit the \'%s\' forum',
                 for_delete: 'Delete the \'%s\' forum',
                 catcount_plural: '%s registered categories',

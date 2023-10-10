@@ -49,7 +49,7 @@ Template.frs_tree_tab.onCreated( function(){
        // actually all the 'text' of a node will goes inside of <a>..</a> tags. May perfectly be full HTML
        createCategoryNode( c ){
             //console.log( c );
-            const labelCount = Forums.fn.i18n( 'tree_tab.for_count' );
+            const labelCount = Forums.fn.i18n( 'badges.forums_count', c.forums.length );
             const titleInfo = Forums.fn.i18n( 'tree_tab.cat_info' );
             const titleEdit = Forums.fn.i18n( 'tree_tab.cat_edit', c.title );
             const titleDelete = Forums.fn.i18n( 'tree_tab.cat_delete', c.title );
