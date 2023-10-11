@@ -1,6 +1,6 @@
 Package.describe({
     name: 'pwix:forums',
-    version: '0.90.0',  // pre-release version number
+    version: '1.0.0-rc',  // pre-release version number
     summary: 'A forum solution for Meteor',
     git: 'https://github.com/trychlos/pwix-forums',
     documentation: 'README.md'
@@ -28,7 +28,7 @@ function configure( api ){
     api.use( 'blaze-html-templates@2.0.0', 'client' );
     api.use( 'ecmascript' );
     api.use( 'less@4.0.0', 'client' );
-    api.use( 'pwix:accounts-tools@0.1.0' );
+    api.use( 'pwix:accounts-tools@1.0.0' );
     api.use( 'pwix:bootbox@1.5.0' );
     api.use( 'pwix:editor@1.2.0' );
     api.use( 'pwix:i18n@1.5.0' );

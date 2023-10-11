@@ -2,7 +2,7 @@
 
 ## ChangeLog
 
-### 0.90.0
+### 1.0.0-rc
 
 Release date: 
 
