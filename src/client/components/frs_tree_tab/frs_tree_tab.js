@@ -114,7 +114,11 @@ Template.frs_tree_tab.onCreated( function(){
         },
 
         // whether the forum can be deleted ?
+        //  - do not delete a non-empty forum
         deletableForum( parent, f ){
+            if( f.pub.threadsList.length > 0 ){
+                return false;
+            }
             return true;
         },
 
