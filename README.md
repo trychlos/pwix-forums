@@ -323,4 +323,4 @@ New and updated translations are willingly accepted, and more than welcome. Just
 
 ---
 P. Wieser
-- Last updated on 2023, Feb. 17th
+- Last updated on 2023, Oct. 11th

@@ -1,6 +1,6 @@
 Package.describe({
     name: 'pwix:forums',
-    version: '1.0.0-rc',  // pre-release version number
+    version: '1.0.0',
     summary: 'A forum solution for Meteor',
     git: 'https://github.com/trychlos/pwix-forums',
     documentation: 'README.md'
