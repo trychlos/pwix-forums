@@ -6,6 +6,7 @@
  *  (aka Meteor RPC).
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import SimpleSchema from 'simpl-schema';
 
 Forums.Forums = {
@@ -201,7 +202,7 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILADDRESS:
                     if( user ){
-                        const o = Forums.fn.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        const o = AccountsTools.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
                         if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
                             result.reason = Forums.C.Participation.EMAILADDRESS;
                         } else {
@@ -215,9 +216,9 @@ Forums.Forums = {
                     break;
                 case Forums.C.Participation.EMAILVERIFIED:
                     if( user ){
-                        const o = Forums.fn.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+                        const o = AccountsTools.preferredLabel( user, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
                         if( o.origin === AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ){
-                            if( Forums.fn.isEmailVerified( user, o.label )){
+                            if( AccountsTools.isEmailVerified( o.label, user )){
                                 result.reason = Forums.C.Participation.EMAILVERIFIED;
                             } else {
                                 result.editable = false;

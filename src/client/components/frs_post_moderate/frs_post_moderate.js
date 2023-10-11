@@ -19,6 +19,7 @@
  *  confirms the dialog.
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { Modal } from 'meteor/pwix:modal';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
@@ -38,8 +39,8 @@ Template.frs_post_moderate.onCreated( function(){
         const post = Template.currentData().post;
         post.dyn = {
             rvStats: new ReactiveVar( null ),
-            rvAuthorEmail: AccountsTools.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ),
-            rvAuthorUsername: AccountsTools.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME )
+            rvAuthorEmail: AccountsTools.preferredLabelRV( post.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS ),
+            rvAuthorUsername: AccountsTools.preferredLabelRV( post.owner, AccountsTools.C.PreferredLabel.USERNAME )
         };
         if( post ){
             Meteor.call( 'frsPosts.userStats', post.owner, ( err, res ) => {

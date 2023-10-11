@@ -4,6 +4,7 @@
  * The displayed thread content is available as a 'threadId' route param
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { pwixI18n } from 'meteor/pwix:i18n';
 
@@ -210,7 +211,7 @@ Template.frsPosts.helpers({
     moderatedPost( it ){
         const moderated = it.deletedAt && it.deletedBecause;
         if( moderated ){
-            it.dynModerated = Forums.fn.preferredLabel( it.deletedBy, AccountsTools.C.PreferredLabel.USERNAME );
+            it.dynModerated = AccountsTools.preferredLabelRV( it.deletedBy, AccountsTools.C.PreferredLabel.USERNAME );
         }
         return moderated;
     },

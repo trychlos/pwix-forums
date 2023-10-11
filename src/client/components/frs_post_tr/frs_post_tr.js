@@ -15,6 +15,7 @@
  *    provides { post: <post> } object data
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { Bootbox } from 'meteor/pwix:bootbox';
 import { Modal } from 'meteor/pwix:modal';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
@@ -131,7 +132,7 @@ Template.frs_post_tr.onCreated( function(){
     // get the owner username
     self.autorun(() => {
         let post = Template.currentData().post;
-        post.rvAuthor = Forums.fn.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME );
+        post.rvAuthor = AccountsTools.preferredLabelRV( post.owner, AccountsTools.C.PreferredLabel.USERNAME );
     })
 });
 

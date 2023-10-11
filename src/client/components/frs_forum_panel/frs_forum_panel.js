@@ -185,7 +185,7 @@ Template.frs_forum_panel.events({
                 } else {
                     console.log( res );
                     Tolert.success( Forums.fn.i18n( 'forum_edit.'+( f._id ? 'message_updated' : 'message_created' ), res.upserted.title ));
-                    pwixModal.close();
+                    Modal.close();
                 }
             });
         }

@@ -38,16 +38,5 @@ Forums.fn = {
             });
         }
         return result;
-    },
-
-    /**
-     * @summary A proxy to AccountsTools.isEmailverified()
-     * @locus Anywhere
-     * @param {Object} user the user document
-     * @param {String} email the email addressed to check
-     * @returns {Boolean} whether the email address has been verified
-     */
-    isEmailVerified( user, email ){
-        return AccountsTools.isEmailVerified( user, email );
     }
 };

@@ -4,6 +4,7 @@
  * The displayed forum content is available as a 'forumId' route param
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { FlowRouter } from 'meteor/ostrio:flow-router-extra';
 import { pwixI18n } from 'meteor/pwix:i18n';
 
@@ -127,8 +128,8 @@ Template.frsThreads.onCreated( function(){
                 const post = Forums.client.collections.Posts.find({ $and: [{ threadId: id }, selector ]}, { sort: { createdAt: -1 }, limit: 1 }).fetch()[0];
                 if( post ){
                     post.dyn = {
-                        rvLastPostOwner: Forums.fn.preferredLabel( forum.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ),
-                        rvOwner: Forums.fn.preferredLabel( post.owner, AccountsTools.C.PreferredLabel.USERNAME ),
+                        rvLastPostOwner: AccountsTools.preferredLabelRV( forum.pub.lastPost.owner, AccountsTools.C.PreferredLabel.USERNAME ),
+                        rvOwner: AccountsTools.preferredLabelRV( post.owner, AccountsTools.C.PreferredLabel.USERNAME ),
                         rvPostsCount: new ReactiveVar( 0 )
                     };
                     Forums.client.collections.Posts.countDocuments({ $and: [{ threadId: id }, selector ]}).then(( count ) => { post.dyn.rvPostsCount.set( count ); });

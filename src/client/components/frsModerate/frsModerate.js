@@ -2,14 +2,15 @@
  * pwix:forums/src/cient/components/frsModerate/frsModerate.js
  */
 
+import dotdotdot from 'dotdotdot';
+import printf from 'printf';
+
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { Modal } from 'meteor/pwix:modal';
 import { pwixI18n } from 'meteor/pwix:i18n';
 import { ReactiveDict } from 'meteor/reactive-dict';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Tolert } from 'meteor/pwix:tolert';
-
-import dotdotdot from 'dotdotdot';
-import printf from 'printf';
 
 import '../frs_post_moderate/frs_post_moderate.js';
 
@@ -506,10 +507,10 @@ Template.frsModerate.helpers({
     //  install a ReactiveVar which will hold the needed labels
     postCatch( f, p ){
         //console.log( 'postCatch' );
-        p.dyn.rvAuthorEmail = Forums.fn.preferredLabel( p.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
-        p.dyn.rvAuthorUsername = Forums.fn.preferredLabel( p.owner, AccountsTools.C.PreferredLabel.USERNAME );
-        p.dyn.rvValidator = p.validatedBy ? Forums.fn.preferredLabel( p.validatedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
-        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? Forums.fn.preferredLabel( p.deletedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
+        p.dyn.rvAuthorEmail = AccountsTools.preferredLabelRV( p.owner, AccountsTools.C.PreferredLabel.EMAIL_ADDRESS );
+        p.dyn.rvAuthorUsername = AccountsTools.preferredLabelRV( p.owner, AccountsTools.C.PreferredLabel.USERNAME );
+        p.dyn.rvValidator = p.validatedBy ? AccountsTools.preferredLabelRV( p.validatedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
+        p.dyn.rvModerator = p.deletedBy && p.deletedBecause ? AccountsTools.preferredLabelRV( p.deletedBy, AccountsTools.C.PreferredLabel.USERNAME ) : null;
         p.dyn.rvStats = new ReactiveVar( null );
         Meteor.callPromise( 'frsPosts.userStats', p.owner ).then(( res ) => { p.dyn.rvStats.set( res ); });
     },

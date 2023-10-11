@@ -10,6 +10,7 @@
  * Todo #93: we do not want that archive/unarchive actions be reactive.
  */
 
+import { AccountsTools } from 'meteor/pwix:accounts-tools';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { pwixI18n as i18n } from 'meteor/pwix:i18n';
 
@@ -63,7 +64,7 @@ Template.frs_forum_tab.onCreated( function(){
                 self.FRS.orig = { ...forum };
                 self.FRS.origSet.set( true );
                 if( forum.archivedAt && forum.archivedBy ){
-                    forum.dynArchived = Forums.fn.preferredLabel( forum.archivedBy, AccountsTools.C.PreferredLabel.USERNAME );
+                    forum.dynArchived = AccountsTools.preferredLabelRV( forum.archivedBy, AccountsTools.C.PreferredLabel.USERNAME );
                 }
             }
         }
